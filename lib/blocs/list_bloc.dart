@@ -1,5 +1,4 @@
 import 'package:applithium_core/analytics/trackable.dart';
-import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
@@ -18,7 +17,7 @@ class ListBloc<M extends Equatable, Event extends BaseListEvent>
   ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(  ListState(null, true, false, false, null)) {
     add(Created());
     _repository.updatesStream.listen((data) {
-      add(DisplayData(data));
+      add(DisplayData(data.items, data.isEndReached));
     });
   }
 
@@ -42,7 +41,7 @@ class ListBloc<M extends Equatable, Event extends BaseListEvent>
     } else if (event is ScrolledToEnd) {
       _repository.loadMoreItems();
     } else if (event is DisplayData<List<M>>) {
-      yield state.withValue(event.data);
+      yield state.withValue(event.data, event.isEndReached);
     } else {
       yield* mapCustomEventToState(event);
     }
@@ -74,21 +73,35 @@ class UpdateRequested extends BaseListEvent {
 
 class DisplayData<T> extends BaseListEvent {
   final T data;
+  final isEndReached;
 
-  DisplayData(this.data): super("data_updated");
+  DisplayData(this.data, this.isEndReached): super("data_updated");
 }
 
 class ScrolledToEnd extends BaseListEvent {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 
-class ListState<VM> extends ContentState<List<VM>> {
-
+class ListState<T> {
+  final List<T> value;
+  final bool isLoading;
+  final dynamic error;
   final bool isPageLoading;
   final bool isEndReached;
-  
-  ListState(List<VM> value, bool isLoading, this.isPageLoading, this.isEndReached, dynamic error)
-      : super(value, isLoading, error);
+
+  ListState(this.value, this.isLoading, this.error, this.isPageLoading, this.isEndReached);
+
+  ListState<T> withValue(List<T> value, bool endReached) {
+    return ListState(value, false, null, false, endReached);
+  }
+
+  ListState<T> withLoading(bool isLoading) {
+    return ListState(value, true, null, false, false);
+  }
+
+  ListState withError(dynamic error) {
+    return ListState(value, false, error, false, false);
+  }
 
   ListState withPageLoading(bool isPageLoading) {
     return ListState(this.value, false, isPageLoading, false, null);
