@@ -14,8 +14,8 @@ class ListBloc<VM, Event extends BaseListEvent>
   @protected
   final Logger logger;
 
-  ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(ListState(null, true, false, null)) {
-    _repository.dataStream.listen((data) {
+  ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(  ListState(null, true, false, false, null)) {
+    _repository.updatesStream.listen((data) {
       add(Created());
     });
   }
@@ -84,7 +84,7 @@ class ListState<VM> extends ContentState<List<VM>> {
 
   final bool isPageLoading;
   final bool isEndReached;
-
+  
   ListState(List<VM> value, bool isLoading, this.isPageLoading, this.isEndReached, dynamic error)
       : super(value, isLoading, error);
 
@@ -92,7 +92,7 @@ class ListState<VM> extends ContentState<List<VM>> {
     return ListState(this.value, false, isPageLoading, false, null);
   }
 
-  ListState reachedMax() {
+  ListState endReached() {
     return ListState(this.value, false, false, true, null);
   }
 }

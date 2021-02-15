@@ -14,22 +14,33 @@ class HttpClientFirstImpl extends HttpClient {
   @protected
   final Logger logger;
 
-  HttpClientFirstImpl(this._host, { this.logger = const DefaultLogger() });
+  HttpClientFirstImpl(this._host, {this.logger = const DefaultLogger()});
 
   @override
   Future<dynamic> getImpl(String path,
-      {String query = "", Map<String, String> headers = const {}}) async {
+      {Map<String, String> queryParams = const {},
+      Map<String, String> headers = const {}}) async {
     Response response;
 
     final querySb = StringBuffer(_host);
-    if(path != null && path.length > 1 && path[0] != "/") {
+    if (path != null && path.length > 1 && path[0] != "/") {
       querySb.write("/");
     }
     querySb.write(path);
 
-    if (query != null && query.length > 0) {
+    if (queryParams != null && queryParams.length > 0) {
       querySb.write("?");
-      querySb.write(query);
+      var iterator = queryParams.entries.iterator;
+      var isFirst = true;
+      do {
+        if(!isFirst) {
+          querySb.write("&");
+        }
+        isFirst = false;
+
+        final entry = iterator.current;
+        querySb.write("${entry.key}=${entry.value}");
+      }while(iterator.moveNext());
     }
 
     logger.log("request get query = " + querySb.toString());
@@ -55,11 +66,13 @@ class HttpClientFirstImpl extends HttpClient {
 
   @override
   Future<dynamic> postImpl(String path, Map<String, dynamic> body,
-      {Map<String, String> headers = const { 'content-type' : 'application/json' }}) async {
+      {Map<String, String> headers = const {
+        'content-type': 'application/json'
+      }}) async {
     Response response;
 
     final querySb = StringBuffer(_host);
-    if(path != null && path.length > 1 && path[0] != "/") {
+    if (path != null && path.length > 1 && path[0] != "/") {
       querySb.write("/");
     }
     querySb.write(path);
@@ -69,7 +82,8 @@ class HttpClientFirstImpl extends HttpClient {
     logger.log("request post body = " + body.toString());
 
     try {
-      response = await post(querySb.toString(), headers: headers, body: json.encode(body));
+      response = await post(querySb.toString(),
+          headers: headers, body: json.encode(body));
     } catch (e) {
       logger.log("error post = " + e.toString());
       throw NotConnectedError();

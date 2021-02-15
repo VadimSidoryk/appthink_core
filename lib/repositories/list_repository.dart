@@ -6,14 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 import 'dart:async';
 
-abstract class ListRepository<T> extends BaseRepository<List<T>> {
+abstract class ListRepository<T> extends BaseRepository<UpdatableListEvents<T>> {
   State _state = State.INITIAL;
 
   CancelableOperation _updateDataOperation;
   CancelableOperation _loadMoreItemsOperation;
 
   int _currentValueLength = 0;
-  bool _hasMoreValues = true;
+
+  final _endReachedSubj = BehaviorSubject.seeded(false);
+  Stream<bool> get endReachedObs => _endReachedSubj.stream;
 
   final int defaultPageLength;
 
@@ -23,10 +25,10 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
   Future<bool> isOutdated;
 
   @protected
-  final data = BehaviorSubject<List<T>>();
+  final dataSubj = BehaviorSubject<List<T>>();
 
   @override
-  Stream<List<T>> get dataStream => data.stream;
+  Stream<List<T>> get updatesStream => dataSubj.stream;
 
   ListRepository(this.defaultPageLength, { this.logger = const DefaultLogger() });
 
@@ -63,7 +65,8 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
 
   @override
   void close() {
-    data.close();
+    dataSubj.close();
+    _endReachedSubj.close();
   }
 
   Future<bool> loadMoreItems() async {
@@ -71,7 +74,7 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
       return false;
     }
 
-    final lastElement = await data.isEmpty ? null : data.value.last;
+    final lastElement = await dataSubj.isEmpty ? null : dataSubj.value.last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
         loadItems(_currentValueLength, lastElement, defaultPageLength),
         onCancel: () => {logger.log("cancel loadMore operation")});
@@ -88,18 +91,18 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
   @protected
   void onNewList(List<T> value) {
     _currentValueLength = value.length;
-    _hasMoreValues = value.length == defaultPageLength;
+    _endReachedSubj.sink.add(value.length < defaultPageLength);
     _updateDataOperation = null;
-    data.sink.add(value);
+    dataSubj.sink.add(value);
   }
 
   @protected
   void onNewItems(List<T> value) {
     _currentValueLength = _currentValueLength + value.length;
-    _hasMoreValues = value.length == defaultPageLength;
+    _endReachedSubj.sink.add(value.length < defaultPageLength);
     _loadMoreItemsOperation = null;
-    final resultList = data.value + value;
-    data.sink.add(resultList);
+    final resultList = dataSubj.value + value;
+    dataSubj.sink.add(resultList);
   }
 
   @protected
@@ -109,7 +112,7 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
 
   @protected
   Future<bool> checkNeedLoadMoreValues() async {
-    return _state != State.MORE_ITEMS_LOADING && _state != State.DATA_UPDATING && _hasMoreValues;
+    return _state != State.MORE_ITEMS_LOADING && _state != State.DATA_UPDATING && ! await endReachedObs.first;
   }
 }
 
@@ -119,4 +122,21 @@ enum State {
   DATA_UPDATED,
   MORE_ITEMS_LOADING,
   MORE_ITEMS_LOADED
+}
+
+class UpdatableListEvents<T> {
+  final List<T> prevValue;
+  final List<T> nextValue;
+
+  UpdatableListEvents._(this.prevValue, this.nextValue);
+
+  factory UpdateListEvents<T>.updated(List<T> prev, List<T> next) => Update
+}
+
+class Update<T> extends UpdatableListEvents<T> {
+  Update(List<T> prevValue, List<T> nextValue):super._(prevValue, nextValue);
+}
+
+class AddItems<T> extends UpdatableListEvents<T> {
+  AddItems
 }

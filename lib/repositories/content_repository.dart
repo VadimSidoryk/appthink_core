@@ -17,7 +17,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   @protected
   final data = BehaviorSubject<T>();
   @override
-  Stream<T> get dataStream => data.stream;
+  Stream<T> get updatesStream => data.stream;
 
   ContentRepository({ this.logger = const DefaultLogger() });
 

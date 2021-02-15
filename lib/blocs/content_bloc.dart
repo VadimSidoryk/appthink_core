@@ -13,8 +13,9 @@ class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<BaseContentEv
   final Logger logger;
 
   ContentBloc(this._repository, { this.logger = const DefaultLogger() }) : super(ContentState(null, true, null)) {
-    _repository.dataStream.listen((data) {
-      add(Created());
+    add(Created());
+    _repository.updatesStream.listen((data) {
+      add(DisplayData(data));
     });
   }
 

@@ -1,4 +1,5 @@
 import 'package:applithium_core/blocs/list_bloc.dart';
+import 'package:applithium_core_example/projects/data_api.dart';
 import 'package:applithium_core_example/projects/domain.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -12,22 +13,23 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _scrollController = ScrollController();
-  ProjectsListBloc _projectsBloc;
+  ObjectsListBloc _projectsBloc;
   final _scrollThreshold = 200.0;
 
   _HomePageState() {
     _scrollController.addListener(_onScroll);
 
-    final api = BehanceApiFirstImpl();
-    final repository = BehanceProjectsRepository(api);
-    _projectsBloc = ProjectsListBloc(repository);
+    final api = CooperHewittApiImpl();
+    final repository = SearchObjectsRepository(api);
+    _projectsBloc = ObjectsListBloc(repository);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
       cubit: _projectsBloc,
-      builder: (BuildContext context, ListState<BehanceProjectModel> state) {
+      // ignore: missing_return
+      builder: (BuildContext context, ListState<ObjectModel> state) {
         if (state.isLoading) {
           return Center(
             child: CircularProgressIndicator(),
@@ -35,24 +37,24 @@ class _HomePageState extends State<HomePage> {
         }
         if (state.error != null) {
           return Center(
-            child: Text('failed to fetch posts'),
+            child: Text('failed to fetch objects'),
           );
         }
         if (state.value != null) {
           if (state.value.isEmpty) {
             return Center(
-              child: Text('no posts'),
+              child: Text('no objects'),
             );
           }
           return ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               return index >= state.value.length
                   ? BottomLoader()
-                  : ProjectWidget(project: state.value[index]);
+                  : ObjectWidget(object: state.value[index]);
             },
-            itemCount: state.hasReachedMax
-                ? state.posts.length
-                : state.posts.length + 1,
+            itemCount: state.isEndReached
+                ? state.value.length
+                : state.value.length + 1,
             controller: _scrollController,
           );
         }
@@ -75,22 +77,22 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class ProjectWidget extends StatelessWidget {
-  final BehanceProjectModel project;
+class ObjectWidget extends StatelessWidget {
+  final ObjectModel object;
 
-  const ProjectWidget({Key key, @required this.project}) : super(key: key);
+  const ObjectWidget({Key key, @required this.object}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: CachedNetworkImage(
-        imageUrl: project.thumbnail,
+        imageUrl: object.thumbnailUrl,
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),
-      title: Text('${project.name}'),
+      title: Text('${object.name}'),
       isThreeLine: true,
-      subtitle: Text(project.ownersToIcon.keys.join(",")),
+      subtitle: Text('${object.description}'),
       dense: true,
     );
   }
