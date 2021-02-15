@@ -1,4 +1,5 @@
 
+import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -18,7 +19,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   @override
   Stream<T> get dataStream => data.stream;
 
-  ContentRepository(this.logger);
+  ContentRepository({ this.logger = const DefaultLogger() });
 
   Future<T> loadData();
 

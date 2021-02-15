@@ -1,35 +1,44 @@
 import 'package:applithium_core/analytics/trackable.dart';
+import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<Event, ContentState<VM>> {
+class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<BaseContentEvent, ContentState<VM>> {
 
   final ContentRepository _repository;
-  final Logger _logger;
+  
+  @protected
+  final Logger logger;
 
-  ContentBloc(this._repository, this._logger) : super(ContentState(null, true, null)) {
+  ContentBloc(this._repository, { this.logger = const DefaultLogger() }) : super(ContentState(null, true, null)) {
     _repository.dataStream.listen((data) {
-      add(BaseContentEvent.created());
+      add(Created());
     });
   }
 
+  @protected
+  Stream<ContentState<VM>> mapCustomEventToState(Event event) async* { }
+
   @override
-  Stream<ContentState<VM>> mapEventToState(Event event) async* {
+  Stream<ContentState<VM>> mapEventToState(BaseContentEvent event) async* {
     if(event is Created) {
       yield state.withLoading(true);
       final isUpdated = await _repository.updateData(true);
-      _logger.log("isUpdated: $isUpdated");
+      logger.log("isUpdated: $isUpdated");
       yield state.withLoading(false);
     } else if(event is Shown) {
       _repository.updateData(false);
     } else if(event is UpdateRequested) {
       yield state.withLoading(true);
       final isUpdated = await _repository.updateData(true);
-      _logger.log("isUpdated: $isUpdated");
+      logger.log("isUpdated: $isUpdated");
       yield state.withLoading(false);
     } else if(event is DisplayData<VM>) {
       yield state.withValue(event.data);
+    } else {
+      yield* mapCustomEventToState(event);
     }
   }
 }
@@ -42,10 +51,6 @@ abstract class BaseContentEvent extends Trackable {
   Map<String, Object> get analyticParams => {};
 
   BaseContentEvent(this.analyticTag);
-
-  factory BaseContentEvent.created() = Created;
-  factory BaseContentEvent.shown() = Shown;
-  factory BaseContentEvent.updateRequested() = UpdateRequested;
 }
 
 class Created extends BaseContentEvent {

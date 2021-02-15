@@ -1,3 +1,4 @@
+import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:async/async.dart';
@@ -7,6 +8,8 @@ import 'dart:async';
 
 abstract class ListRepository<T> extends BaseRepository<List<T>> {
   State _state = State.INITIAL;
+
+  CancelableOperation _updateDataOperation;
   CancelableOperation _loadMoreItemsOperation;
 
   int _currentValueLength = 0;
@@ -25,7 +28,7 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
   @override
   Stream<List<T>> get dataStream => data.stream;
 
-  ListRepository(this.logger, this.defaultPageLength);
+  ListRepository(this.defaultPageLength, { this.logger = const DefaultLogger() });
 
   Future<List<T>> loadItems(int startIndex, T lastValue, int itemsToLoad);
 
@@ -34,10 +37,19 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
     final needToUpdate = await checkNeedToUpdate(isForced);
     if(_loadMoreItemsOperation != null) {
       _loadMoreItemsOperation.cancel();
+      _loadMoreItemsOperation = null;
     }
 
     if (needToUpdate) {
-      return loadItems(0, null, defaultPageLength).then((value) {
+      if(_updateDataOperation != null) {
+        _updateDataOperation.cancel();
+        _updateDataOperation = null;
+      }
+      _updateDataOperation = CancelableOperation.fromFuture(
+          loadItems(0, null, defaultPageLength),
+          onCancel: () => {logger.log("cancel update operation")});
+
+      return _updateDataOperation.valueOrCancellation(false).then((value) {
         onNewList(value);
         return true;
       }, onError: () {
@@ -62,7 +74,7 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
     final lastElement = await data.isEmpty ? null : data.value.last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
         loadItems(_currentValueLength, lastElement, defaultPageLength),
-        onCancel: () => {logger.log("cancel operation")});
+        onCancel: () => {logger.log("cancel loadMore operation")});
 
     return _loadMoreItemsOperation.valueOrCancellation(false).then((value) {
       onNewItems(value);
@@ -77,6 +89,7 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
   void onNewList(List<T> value) {
     _currentValueLength = value.length;
     _hasMoreValues = value.length == defaultPageLength;
+    _updateDataOperation = null;
     data.sink.add(value);
   }
 
@@ -84,6 +97,7 @@ abstract class ListRepository<T> extends BaseRepository<List<T>> {
   void onNewItems(List<T> value) {
     _currentValueLength = _currentValueLength + value.length;
     _hasMoreValues = value.length == defaultPageLength;
+    _loadMoreItemsOperation = null;
     final resultList = data.value + value;
     data.sink.add(resultList);
   }

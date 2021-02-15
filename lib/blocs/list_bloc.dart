@@ -1,39 +1,48 @@
 import 'package:applithium_core/analytics/trackable.dart';
 import 'package:applithium_core/blocs/content_bloc.dart';
+import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListBloc<VM, Event extends BaseListEvent>
-    extends Bloc<Event, ListState<VM>> {
+    extends Bloc<BaseListEvent, ListState<VM>> {
 
   final ListRepository _repository;
-  final Logger _logger;
+  
+  @protected
+  final Logger logger;
 
-  ListBloc(this._repository, this._logger) : super(ListState(null, true, false, null)) {
+  ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(ListState(null, true, false, null)) {
     _repository.dataStream.listen((data) {
-      add(BaseListEvent.created());
+      add(Created());
     });
   }
 
+  @protected
+  Stream<ListState<VM>> mapCustomEventToState(Event event) async* { }
+
   @override
-  Stream<ListState<VM>> mapEventToState(Event event) async* {
+  Stream<ListState<VM>> mapEventToState(BaseListEvent event) async* {
     if (event is Created) {
       yield state.withLoading(true);
       final isUpdated = await _repository.updateData(true);
-      _logger.log("isUpdated: $isUpdated");
+      logger.log("isUpdated: $isUpdated");
       yield state.withLoading(false);
     } else if (event is Shown) {
       _repository.updateData(false);
     } else if (event is UpdateRequested) {
       yield state.withLoading(true);
       final isUpdated = await _repository.updateData(true);
-      _logger.log("isUpdated: $isUpdated");
+      logger.log("isUpdated: $isUpdated");
       yield state.withLoading(false);
     } else if (event is ScrolledToEnd) {
       _repository.loadMoreItems();
     } else if (event is DisplayData<List<VM>>) {
       yield state.withValue(event.data);
+    } else {
+      yield* mapCustomEventToState(event);
     }
   }
 }
@@ -47,11 +56,6 @@ abstract class BaseListEvent extends Trackable {
   Map<String, Object> get analyticParams => {};
 
   BaseListEvent(this.analyticTag);
-
-  factory  BaseListEvent.created() = Created;
-  factory  BaseListEvent.shown() = Shown;
-  factory  BaseListEvent.updateRequested() = UpdateRequested;
-  factory  BaseListEvent.scrolledToEnd() = ScrolledToEnd;
 }
 
 class Created extends BaseListEvent {
@@ -77,10 +81,18 @@ class ScrolledToEnd extends BaseListEvent {
 }
 
 class ListState<VM> extends ContentState<List<VM>> {
-  ListState(List<VM> value, bool isLoading, bool isPageLoading, dynamic error)
+
+  final bool isPageLoading;
+  final bool isEndReached;
+
+  ListState(List<VM> value, bool isLoading, this.isPageLoading, this.isEndReached, dynamic error)
       : super(value, isLoading, error);
 
   ListState withPageLoading(bool isPageLoading) {
-    return ListState(this.value, false, isPageLoading, null);
+    return ListState(this.value, false, isPageLoading, false, null);
+  }
+
+  ListState reachedMax() {
+    return ListState(this.value, false, false, true, null);
   }
 }
