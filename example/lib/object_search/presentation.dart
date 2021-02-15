@@ -1,26 +1,27 @@
 import 'package:applithium_core/blocs/list_bloc.dart';
-import 'package:applithium_core_example/projects/data_api.dart';
-import 'package:applithium_core_example/projects/domain.dart';
+import 'package:applithium_core_example/data/api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatefulWidget {
+import 'domain.dart';
+
+class ObjectsListScreen extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _ObjectsListScreenState createState() => _ObjectsListScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ObjectsListScreenState extends State<ObjectsListScreen> {
   final _scrollController = ScrollController();
   ObjectsListBloc _projectsBloc;
   final _scrollThreshold = 200.0;
 
-  _HomePageState() {
+  _ObjectsListScreenState() {
     _scrollController.addListener(_onScroll);
 
     final api = CooperHewittApiImpl();
-    final repository = SearchObjectsRepository(api);
+    final repository = ExhibitionObjectsRepository(api, "840501697");
     _projectsBloc = ObjectsListBloc(repository);
   }
 

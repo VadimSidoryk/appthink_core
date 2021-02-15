@@ -3,28 +3,30 @@ import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ListBloc<VM, Event extends BaseListEvent>
-    extends Bloc<BaseListEvent, ListState<VM>> {
+class ListBloc<M extends Equatable, Event extends BaseListEvent>
+    extends Bloc<BaseListEvent, ListState<M>> {
 
-  final ListRepository _repository;
+  final ListRepository<M> _repository;
   
   @protected
   final Logger logger;
 
   ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(  ListState(null, true, false, false, null)) {
+    add(Created());
     _repository.updatesStream.listen((data) {
-      add(Created());
+      add(DisplayData(data));
     });
   }
 
   @protected
-  Stream<ListState<VM>> mapCustomEventToState(Event event) async* { }
+  Stream<ListState<M>> mapCustomEventToState(Event event) async* { }
 
   @override
-  Stream<ListState<VM>> mapEventToState(BaseListEvent event) async* {
+  Stream<ListState<M>> mapEventToState(BaseListEvent event) async* {
     if (event is Created) {
       yield state.withLoading(true);
       final isUpdated = await _repository.updateData(true);
@@ -39,7 +41,7 @@ class ListBloc<VM, Event extends BaseListEvent>
       yield state.withLoading(false);
     } else if (event is ScrolledToEnd) {
       _repository.loadMoreItems();
-    } else if (event is DisplayData<List<VM>>) {
+    } else if (event is DisplayData<List<M>>) {
       yield state.withValue(event.data);
     } else {
       yield* mapCustomEventToState(event);

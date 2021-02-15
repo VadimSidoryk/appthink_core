@@ -23,40 +23,27 @@ class ObjectModel extends Equatable {
   }
 }
 
-class SearchObjectsRepository extends ListRepository<ObjectModel> {
+class ExhibitionObjectsRepository extends ListRepository<ObjectModel> {
   final CooperHewittApi _api;
 
-  String _searchQuery;
+  final String exhibitionId;
 
-  SearchObjectsRepository(this._api) : super(20);
-
-  Future<bool> searchQueryChanged(String query) {
-    _searchQuery = query;
-    return updateData(true);
-  }
+  ExhibitionObjectsRepository(this._api, this.exhibitionId) : super(20);
 
   @override
   Future<List<ObjectModel>> loadItems(
       int startIndex, lastValue, int itemsToLoad) {
     return _api
-        .getObjectsByQuery(_searchQuery, startIndex ~/ itemsToLoad, itemsToLoad)
+        .getExhibitionObjects(exhibitionId, startIndex ~/ itemsToLoad, itemsToLoad)
         .then((dtoList) =>
             dtoList.map((dto) => ObjectModel.fromDTO(dto)).toList());
   }
 }
 
 class ObjectsListBloc extends ListBloc<ObjectModel, ObjectsListEvent> {
-  final SearchObjectsRepository _repository;
+  final ExhibitionObjectsRepository _repository;
 
   ObjectsListBloc(this._repository) : super(_repository);
-
-  @override
-  Stream<ListState<ObjectModel>> mapCustomEventToState(
-      ObjectsListEvent event) async* {
-    if (event is SearchQueryChanged) {
-      _repository.searchQueryChanged(event._searchQuery);
-    }
-  }
 }
 
 class ObjectsListEvent extends BaseListEvent {
