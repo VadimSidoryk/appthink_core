@@ -9,6 +9,9 @@ import 'package:scoped/scoped.dart';
 import 'domain.dart';
 
 class ExhibitionObjectsScreen extends StatefulWidget {
+
+  static const routeName =  '/exhibition_objects';
+
   @override
   _ExhibitionObjectsScreenState createState() =>
       _ExhibitionObjectsScreenState();

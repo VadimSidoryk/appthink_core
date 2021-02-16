@@ -15,7 +15,6 @@ class ListBloc<M extends Equatable, Event extends BaseListEvent>
   final Logger logger;
 
   ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(  ListState(null, true, false, false, null)) {
-    add(Created());
     _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });
@@ -26,12 +25,7 @@ class ListBloc<M extends Equatable, Event extends BaseListEvent>
 
   @override
   Stream<ListState<M>> mapEventToState(BaseListEvent event) async* {
-    if (event is Created) {
-      yield state.withLoading(true);
-      final isUpdated = await _repository.updateData(true);
-      logger.log("isUpdated: $isUpdated");
-      yield state.withLoading(false);
-    } else if (event is Shown) {
+    if (event is Shown) {
       _repository.updateData(false);
     } else if (event is UpdateRequested) {
       yield state.withLoading(true);
@@ -57,10 +51,6 @@ abstract class BaseListEvent extends Trackable {
   Map<String, Object> get analyticParams => {};
 
   BaseListEvent(this.analyticTag);
-}
-
-class Created extends BaseListEvent {
-  Created(): super("screen_created");
 }
 
 class Shown extends BaseListEvent {

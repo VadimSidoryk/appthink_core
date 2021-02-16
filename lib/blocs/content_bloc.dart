@@ -13,7 +13,6 @@ class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<BaseContentEv
   final Logger logger;
 
   ContentBloc(this._repository, { this.logger = const DefaultLogger() }) : super(ContentState(null, true, null)) {
-    add(Created());
     _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
@@ -24,12 +23,7 @@ class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<BaseContentEv
 
   @override
   Stream<ContentState<VM>> mapEventToState(BaseContentEvent event) async* {
-    if(event is Created) {
-      yield state.withLoading(true);
-      final isUpdated = await _repository.updateData(true);
-      logger.log("isUpdated: $isUpdated");
-      yield state.withLoading(false);
-    } else if(event is Shown) {
+    if(event is Shown) {
       _repository.updateData(false);
     } else if(event is UpdateRequested) {
       yield state.withLoading(true);
@@ -52,10 +46,6 @@ abstract class BaseContentEvent extends Trackable {
   Map<String, Object> get analyticParams => {};
 
   BaseContentEvent(this.analyticTag);
-}
-
-class Created extends BaseContentEvent {
-  Created(): super("screen_created");
 }
 
 class Shown extends BaseContentEvent {

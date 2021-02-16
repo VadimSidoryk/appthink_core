@@ -4,4 +4,8 @@ abstract class BaseRepository<T> {
   Future<bool> updateData(bool isForced);
 
   void close();
+
+  void preloadData() {
+    updateData(true);
+  }
 }

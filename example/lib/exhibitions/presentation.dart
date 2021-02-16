@@ -7,6 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scoped/scoped.dart';
 
 class ExhibitionsScreen extends StatefulWidget {
+
+  static const routeName = '/';
+
   @override
   _ExhibitionsScreenState createState() => _ExhibitionsScreenState();
 }
@@ -94,7 +97,7 @@ class ExhibitionWidget extends StatelessWidget {
       title: Text('${model.name}'),
       dense: true,
     ),
-    onTap: () => Navigator.pushNamed(context, '/exhibition_objects'));
+    onTap: () => Navigator.pushNamed(context, '/exhibition_objects', arguments: model.id));
   }
 }
 
