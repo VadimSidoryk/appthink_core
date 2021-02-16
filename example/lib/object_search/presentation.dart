@@ -85,16 +85,21 @@ class ObjectWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CachedNetworkImage(
-        imageUrl: object.thumbnailUrls.first,
-        placeholder: (context, url) => CircularProgressIndicator(),
-        errorWidget: (context, url, error) => Icon(Icons.error),
-      ),
-      title: Text('${object.name}'),
-      isThreeLine: true,
-      subtitle: Text('${object.description}'),
-      dense: true,
+    return Stack(
+      children: [
+        CachedNetworkImage(
+          imageUrl: object.thumbnailUrls.first,
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
+        Positioned.fill(child:
+        Align(child: Padding(child: Text(
+          '${object.name}',
+          style: TextStyle(color: Colors.deepOrangeAccent, fontSize: 20, fontWeight: FontWeight.bold ),
+        ), padding: EdgeInsets.all(20),), alignment: Alignment.bottomLeft,)
+        )
+
+      ],
     );
   }
 }

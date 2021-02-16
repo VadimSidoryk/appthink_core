@@ -3,6 +3,7 @@ import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core_example/data/api.dart';
 import 'package:applithium_core_example/data/dtos.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class ObjectModel extends Equatable {
   final String id;
