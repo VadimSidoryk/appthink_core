@@ -56,6 +56,7 @@ abstract class ListRepository<T extends Equatable>
     }
 
     if (needToUpdate) {
+      _state = State.DATA_UPDATING;
       if (_updateDataOperation != null) {
         _updateDataOperation.cancel();
         _updateDataOperation = null;
@@ -65,6 +66,7 @@ abstract class ListRepository<T extends Equatable>
           onCancel: () => {logger.log("cancel update operation")});
 
       return _updateDataOperation.valueOrCancellation(false).then((value) {
+        _state = State.DATA_UPDATED;
         _endReachedSubj.sink.add(value.length < defaultPageLength);
         onNewList(value);
         return true;
@@ -125,12 +127,15 @@ abstract class ListRepository<T extends Equatable>
       return false;
     }
 
+    _state = State.MORE_ITEMS_LOADING;
+
     final lastElement = await dataSubj.isEmpty ? null : dataSubj.value.last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
         loadItems(_currentValueLength, lastElement, defaultPageLength),
         onCancel: () => {logger.log("cancel loadMore operation")});
 
     return _loadMoreItemsOperation.valueOrCancellation(false).then((value) {
+      _state = State.MORE_ITEMS_LOADED;
       _endReachedSubj.sink.add(value.length < defaultPageLength);
       return addItems(value);
     }, onError: (obj, exception) {

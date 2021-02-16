@@ -35,7 +35,7 @@ class ExhibitionObjectsRepository extends ListRepository<ObjectModel> {
   Future<List<ObjectModel>> loadItems(
       int startIndex, lastValue, int itemsToLoad) {
     return _api
-        .getExhibitionObjects(exhibitionId, startIndex ~/ itemsToLoad, itemsToLoad)
+        .getExhibitionObjects(exhibitionId, startIndex ~/ itemsToLoad + 1, itemsToLoad)
         .then((dtoList) =>
             dtoList.map((dto) => ObjectModel.fromDTO(dto)).toList());
   }
