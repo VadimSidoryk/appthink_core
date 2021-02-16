@@ -12,12 +12,16 @@ abstract class CooperHewittApi {
 
   Future<List<ObjectItemDTO>> getObjectsByQuery(
       String query, int page, int itemsPerPage);
+
+  Future<ObjectItemDTO> getObjectInfo(String objectId);
 }
 
 class CooperHewittApiImpl extends CooperHewittApi {
-  final _token = "77a9aa7138f7c5bcc8a2fc3842681730";
+  final String _token;
   final _httpClient =
   HttpClientFirstImpl("https://api.collection.cooperhewitt.org/rest");
+
+  CooperHewittApiImpl(this._token);
 
   @override
   Future<List<ExhibitionItemDTO>> getExhibitions(int page, int itemsPerPage) {
@@ -61,6 +65,17 @@ class CooperHewittApiImpl extends CooperHewittApi {
     }).then((json) {
       final List<dynamic> items = json["objects"];
       return items.map((itemJson) => ObjectItemDTO.fromJson(itemJson)).toList();
+    });
+  }
+
+  @override
+  Future<ObjectItemDTO> getObjectInfo(String objectId) {
+    return _httpClient.getImpl("/", queryParams: {
+      "method": "cooperhewitt.objects.getInfo",
+      "object_id ": objectId,
+      "access_token": _token
+    }).then((json) {
+      return ObjectItemDTO.fromJson(json["object"]);
     });
   }
 }

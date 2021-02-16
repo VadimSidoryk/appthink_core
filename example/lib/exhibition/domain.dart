@@ -41,10 +41,10 @@ class ExhibitionObjectsRepository extends ListRepository<ObjectModel> {
   }
 }
 
-class ObjectsListBloc extends ListBloc<ObjectModel, ObjectsListEvent> {
+class ExhibitionObjectsBloc extends ListBloc<ObjectModel, ObjectsListEvent> {
   final ExhibitionObjectsRepository _repository;
 
-  ObjectsListBloc(this._repository) : super(_repository);
+  ExhibitionObjectsBloc(this._repository) : super(_repository);
 }
 
 class ObjectsListEvent extends BaseListEvent {

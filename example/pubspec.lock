@@ -299,7 +299,7 @@ packages:
     source: hosted
     version: "0.25.0"
   scoped:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: scoped
       url: "https://pub.dartlang.org"

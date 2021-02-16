@@ -4,31 +4,39 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:scoped/scoped.dart';
 
 import 'domain.dart';
 
-class ObjectsListScreen extends StatefulWidget {
+class ExhibitionObjectsScreen extends StatefulWidget {
   @override
-  _ObjectsListScreenState createState() => _ObjectsListScreenState();
+  _ExhibitionObjectsScreenState createState() =>
+      _ExhibitionObjectsScreenState();
 }
 
-class _ObjectsListScreenState extends State<ObjectsListScreen> {
+class _ExhibitionObjectsScreenState extends State<ExhibitionObjectsScreen> {
   final _scrollController = ScrollController();
-  ObjectsListBloc _projectsBloc;
+  ExhibitionObjectsBloc _searchBloc;
   final _scrollThreshold = 200.0;
 
-  _ObjectsListScreenState() {
+  _ExhibitionObjectsScreenState() {
     _scrollController.addListener(_onScroll);
-
-    final api = CooperHewittApiImpl();
-    final repository = ExhibitionObjectsRepository(api, "1141959691");
-    _projectsBloc = ObjectsListBloc(repository);
   }
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Objects list'),
+        ),
+        body: Center(child: _buildContent(context)));
+  }
+
+  Widget _buildContent(BuildContext context) {
+    _searchBloc =
+        ExhibitionObjectsBloc(context.get<ExhibitionObjectsRepository>());
     return BlocBuilder(
-      cubit: _projectsBloc,
+      cubit: _searchBloc,
       // ignore: missing_return
       builder: (BuildContext context, ListState<ObjectModel> state) {
         if (state.isLoading) {
@@ -65,7 +73,7 @@ class _ObjectsListScreenState extends State<ObjectsListScreen> {
 
   @override
   void dispose() {
-    _projectsBloc.close();
+    _searchBloc.close();
     super.dispose();
   }
 
@@ -73,7 +81,7 @@ class _ObjectsListScreenState extends State<ObjectsListScreen> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     if (maxScroll - currentScroll <= _scrollThreshold) {
-      _projectsBloc.add(ScrolledToEnd());
+      _searchBloc.add(ScrolledToEnd());
     }
   }
 }
