@@ -68,8 +68,8 @@ abstract class ListRepository<T extends Equatable>
         _endReachedSubj.sink.add(value.length < defaultPageLength);
         onNewList(value);
         return true;
-      }, onError: () {
-        logger.error(Exception("Can't update data"));
+      }, onError: (obj, exception) {
+        logger.error(Exception(exception));
         return false;
       });
     } else {
@@ -133,8 +133,8 @@ abstract class ListRepository<T extends Equatable>
     return _loadMoreItemsOperation.valueOrCancellation(false).then((value) {
       _endReachedSubj.sink.add(value.length < defaultPageLength);
       return addItems(value);
-    }, onError: () {
-      logger.error(Exception("Can't update data"));
+    }, onError: (obj, exception) {
+      logger.error(exception);
       return false;
     });
   }

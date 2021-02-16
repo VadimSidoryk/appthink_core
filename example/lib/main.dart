@@ -8,11 +8,11 @@ import 'package:applithium_core/applithium_core.dart';
 import 'package:applithium_core/proxy/custom_proxy.dart';
 
 void main() {
-  if (!kReleaseMode) {
-    // For Android devices you can also allowBadCertificates: true below, but you should ONLY do this when !kReleaseMode
-    final proxy = CustomProxy(ipAddress: "192.168.0.100", port: 8888);
-    proxy.enable();
-  }
+  // if (!kReleaseMode) {
+  //   // For Android devices you can also allowBadCertificates: true below, but you should ONLY do this when !kReleaseMode
+  //   final proxy = CustomProxy(ipAddress: "192.168.0.100", port: 8888);
+  //   proxy.enable();
+  // }
 
   runApp(MyApp());
 }

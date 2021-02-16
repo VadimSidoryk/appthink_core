@@ -1,4 +1,3 @@
-
 class ExhibitionItemDTO {
   String _id;
   String _url;
@@ -9,21 +8,27 @@ class ExhibitionItemDTO {
   String _isActive;
 
   String get id => _id;
+
   String get url => _url;
+
   String get title => _title;
+
   String get text => _text;
+
   String get dateStart => _dateStart;
+
   String get dateEnd => _dateEnd;
+
   String get isActive => _isActive;
 
-  ExhibitionItemDTO({
-    String id,
-    String url,
-    String title,
-    String text,
-    String dateStart,
-    String dateEnd,
-    String isActive}){
+  ExhibitionItemDTO(
+      {String id,
+      String url,
+      String title,
+      String text,
+      String dateStart,
+      String dateEnd,
+      String isActive}) {
     _id = id;
     _url = url;
     _title = title;
@@ -54,7 +59,6 @@ class ExhibitionItemDTO {
     map["is_active"] = _isActive;
     return map;
   }
-
 }
 
 class ObjectItemDTO {
@@ -91,7 +95,7 @@ class ObjectItemDTO {
   dynamic _onDisplay;
   String _country;
   String _type;
-  Images _images;
+  List<MultiSizeImage> _images;
   List<Participants> _participants;
   String _countryName;
   int _isLoanObject;
@@ -162,7 +166,7 @@ class ObjectItemDTO {
 
   String get type => _type;
 
-  Images get images => _images;
+  List<MultiSizeImage> get images => _images;
 
   List<Participants> get participants => _participants;
 
@@ -204,7 +208,7 @@ class ObjectItemDTO {
       dynamic onDisplay,
       String country,
       String type,
-      Images images,
+      List<MultiSizeImage> images,
       List<Participants> participants,
       String countryName,
       int isLoanObject}) {
@@ -272,7 +276,7 @@ class ObjectItemDTO {
     _provenance = json["provenance"];
     _dimensions = json["dimensions"];
     _dimensionsRaw = json["dimensions_raw"] != null
-        ? Dimensions.fromJson(json["dimensionsRaw"])
+        ? Dimensions.fromJson(json["dimensions_raw"])
         : null;
     _creditLine = json["creditline"];
     _description = json["description"];
@@ -284,13 +288,16 @@ class ObjectItemDTO {
     _country = json["woe:country"];
     _type = json["type"];
     if (json["images"] != null) {
-      final imagesJson = json["images"];
-      _images = Images(
-        large: Image.fromJson(imagesJson["b"]),
-        medium: Image.fromJson(imagesJson['z']),
-        small: Image.fromJson(imagesJson['n']),
-        xsmall: Image.fromJson(imagesJson['sq'])
-      );
+      final List<dynamic> imagesList = json["images"];
+      _images = [];
+      for (int i = 0; i < imagesList.length; i++) {
+        final dynamic multiSizeImageJson = imagesList[i];
+        _images.add(MultiSizeImage(
+            large: Image.fromJson(multiSizeImageJson["b"]),
+            medium: Image.fromJson(multiSizeImageJson['z']),
+            small: Image.fromJson(multiSizeImageJson['n']),
+            xsmall: Image.fromJson(multiSizeImageJson['sq'])));
+      }
     }
     if (json["participants"] != null) {
       _participants = [];
@@ -340,12 +347,16 @@ class ObjectItemDTO {
     map["woe:country"] = _country;
     map["type"] = _type;
     if (_images != null) {
-      map["images"] = {
-        "b": images.large.toJson(),
-        "z": images.medium.toJson(),
-        'n': images.small.toJson(),
-        "sq": images.xsmall.toJson()
-      };
+      map['images'] = [];
+      for (int i = 0; i < _images.length; i++) {
+        final multiSizeImage = images[i];
+        map["images"].add({
+          "b": multiSizeImage.large.toJson(),
+          "z": multiSizeImage.medium.toJson(),
+          'n': multiSizeImage.small.toJson(),
+          "sq": multiSizeImage.xsmall.toJson()
+        });
+      }
     }
     if (_participants != null) {
       map["participants"] = _participants.map((v) => v.toJson()).toList();
@@ -426,7 +437,7 @@ class Participants {
   }
 }
 
-class Images {
+class MultiSizeImage {
   Image _large;
   Image _medium;
   Image _small;
@@ -440,14 +451,14 @@ class Images {
 
   Image get xsmall => _xsmall;
 
-  Images({Image large, Image medium, Image small, Image xsmall}) {
+  MultiSizeImage({Image large, Image medium, Image small, Image xsmall}) {
     _large = large;
     _medium = medium;
     _small = small;
     _xsmall = xsmall;
   }
 
-  Images.fromJson(dynamic json) {
+  MultiSizeImage.fromJson(dynamic json) {
     _large = json["b"] != null ? Image.fromJson(json["b"]) : null;
     _medium = json["z"] != null ? Image.fromJson(json["z"]) : null;
     _small = json["n"] != null ? Image.fromJson(json["n"]) : null;

@@ -27,7 +27,7 @@ class CooperHewittApiImpl extends CooperHewittApi {
       "per_page": itemsPerPage.toString(),
       "access_token": _token
     }).then((json) {
-      final List<Map<String, dynamic>> items = json["exhibitions"];
+      final List<dynamic> items = json["exhibitions"];
       return items
           .map((itemJson) => ExhibitionItemDTO.fromJson(itemJson))
           .toList();
@@ -44,7 +44,7 @@ class CooperHewittApiImpl extends CooperHewittApi {
       "per_page": itemsPerPage.toString(),
       "access_token": _token
     }).then((json) {
-      final List<Map<String, dynamic>> items = json["objects"];
+      final List<dynamic> items = json["objects"];
       return items.map((itemJson) => ObjectItemDTO.fromJson(itemJson)).toList();
     });
   }
@@ -59,7 +59,7 @@ class CooperHewittApiImpl extends CooperHewittApi {
       "per_page": itemsPerPage.toString(),
       "access_token": _token
     }).then((json) {
-      final List<Map<String, dynamic>> items = json["objects"];
+      final List<dynamic> items = json["objects"];
       return items.map((itemJson) => ObjectItemDTO.fromJson(itemJson)).toList();
     });
   }

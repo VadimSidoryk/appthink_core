@@ -8,18 +8,19 @@ class ObjectModel extends Equatable {
   final String id;
   final String name;
   final String description;
-  final String thumbnailUrl;
-  final String fullSizeUrl;
+  final List<String> thumbnailUrls;
+  final List<String> fullSizeUrls;
 
-  ObjectModel(this.id, this.name, this.description, this.thumbnailUrl,
-      this.fullSizeUrl);
+  ObjectModel(this.id, this.name, this.description, this.thumbnailUrls,
+      this.fullSizeUrls);
 
   @override
   List<Object> get props => [id];
 
   factory ObjectModel.fromDTO(ObjectItemDTO dto) {
-    return ObjectModel(dto.id, dto.title, dto.description, dto.images.small.url,
-        dto.images.large.url);
+    return ObjectModel(dto.id, dto.title, dto.description,
+        dto.images.map((multiSize) => multiSize.medium.url).toList(),
+    dto.images.map((multiSize) => multiSize.large.url).toList());
   }
 }
 

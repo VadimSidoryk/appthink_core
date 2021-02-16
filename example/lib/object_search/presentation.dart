@@ -21,7 +21,7 @@ class _ObjectsListScreenState extends State<ObjectsListScreen> {
     _scrollController.addListener(_onScroll);
 
     final api = CooperHewittApiImpl();
-    final repository = ExhibitionObjectsRepository(api, "840501697");
+    final repository = ExhibitionObjectsRepository(api, "1141959691");
     _projectsBloc = ObjectsListBloc(repository);
   }
 
@@ -87,7 +87,7 @@ class ObjectWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CachedNetworkImage(
-        imageUrl: object.thumbnailUrl,
+        imageUrl: object.thumbnailUrls.first,
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => Icon(Icons.error),
       ),

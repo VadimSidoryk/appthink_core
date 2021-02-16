@@ -32,7 +32,7 @@ class HttpClientFirstImpl extends HttpClient {
       querySb.write("?");
       var iterator = queryParams.entries.iterator;
       var isFirst = true;
-      do {
+      while(iterator.moveNext()) {
         if(!isFirst) {
           querySb.write("&");
         }
@@ -40,7 +40,7 @@ class HttpClientFirstImpl extends HttpClient {
 
         final entry = iterator.current;
         querySb.write("${entry.key}=${entry.value}");
-      }while(iterator.moveNext());
+      }
     }
 
     logger.log("request get query = " + querySb.toString());
@@ -49,7 +49,7 @@ class HttpClientFirstImpl extends HttpClient {
     try {
       response = await get(querySb.toString(), headers: headers);
     } catch (e) {
-      logger.log("error = " + e.toString());
+      logger.error(e);
       throw NotConnectedError();
     }
 
@@ -61,7 +61,7 @@ class HttpClientFirstImpl extends HttpClient {
       throw RemoteServerError();
     }
 
-    return response.body;
+    return json.decode(response.body);
   }
 
   @override
