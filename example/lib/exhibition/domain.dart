@@ -3,6 +3,7 @@ import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core_example/data/api.dart';
 import 'package:applithium_core_example/data/dtos.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class ObjectModel extends Equatable {
   final String id;
@@ -35,7 +36,7 @@ class ExhibitionObjectsRepository extends ListRepository<ObjectModel> {
   Future<List<ObjectModel>> loadItems(
       int startIndex, lastValue, int itemsToLoad) {
     return _api
-        .getExhibitionObjects(exhibitionId, startIndex ~/ itemsToLoad, itemsToLoad)
+        .getExhibitionObjects(exhibitionId, startIndex ~/ itemsToLoad + 1, itemsToLoad)
         .then((dtoList) =>
             dtoList.map((dto) => ObjectModel.fromDTO(dto)).toList());
   }
