@@ -24,11 +24,10 @@ class _TopBattlesPageState extends State<TopBattlesPage> {
 
   @override
   Widget build(BuildContext context) {
-    _bloc = TopBattlesBloc(context.get<TopBattlesRepository>());
+    _bloc = TopBattlesBloc(context.get());
     return BlocBuilder(
       cubit: _bloc,
-      // ignore: missing_return
-      builder: (BuildContext context, ListState<BattleModel> state) {
+      builder: (BuildContext context, ListState<BattleItemModel> state) {
         if (state.isLoading) {
           return Center(
             child: CircularProgressIndicator(),
@@ -36,27 +35,25 @@ class _TopBattlesPageState extends State<TopBattlesPage> {
         }
         if (state.error != null) {
           return Center(
-            child: Text('failed to fetch objects'),
+            child: Text('failed to fetch battles'),
           );
         }
-        if (state.value != null) {
-          if (state.value.isEmpty) {
-            return Center(
-              child: Text('no objects'),
-            );
-          }
-          return ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return index >= state.value.length
-                  ? BottomLoader()
-                  : BattleWidget(state.value[index]);
-            },
-            itemCount: state.isEndReached
-                ? state.value.length
-                : state.value.length + 1,
-            controller: _scrollController,
+
+        if (state.value.isEmpty) {
+          return Center(
+            child: Text('no battles'),
           );
         }
+        return ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return index >= state.value.length
+                ? BottomLoader()
+                : BattleWidget(state.value[index]);
+          },
+          itemCount:
+              state.isEndReached ? state.value.length : state.value.length + 1,
+          controller: _scrollController,
+        );
       },
     );
   }
@@ -77,25 +74,31 @@ class _TopBattlesPageState extends State<TopBattlesPage> {
 }
 
 class BattleWidget extends StatelessWidget {
-  final BattleModel _model;
+  final BattleItemModel _model;
 
   const BattleWidget(this._model);
 
   @override
   Widget build(BuildContext context) {
-    return  ListTile(
-          leading:  Stack(
-            children: [
-          Padding(child: ParticipantWidget(_model.participant2), padding: EdgeInsets.only(left: 25)),
-              Padding(child: ParticipantWidget(_model.participant1), padding: EdgeInsets.only(right: 25),)
-            ]
-          ),
-          title: Text("${_model.participant1.name} VS ${_model.participant2.name}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-          subtitle: Text("Waiting: ${_model.waiters}"),
-          onTap: () => Navigator.pushNamed(context, '/exhibition_objects',
-              arguments: _model.id),
-          dense: true,
-        );
+    return ListTile(
+      leading: Stack(children: [
+        Padding(
+            child: ParticipantWidget(_model.participant2),
+            padding: EdgeInsets.only(left: 25)),
+        Padding(
+          child: ParticipantWidget(_model.participant1),
+          padding: EdgeInsets.only(right: 25),
+        )
+      ]),
+      title: Text(
+        "${_model.participant1.name} VS ${_model.participant2.name}",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      ),
+      subtitle: Text("Waiting: ${_model.waiters}"),
+      onTap: () => Navigator.pushNamed(context, '/exhibition_objects',
+          arguments: _model.id),
+      dense: true,
+    );
   }
 }
 
@@ -107,18 +110,18 @@ class ParticipantWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-        imageUrl: _model.thumbnail,
-        imageBuilder: (context, imageProvider) => Container(
-          width: 40.0,
-          height: 40.0,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-          ),
+      imageUrl: _model.thumbnail,
+      imageBuilder: (context, imageProvider) => Container(
+        width: 40.0,
+        height: 40.0,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
         ),
-        placeholder: (context, url) => CircularProgressIndicator(),
-        errorWidget: (context, url, error) => Icon(Icons.error),
-      );
+      ),
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+    );
   }
 }
 

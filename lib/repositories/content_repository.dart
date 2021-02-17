@@ -32,8 +32,8 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
          onNewData(value);
          _state = State.UPDATED;
          return true;
-       }, onError: () {
-         logger.error(Exception("Can't update data"));
+       }, onError: (ebj, exception) {
+         logger.error(exception);
          _state = State.UPDATED;
          return false;
        });

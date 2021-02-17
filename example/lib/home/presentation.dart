@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:scoped/scoped.dart';
 
 class HomeScreen extends StatefulWidget {
+
+  static const routeName = "/";
+
   @override
   State<StatefulWidget> createState() {
     return _HomeScreenState();
