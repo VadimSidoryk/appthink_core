@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<BaseContentEvent, ContentState<VM>> {
 
-  final ContentRepository _repository;
+  final ContentRepository<VM> _repository;
   
   @protected
   final Logger logger;
