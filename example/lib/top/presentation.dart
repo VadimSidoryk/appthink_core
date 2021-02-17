@@ -84,14 +84,13 @@ class BattleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  ListTile(
-          leading:  Row(
+          leading:  Stack(
             children: [
-              ParticipantWidget(_model.participant1),
-              ParticipantWidget(_model.participant2)
-            ],
-              mainAxisSize: MainAxisSize.min,
+          Padding(child: ParticipantWidget(_model.participant2), padding: EdgeInsets.only(left: 25)),
+              Padding(child: ParticipantWidget(_model.participant1), padding: EdgeInsets.only(right: 25),)
+            ]
           ),
-          title: Text('Battle will start in ${_model.startTime - DateTime.now().microsecondsSinceEpoch}'),
+          title: Text("${_model.participant1.name} VS ${_model.participant2.name}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
           subtitle: Text("Waiting: ${_model.waiters}"),
           onTap: () => Navigator.pushNamed(context, '/exhibition_objects',
               arguments: _model.id),
@@ -107,12 +106,11 @@ class ParticipantWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      CachedNetworkImage(
+    return CachedNetworkImage(
         imageUrl: _model.thumbnail,
         imageBuilder: (context, imageProvider) => Container(
-          width: 80.0,
-          height: 80.0,
+          width: 40.0,
+          height: 40.0,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
@@ -120,9 +118,7 @@ class ParticipantWidget extends StatelessWidget {
         ),
         placeholder: (context, url) => CircularProgressIndicator(),
         errorWidget: (context, url, error) => Icon(Icons.error),
-      ),
-      Text(_model.name)
-    ]);
+      );
   }
 }
 

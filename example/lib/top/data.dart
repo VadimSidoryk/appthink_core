@@ -55,7 +55,7 @@ class MockedBattlesSource extends BattlesSource {
   static const List<String> thumbnails = const [
     "https://yt3.ggpht.com/ytc/AAUvwngLHMAHZY-Fe6Dmur0QtgZLPR_TnsbnS3k6hFUw=s176-c-k-c0x00ffffff-no-rj",
     "https://yt3.ggpht.com/ytc/AAUvwngaXLxft4mGDEF5LOivs24tsT5XolXeXvg9stVk=s176-c-k-c0x00ffffff-no-rj-mo",
-    "https://yt3.ggpht.com/yhttps://yt3.ggpht.com/ytc/AAUvwnhaIKwFbvy6iBKbUwRpyOc7GGeyVZNWk-RG1WtjWA=s176-c-k-c0x00ffffff-no-rj-motc/AAUvwngMV_xY8iFp1qgSGY5k7VpUjkW9__HqgtHInjDL=s176-c-k-c0x00ffffff-no-rj-mo",
+    "https://yt3.ggpht.com/ytc/AAUvwngMV_xY8iFp1qgSGY5k7VpUjkW9__HqgtHInjDL=s176-c-k-c0x00ffffff-no-rj",
     "https://yt3.ggpht.com/ytc/AAUvwnhEQ6YDdgheCifYTb5VmQDYfy5mw0u7UJ5fU41c1A=s176-c-k-c0x00ffffff-no-rj-mo",
     "https://yt3.ggpht.com/ytc/AAUvwnh58Wtyi_6thsG8keKeNS9yBNQEI4tAz8si9tid=s176-c-k-c0x00ffffff-no-rj-mo",
     "https://yt3.ggpht.com/ytc/AAUvwnhbPk3EMmUEBIi1DiJZ9ApCMNkCT_wDFXZszS9Muw=s176-c-k-c0x00ffffff-no-rj",
