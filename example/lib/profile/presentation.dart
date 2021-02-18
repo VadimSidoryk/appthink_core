@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scoped/scoped.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 
 class UserDetailsPage extends StatefulWidget {
   const UserDetailsPage();
@@ -43,9 +43,9 @@ class _UserDetailsState extends State<UserDetailsPage> {
 
 class UserDetailsWidget extends StatelessWidget {
   final UserDetailsModel _model;
-  final Function() _onClickListener;
+  final Function() _increaseClickListener;
 
-  const UserDetailsWidget(this._model, this._onClickListener);
+  const UserDetailsWidget(this._model, this._increaseClickListener);
 
   @override
   Widget build(BuildContext context) {
@@ -55,31 +55,16 @@ class UserDetailsWidget extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: FractionallySizedBox(
               heightFactor: 0.41,
-              child: Stack(
-                children: [
-                  CachedNetworkImage(
-                      imageUrl: _model.backgroundUrl,
-                      imageBuilder: (context, imageProvider) => Container(
-                            width: double.maxFinite,
-                            height: double.maxFinite,
-                            decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: imageProvider, fit: BoxFit.fill)),
-                          )),
-                  Align(
-                      alignment: Alignment.center,
-                      child: _createDetailsWidget())
-                ],
-              ),
+              child: _createHeaderWidget()
             )),
         Align(
           child: FractionallySizedBox(
-              alignment: Alignment.bottomCenter,
               heightFactor: 0.61,
               child: Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: SizedBox.expand(
                       child: Container(
+                        child: _createContentWidget(),
                           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(16), topRight: Radius.circular(16))))))),
           alignment: Alignment.bottomCenter,
@@ -87,8 +72,27 @@ class UserDetailsWidget extends StatelessWidget {
       ],
     ));
   }
+  
+  Widget _createHeaderWidget() {
+    return Stack(
+      children: [
+        CachedNetworkImage(
+            imageUrl: _model.backgroundUrl,
+            imageBuilder: (context, imageProvider) => Container(
+              width: double.maxFinite,
+              height: double.maxFinite,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: imageProvider, fit: BoxFit.fill)),
+            )),
+        Align(
+            alignment: Alignment.center,
+            child: _createHeaderContent())
+      ],
+    );
+  }
 
-  Widget _createDetailsWidget() {
+  Widget _createHeaderContent() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -130,7 +134,7 @@ class UserDetailsWidget extends StatelessWidget {
                         "Пополнить Баланс",
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () => _onClickListener.call(),
+                      onPressed: () => _increaseClickListener.call(),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18.0),
                           side: BorderSide(color: Colors.blueAccent)),
@@ -157,5 +161,9 @@ class UserDetailsWidget extends StatelessWidget {
         )
       ],
     );
+  }
+  
+  Widget _createContentWidget() {
+    return ListView.builder();
   }
 }

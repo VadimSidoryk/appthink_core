@@ -3,7 +3,7 @@ import 'package:applithium_core/blocs/list_bloc.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:equatable/equatable.dart';
 
-class TopBattlesRepository extends ListRepository<BattleItemModel> {
+class TopBattlesRepository extends ListRepository<BattleItemModel>  {
 
   final BattlesSource _source;
 

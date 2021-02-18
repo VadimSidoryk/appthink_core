@@ -15,7 +15,6 @@ dependencies:
   equatable: ^1.2.6
   flutter_bloc: ^6.1.2
   cached_network_image: 2.5.0
-  scoped: ^2.0.1
 
   applithium_core:
     # When depending on this package from a real application you should use:

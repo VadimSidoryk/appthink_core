@@ -18,8 +18,24 @@ class BattleDetailsBloc
   BattleDetailsBloc(this._repository) : super(_repository);
 }
 
-class BattleDetailsEvents extends BaseContentEvent {
-  BattleDetailsEvents(String analyticTag) : super(analyticTag);
+abstract class BattleDetailsEvents extends BaseContentEvent {
+  BattleDetailsEvents._(String analyticTag) : super(analyticTag);
+
+  factory BattleDetailsEvents.participant1Clicked() => Participant1Clicked();
+  factory BattleDetailsEvents.drawClicked() => DrawClicked();
+  factory BattleDetailsEvents.participant2Clicked() => Participant2Clicked();
+}
+
+class Participant1Clicked extends BattleDetailsEvents {
+  Participant1Clicked() : super._("vote_for_participant_1");
+}
+
+class DrawClicked extends BattleDetailsEvents {
+  DrawClicked() : super._("vote_draw");
+}
+
+class Participant2Clicked extends BattleDetailsEvents {
+  Participant2Clicked() : super._("vote_for_participant_2");
 }
 
 class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
