@@ -7,6 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scoped/scoped.dart';
 
 class TopBattlesPage extends StatefulWidget {
+
+  const TopBattlesPage();
+
   @override
   State<StatefulWidget> createState() {
     return _TopBattlesPageState();

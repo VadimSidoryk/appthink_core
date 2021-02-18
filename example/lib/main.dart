@@ -1,15 +1,9 @@
 import 'package:applithium_core_example/details/data.dart';
 import 'package:applithium_core_example/details/domain.dart';
-import 'package:applithium_core_example/details/presentation.dart';
+import 'package:applithium_core_example/home/presentation.dart';
 import 'package:applithium_core_example/top/data.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-import 'package:applithium_core/applithium_core.dart';
 import 'package:scoped/scoped.dart';
-
-
 
 
 void main() {
@@ -32,7 +26,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: Scope(
         store: Store()..add(BattleDetailsRepository(battleModel.id, MockedBattleDetailsSource(battleModel))..preloadData()),
-        child: BattleDetailsScreen(),
+        child: HomeScreen(),
       ),
     );
   }

@@ -1,3 +1,6 @@
+import 'package:applithium_core_example/profile/data.dart';
+import 'package:applithium_core_example/profile/domain.dart';
+import 'package:applithium_core_example/profile/presentation.dart';
 import 'package:applithium_core_example/top/data.dart';
 import 'package:applithium_core_example/top/domain.dart';
 import 'package:applithium_core_example/top/presentation.dart';
@@ -16,13 +19,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  int _selectedIndex = 0;
+  static const List<Widget> _pages = [
+    TopBattlesPage(),
+    TopBattlesPage(),
+    UserDetailsPage(),
+  ];
+
+  static List<Store> _stores = [
+    Store()..add(TopBattlesRepository(MockedBattlesSource())..preloadData()),
+    Store()..add(TopBattlesRepository(MockedBattlesSource())..preloadData()),
+    Store()..add(UserDetailsRepository(MockedUserSource())..preloadData()),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scope(
-          store: Store()..add(TopBattlesRepository(MockedBattlesSource())..preloadData()),
-          child: TopBattlesPage()),
+        store: _stores[_selectedIndex],
+        child: _pages[_selectedIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
         selectedItemColor: Colors.red,
         unselectedItemColor: Colors.grey.shade600,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
@@ -44,5 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
