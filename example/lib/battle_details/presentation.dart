@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:tuple/tuple.dart';
 
 import 'domain.dart';
 
@@ -42,9 +43,9 @@ class _BattleDetailsScreenState extends State<BattleDetailsScreen> {
               }
               return _BattleDetailsWidget(
                 state.value,
-                () => _bloc.add(BattleDetailsEvents.participant1Clicked()),
-                () => _bloc.add(BattleDetailsEvents.drawClicked()),
-                () => _bloc.add(BattleDetailsEvents.participant2Clicked()),
+                    () => _bloc.add(BattleDetailsEvents.participant1Clicked()),
+                    () => _bloc.add(BattleDetailsEvents.drawClicked()),
+                    () => _bloc.add(BattleDetailsEvents.participant2Clicked()),
               );
             }));
   }
@@ -100,7 +101,8 @@ class _BattleDetailsWidget extends StatelessWidget {
         Flexible(
           child: CachedNetworkImage(
               imageUrl: _model.participant1.fullSizeImage,
-              imageBuilder: (context, imageProvider) => Container(
+              imageBuilder: (context, imageProvider) =>
+                  Container(
                     width: double.maxFinite,
                     height: double.maxFinite,
                     decoration: BoxDecoration(
@@ -112,7 +114,8 @@ class _BattleDetailsWidget extends StatelessWidget {
         Flexible(
           child: CachedNetworkImage(
               imageUrl: _model.participant2.fullSizeImage,
-              imageBuilder: (context, imageProvider) => Container(
+              imageBuilder: (context, imageProvider) =>
+                  Container(
                     width: double.maxFinite,
                     height: double.maxFinite,
                     decoration: BoxDecoration(
@@ -126,80 +129,86 @@ class _BattleDetailsWidget extends StatelessWidget {
   }
 
   Widget _createHeaderContent() {
-    return Column(
-      children: [ Flexible(
-        flex: 1,
-        child: Stack(
-          children: [
+    return Column(children: [
+      Flexible(
+          flex: 1,
+          child: Stack(children: [
             Align(
-              alignment: Alignment.topLeft,
-              child: Text(_model.participant1.name, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30))
-            ),
+                alignment: Alignment.topLeft,
+                child: Text(_model.participant1.name,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30))),
             Align(
                 alignment: Alignment.bottomRight,
-                child: Text(_model.participant2.name, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30))
-            )
-          ]
-        )
-      ),Padding(padding: EdgeInsets.only(bottom: 5), child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Flexible(
-            child: SizedBox(
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: FlatButton(
-                    color: Colors.blueAccent,
-                    child: Text(
-                      "${_model.participant1.name}",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () => _voteForParticipant1.call(),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.blueAccent)),
-                  )),
-              width: double.infinity,
-            ),
-            flex: 1,
-          ),
-          Flexible(
-              child: SizedBox(
-                child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: FlatButton(
-                      child:
-                          Text("Ничья", style: TextStyle(color: Colors.white)),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.white)),
-                      onPressed: () => _voteForDraft.call(),
-                    )),
-                width: double.infinity,
+                child: Text(_model.participant2.name,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30)))
+          ])),
+      Padding(
+          padding: EdgeInsets.only(bottom: 5),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Flexible(
+                child: SizedBox(
+                  child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: FlatButton(
+                        color: Colors.blueAccent,
+                        child: Text(
+                          "${_model.participant1.name}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () => _voteForParticipant1.call(),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.blueAccent)),
+                      )),
+                  width: double.infinity,
+                ),
+                flex: 1,
               ),
-              flex: 1),
-          Flexible(
-            child: SizedBox(
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: FlatButton(
-                    color: Colors.redAccent,
-                    child: Text(
-                      "${_model.participant2.name}",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () => _voteForParticipant2.call(),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.redAccent)),
-                  )),
-              width: double.infinity,
-            ),
-            flex: 1,
-          ),
-        ],
-      )),]
-    );
+              Flexible(
+                  child: SizedBox(
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: FlatButton(
+                          child: Text("Ничья",
+                              style: TextStyle(color: Colors.white)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Colors.white)),
+                          onPressed: () => _voteForDraft.call(),
+                        )),
+                    width: double.infinity,
+                  ),
+                  flex: 1),
+              Flexible(
+                child: SizedBox(
+                  child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: FlatButton(
+                        color: Colors.redAccent,
+                        child: Text(
+                          "${_model.participant2.name}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () => _voteForParticipant2.call(),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.redAccent)),
+                      )),
+                  width: double.infinity,
+                ),
+                flex: 1,
+              ),
+            ],
+          )),
+    ]);
   }
 
   Widget _createContentWidget() {
@@ -250,8 +259,10 @@ class _MessageWidgetState extends State<_MessagesWidget> {
               return index >= state.value.length
                   ? BottomLoader()
                   : (state.value[index] is MessageItemModel)
-                      ? MessageWidget(state.value[index])
-                      : MessageWithBetWidget(state.value[index]);
+                  ? MessageWidget(state.value[index])
+                  : MessageWithBetWidget(state.value[index], (result) {
+                _bloc.add(PersonalBetClicked(state.value[index], result));
+                });
             },
             itemCount: state.isEndReached
                 ? state.value.length
@@ -277,17 +288,52 @@ class _MessageWidgetState extends State<_MessagesWidget> {
 }
 
 class MessageWithBetWidget extends MessageWidget {
+
+  static Color getBackgroundColor(MessageWithBetItemModel model) {
+    return model.bet.result == BattleResult.PARTICIPANT_1_WIN
+        ? Colors.blueAccent
+        : Colors.redAccent;
+  }
+
+  static Widget Function(BuildContext) getFooterBuilder(
+      MessageWithBetItemModel model,
+      Function(BattleResult) footerClickListener) =>
+          (BuildContext context) {
+        List<Tuple3> data;
+
+        if (model.bet.result == BattleResult.PARTICIPANT_1_WIN) {
+          data = [
+            Tuple3(Colors.blueAccent, model.bet.agreed, () =>
+                footerClickListener.call(BattleResult.PARTICIPANT_1_WIN)),
+            Tuple3(Colors.redAccent, model.bet.disagreed, () =>
+                footerClickListener.call(BattleResult.PARTICIPANT_2_WIN))
+          ];
+        } else {
+          data = [
+            Tuple3(Colors.redAccent, model.bet.agreed, () =>
+                footerClickListener.call(BattleResult.PARTICIPANT_2_WIN)),
+            Tuple3(Colors.blueAccent, model.bet.disagreed, () =>
+                footerClickListener.call(BattleResult.PARTICIPANT_1_WIN))
+          ];
+        }
+
+        return Row(
+          children: [
+            ActionWidget(data[0].item1, data[0].item2, data[0].item3),
+            Container(
+              width: 5,
+            ),
+            ActionWidget(data[1].item1, data[1].item2, data[1].item3),
+          ],
+        );
+      };
+
   final MessageWithBetItemModel _model;
 
-  MessageWithBetWidget(this._model)
+  MessageWithBetWidget(this._model, Function(BattleResult) clickListener)
       : super(_model,
-            backgroundColor: _model.bet.result == BattleResult.PARTICIPANT_1_WIN
-                ? Colors.redAccent
-                : Colors.blueAccent,
-  footerBuilder: (context) => Row(children: [
-    ActionWidget(Colors.redAccent, _model.bet.agreed, null),
-    Container(width: 5,),
-    ActionWidget(Colors.blueAccent, _model.bet.disagreed, null)],));
+      backgroundColor: getBackgroundColor(_model),
+      footerBuilder: getFooterBuilder(_model, clickListener));
 }
 
 class MessageWidget extends StatelessWidget {
@@ -301,8 +347,8 @@ class MessageWidget extends StatelessWidget {
 
   MessageWidget(this._model,
       {Color backgroundColor,
-      Widget Function(BuildContext) headerBuilder,
-      Widget Function(BuildContext) footerBuilder}) {
+        Widget Function(BuildContext) headerBuilder,
+        Widget Function(BuildContext) footerBuilder}) {
     if (backgroundColor != null) {
       this.backgroundColor = backgroundColor;
       this.messageColor = Colors.white;
@@ -324,15 +370,16 @@ class MessageWidget extends StatelessWidget {
                 padding: EdgeInsets.only(right: 5),
                 child: CachedNetworkImage(
                   imageUrl: _model.user.thumbnail,
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: 40.0,
-                    height: 40.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
-                    ),
-                  ),
+                  imageBuilder: (context, imageProvider) =>
+                      Container(
+                        width: 40.0,
+                        height: 40.0,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
+                      ),
                   placeholder: (context, url) => CircularProgressIndicator(),
                   errorWidget: (context, url, error) => Icon(Icons.error),
                 )),
@@ -366,7 +413,9 @@ class MessageWidget extends StatelessWidget {
                     ),
                     Align(
                       child: Text(
-                          "${timeFormat.format(DateTime.fromMillisecondsSinceEpoch(_model.timeSend))}"),
+                          "${timeFormat.format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  _model.timeSend))}"),
                       alignment: Alignment.centerRight,
                     ),
                     footerBuilder != null
@@ -409,18 +458,22 @@ class ActionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         child: Container(
-            child: Padding(padding: EdgeInsets.all(3), child: Row(children: [
-              Container(
-                width: 15,
-                height: 15,
-                decoration:
+            child: Padding(
+                padding: EdgeInsets.all(3),
+                child: Row(children: [
+                  Container(
+                    width: 15,
+                    height: 15,
+                    decoration:
                     BoxDecoration(shape: BoxShape.circle, color: _color),
-              ),
-              Container(width: 5),
-              Text("$_count",
-                  style: TextStyle(
-                      color: _color, fontSize: 14, fontWeight: FontWeight.bold))
-            ])),
+                  ),
+                  Container(width: 5),
+                  Text("$_count",
+                      style: TextStyle(
+                          color: _color,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold))
+                ])),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: Colors.black12)),

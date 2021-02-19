@@ -23,6 +23,7 @@ abstract class MessagesListEvent extends BaseListEvent {
   MessagesListEvent._(String analyticTag) : super(analyticTag);
 }
 
+
 class PersonalBetClicked extends MessagesListEvent {
   final MessageWithBetItemModel messageModel;
   final BattleResult result;
@@ -39,7 +40,7 @@ class MessagesListBloc
 
   @override
   Stream<ListState<MessageItemModel>> mapCustomEventToState(
-      MessagesListEvent event) {
+      MessagesListEvent event) async* {
     if (event is PersonalBetClicked) {
       _repository.makePersonalBet(event.messageModel, event.result);
     }
@@ -54,7 +55,7 @@ class BattleDetailsBloc
 
   @override
   Stream<ContentState<BattleDetailsModel>> mapCustomEventToState(
-      BattleDetailsEvents event) {
+      BattleDetailsEvents event) async* {
     if (event is Participant1Clicked) {
       _detailsRepository.makeGeneralBet(BattleResult.PARTICIPANT_1_WIN);
     } else if (event is DrawClicked) {

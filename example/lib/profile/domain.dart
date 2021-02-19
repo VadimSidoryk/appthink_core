@@ -72,7 +72,7 @@ class UserDetailsBloc extends ContentBloc<UserDetailsModel, UserDetailsEvent> {
 
   @override
   Stream<ContentState<UserDetailsModel>> mapCustomEventToState(
-      UserDetailsEvent event) {
+      UserDetailsEvent event) async* {
     if (event is IncreaseBalanceClicked) {
       _repository.increaseBalance(100);
     }
