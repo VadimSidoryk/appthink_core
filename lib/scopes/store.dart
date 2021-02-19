@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 
 import 'scope.dart';
 
-enum _StoreFactoryType { transient, lazy, instance }
+enum _StoreFactoryType { factory, single }
 
-typedef StoreFactoryFunc<T> = T Function();
+abstract class InstanceProvider {
+  T get<T>();
+}
 
 ///Simple instance store
-class Store {
+class Store extends InstanceProvider {
   final _map = new Map<Type, _StoreFactory<dynamic>>();
 
   Store();
@@ -21,6 +23,7 @@ class Store {
     }
   }
   
+  @override
   T get<T>() {
     _StoreFactory<T> sf = _map[T];
     if (sf == null) {
@@ -32,18 +35,13 @@ class Store {
   call<T>() => get<T>();
 
   ///registers transient instances ( a new instance is provider per request )
-  addTransient<T>(StoreFactoryFunc<T> func) {
-    _map[T] = _StoreFactory<T>(_StoreFactoryType.transient, func: func);
+  addFactory<T>(T Function(InstanceProvider) func) {
+    _map[T] = _StoreFactory<T>(_StoreFactoryType.factory, func: () => func.call(this));
   }
 
   ///registers lazy instances ( they get instantiated on first request )
-  addLazy<T>(StoreFactoryFunc<T> func) {
-    _map[T] = _StoreFactory<T>(_StoreFactoryType.lazy, func: func);
-  }
-
-  ///registers instances
-  add<T>(T instance) {
-    _map[T] = _StoreFactory<T>(_StoreFactoryType.instance, instance: instance);
+  add<T>(T Function(InstanceProvider) func) {
+    _map[T] = _StoreFactory<T>(_StoreFactoryType.single, func: () => func.call(this));
   }
 
   clear() {
@@ -55,7 +53,7 @@ class Store {
 ///a little functor to help provide the right instance
 class _StoreFactory<T> {
   _StoreFactoryType type;
-  final StoreFactoryFunc _func;
+  final T Function() _func;
   Object _instance;
 
   _StoreFactory(this.type, {func, instance})
@@ -65,14 +63,12 @@ class _StoreFactory<T> {
   T get instance {
     try {
       switch (type) {
-        case _StoreFactoryType.instance:
-          return _instance as T;
-        case _StoreFactoryType.lazy:
+        case _StoreFactoryType.single:
           if (_instance == null) {
             _instance = _func();
           }
           return _instance as T;
-        case _StoreFactoryType.transient:
+        case _StoreFactoryType.factory:
           return _func() as T;
       }
     } catch (e, s) {

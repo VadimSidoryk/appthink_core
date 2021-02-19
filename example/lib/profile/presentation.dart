@@ -18,6 +18,13 @@ class UserDetailsPage extends StatefulWidget {
 class _UserDetailsState extends State<UserDetailsPage> {
   UserDetailsBloc _bloc;
 
+  static const items = [
+    MenuItem("История ставок"),
+    MenuItem("История платежей"),
+    MenuItem("Персональные данные"),
+  ];
+
+
   @override
   Widget build(BuildContext context) {
     _bloc = UserDetailsBloc(context.get());
@@ -164,6 +171,29 @@ class UserDetailsWidget extends StatelessWidget {
   }
   
   Widget _createContentWidget() {
-    return ListView.builder();
+    return ListView.builder(
+      itemCount: _UserDetailsState.items.length,
+      itemBuilder: (BuildContext context, int index) {
+        return MenuItemWidget(_UserDetailsState.items[index]);
+      },
+    );
   }
+}
+
+class MenuItemWidget extends StatelessWidget {
+
+  final MenuItem item;
+
+  const MenuItemWidget(this.item);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(title: Text(item.title), trailing: Icon(Icons.arrow_forward_ios),);
+  }
+}
+
+class MenuItem {
+  final String title;
+
+  const MenuItem(this.title);
 }

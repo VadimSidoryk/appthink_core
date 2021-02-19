@@ -21,24 +21,28 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Map<int, Store> _battlesStores = {};
   Store _globalStore = Store()
-    ..add(UserDetailsRepository(MockedUserSource()));
+    ..add<UserDetailsSource>((provider) => MockedUserSource())
+    ..add((provider) => UserDetailsRepository(provider.get())..preloadData());
 
   @override
   Widget build(BuildContext context) {
-    return Scope(store: _globalStore, child: MaterialApp(
-      initialRoute: HomeScreen.routeName,
-      routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
-        HomeScreen.routeName: (context) => HomeScreen(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        BattleDetailsScreen.routeName: (context) {
-          final BattleItemModel model =
-              ModalRoute.of(context).settings.arguments;
-          return Scope(
-              store: _getBattleStore(context, model), child: BattleDetailsScreen());
-        }
-      },
-    ));
+    return Scope(
+        store: _globalStore,
+        child: MaterialApp(
+          initialRoute: HomeScreen.routeName,
+          routes: {
+            // When navigating to the "/" route, build the FirstScreen widget.
+            HomeScreen.routeName: (context) => HomeScreen(),
+            // When navigating to the "/second" route, build the SecondScreen widget.
+            BattleDetailsScreen.routeName: (context) {
+              final BattleItemModel model =
+                  ModalRoute.of(context).settings.arguments;
+              return Scope(
+                  store: _getBattleStore(context, model),
+                  child: BattleDetailsScreen());
+            }
+          },
+        ));
   }
 
   Store _getBattleStore(BuildContext context, BattleItemModel model) {
@@ -46,8 +50,10 @@ class _MyAppState extends State<MyApp> {
       return _battlesStores[model.id];
     } else {
       final result = Store.extend(context)
-        ..add(
-            BattleDetailsRepository(model.id, MockedBattleDetailsSource(model))
+        ..add<BattleDetailsSource>(
+            (provider) => MockedBattleDetailsSource(model))
+        ..add((provider) =>
+            BattleDetailsRepository(model.id, provider.get(), provider.get())
               ..preloadData());
       _battlesStores[model.id] = result;
       return result;

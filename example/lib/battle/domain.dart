@@ -1,6 +1,8 @@
 import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
+import 'package:applithium_core_example/bet/domain.dart';
+import 'package:applithium_core_example/profile/domain.dart';
 import 'package:applithium_core_example/top/domain.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,6 +11,8 @@ abstract class BattleDetailsSource {
 
   Future<List<MessageModel>> getMessagesFor(
       int battleId, int page, int itemsPerPage);
+
+  Future<bool> makeABet(BetDetailsModel model);
 }
 
 class BattleDetailsBloc
@@ -41,10 +45,11 @@ class Participant2Clicked extends BattleDetailsEvents {
 class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
   final int _battleId;
   final BattleDetailsSource _source;
+  final UserDetailsRepository _userRepo;
 
   final _MessagesRepository messagesRepository;
 
-  BattleDetailsRepository(this._battleId, this._source)
+  BattleDetailsRepository(this._battleId, this._source, this._userRepo)
       : messagesRepository = _MessagesRepository(_battleId, _source);
 
   @override
@@ -56,6 +61,18 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
   void preloadData() {
     super.preloadData();
     messagesRepository.preloadData();
+  }
+  
+  Future<bool> makeBet(BetDetailsModel model) async {
+     final reserved = await _userRepo.reserveBalance(model.cashAmount);
+     if(!reserved){
+       return false;
+     } else {
+        final betStatus = await _source.makeABet(model);
+        if(betStatus) {
+          _userRepo.notifyBetMade(model);
+        }
+     }
   }
 }
 
@@ -118,18 +135,6 @@ class MessageModel extends Equatable {
 
   @override
   List<Object> get props => [id];
-}
-
-class BetDetailsModel {
-  final int id;
-  final BattleResult type;
-  final int cashAmount;
-  final Set<int> agreed;
-  final Set<int> disagreed;
-  final bool isOpen;
-
-  BetDetailsModel(this.id, this.type, this.cashAmount, this.agreed,
-      this.disagreed, this.isOpen);
 }
 
 enum BattleResult { PARTICIPANT_1_WIN, PARTICIPANT_2_WIN, DRAW }

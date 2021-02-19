@@ -2,7 +2,7 @@ import 'package:applithium_core_example/profile/domain.dart';
 
 class MockedUserSource extends UserDetailsSource {
 
-  int amount = 500;
+  int balance = 500;
 
   @override
   Future<UserDetailsModel> getUserDetails() {
@@ -18,10 +18,16 @@ class MockedUserSource extends UserDetailsSource {
   UserDetailsModel mockUserDetails() {
     return UserDetailsModel(
       "Maksim Kaz",
-      amount,
+      balance,
       "https://yt3.ggpht.com/ytc/AAUvwnhj7hF3uTbk1UIOENKZ3P5XSh_gILMNaOznAbeU6w=s68-c-k-c0x00ffffff-no-rj",
-      "https://uaay.org/wp-content/uploads/2019/12/profile-background.png"
+      "https://uaay.org/wp-content/uploads/2019/12/profile-background.png",
+      []
     );
   }
 
+  @override
+  Future<int> reserveBalance(int amount) {
+    balance -= amount;
+    return Future.delayed(Duration(milliseconds: 1000), () => balance);
+  }
 }

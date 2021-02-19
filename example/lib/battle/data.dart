@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:applithium_core_example/bet/domain.dart';
 import 'package:applithium_core_example/top/domain.dart';
 
 import 'domain.dart';
@@ -58,4 +59,9 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
     "https://www.youtube.com/watch?v=JqNECeH3dRU",
     "https://www.youtube.com/watch?v=Vh56HQ0glno"
   ];
+
+  @override
+  Future<bool> makeABet(BetDetailsModel model) {
+    return Future.delayed(Duration(milliseconds: 1500), () => true);
+  }
 }

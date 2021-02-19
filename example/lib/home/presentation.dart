@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
+
   static const List<Widget> _pages = [
     TopBattlesPage(),
     TopBattlesPage(),
@@ -27,8 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   static List<Store> _stores = [
-      Store()..add(TopBattlesRepository(MockedBattlesSource())..preloadData()),
-      Store()..add(TopBattlesRepository(MockedBattlesSource())..preloadData()),
+      Store()..add<BattlesSource>((provider) => MockedBattlesSource())
+        ..add((provider) => TopBattlesRepository(provider.get())..preloadData()),
+      Store()..add<BattlesSource>((provider) => MockedBattlesSource())
+        ..add((provider) => TopBattlesRepository(provider.get())..preloadData()),
       null
     ];
 
