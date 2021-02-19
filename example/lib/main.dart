@@ -1,13 +1,14 @@
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core_example/battle/data.dart';
-import 'package:applithium_core_example/battle/domain.dart';
-import 'package:applithium_core_example/battle/presentation.dart';
 import 'package:applithium_core_example/home/presentation.dart';
 import 'package:applithium_core_example/profile/data.dart';
 import 'package:applithium_core_example/profile/domain.dart';
-import 'package:applithium_core_example/top/domain.dart';
 import 'package:flutter/material.dart';
+
+import 'battle_details/data.dart';
+import 'battle_details/domain.dart';
+import 'battle_details/presentation.dart';
+import 'battle_list/domain.dart';
 
 void main() {
   runApp(MyApp());

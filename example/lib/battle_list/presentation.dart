@@ -1,11 +1,12 @@
 import 'package:applithium_core/blocs/list_bloc.dart';
-import 'package:applithium_core_example/battle/presentation.dart';
-import 'package:applithium_core_example/top/domain.dart';
+import 'package:applithium_core_example/battle_details/presentation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:applithium_core/scopes/extensions.dart';
+
+import 'domain.dart';
 
 class TopBattlesPage extends StatefulWidget {
 

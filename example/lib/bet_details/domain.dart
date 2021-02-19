@@ -1,4 +1,5 @@
-import 'package:applithium_core_example/battle/domain.dart';
+
+import 'package:applithium_core_example/battle_details/domain.dart';
 
 class BetDetailsModel {
   final int id;

@@ -1,9 +1,9 @@
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
+import 'package:applithium_core_example/battle_list/data.dart';
+import 'package:applithium_core_example/battle_list/domain.dart';
+import 'package:applithium_core_example/battle_list/presentation.dart';
 import 'package:applithium_core_example/profile/presentation.dart';
-import 'package:applithium_core_example/top/data.dart';
-import 'package:applithium_core_example/top/domain.dart';
-import 'package:applithium_core_example/top/presentation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:applithium_core_example/bet/domain.dart';
-import 'package:applithium_core_example/top/domain.dart';
+import 'package:applithium_core_example/battle_list/domain.dart';
+import 'package:applithium_core_example/bet_details/domain.dart';
 
 import 'domain.dart';
 

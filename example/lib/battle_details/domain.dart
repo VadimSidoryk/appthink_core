@@ -1,9 +1,9 @@
 import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
-import 'package:applithium_core_example/bet/domain.dart';
+import 'package:applithium_core_example/battle_list/domain.dart';
+import 'package:applithium_core_example/bet_details/domain.dart';
 import 'package:applithium_core_example/profile/domain.dart';
-import 'package:applithium_core_example/top/domain.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class BattleDetailsSource {

@@ -1,6 +1,6 @@
 import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
-import 'package:applithium_core_example/bet/domain.dart';
+import 'package:applithium_core_example/bet_details/domain.dart';
 
 class UserDetailsModel {
   final String displayName;

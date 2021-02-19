@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:applithium_core_example/top/domain.dart';
+import 'domain.dart';
+
 
 class MockedBattlesSource extends BattlesSource {
   final _random = Random();
