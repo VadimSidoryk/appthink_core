@@ -7,7 +7,7 @@ class UserDetailsModel {
   final int balance;
   final String thumbnailUrl;
   final String backgroundUrl;
-  final List<BetDetailsModel> betHistory;
+  final List<BetItemModel> betHistory;
 
   UserDetailsModel(
       this.displayName, this.balance, this.thumbnailUrl, this.backgroundUrl, this.betHistory);
@@ -17,7 +17,7 @@ class UserDetailsModel {
         this.displayName, balance, this.thumbnailUrl, this.backgroundUrl, this.betHistory);
   }
 
-  UserDetailsModel addBet(BetDetailsModel model) {
+  UserDetailsModel addBet(BetItemModel model) {
     return UserDetailsModel(
         this.displayName, this.balance, this.thumbnailUrl, this.backgroundUrl, List.from(this.betHistory)..add(model));
   }
@@ -60,7 +60,7 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
     }
   }
 
-  void notifyBetMade(BetDetailsModel model) {
+  void notifyBetMade(BetItemModel model) {
     updateLocalData((user) => user.addBet(model));
   }
 }

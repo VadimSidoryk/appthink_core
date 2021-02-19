@@ -55,6 +55,9 @@ class _MyAppState extends State<MyApp> {
             (provider) => MockedBattleDetailsSource(model))
         ..add((provider) =>
             BattleDetailsRepository(model.id, provider.get(), provider.get())
+              ..preloadData())
+        ..add((provider) =>
+            MessagesRepository(model.id, provider.get(), provider.get())
               ..preloadData());
       _battlesStores[model.id] = result;
       return result;
