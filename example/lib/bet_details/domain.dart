@@ -1,26 +1,16 @@
+import 'package:applithium_core_example/bets_list/domain.dart';
 
-import 'package:applithium_core_example/battle_details/domain.dart';
-import 'package:equatable/equatable.dart';
+class BetModel extends BetLiteModel {
 
-class BetItemModel extends Equatable{
-  final int id;
-  final BattleResult result;
-  final int cashAmount;
-  final int agreed;
-  final int disagreed;
-  final bool isOpen;
+  final String battleId;
 
-  BetItemModel(this.id, this.result, this.cashAmount, this.agreed,
-      this.disagreed, this.isOpen);
-
-  @override
-  List<Object> get props => [id];
+  BetModel(
+      id,
+      creationTime,
+      cashAmount,
+      battleTitle,
+      status,
+      this.battleId) : super(id, creationTime, cashAmount, battleTitle, status);
   
-  BetItemModel increaseAgreed() {
-    return BetItemModel(this.id, this.result, this.cashAmount, this.agreed + 1, this.disagreed, this.isOpen);
-  }
 
-  BetItemModel increaseDisagreed() {
-    return BetItemModel(this.id, this.result, this.cashAmount, this.agreed, this.disagreed + 1, this.isOpen);
-  }
 }

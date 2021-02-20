@@ -24,7 +24,7 @@ abstract class ListRepository<T extends Equatable>
   int _currentValueLength = 0;
 
   @protected
-  final dataSubj = BehaviorSubject<List<T>>();
+  final data = BehaviorSubject<List<T>>();
 
   final _endReachedSubj = BehaviorSubject.seeded(false);
 
@@ -39,7 +39,7 @@ abstract class ListRepository<T extends Equatable>
 
   @override
   Stream<ListData<T>> get updatesStream => CombineLatestStream.combine2(
-      dataSubj.stream,
+      data.stream,
       _endReachedSubj.stream,
       (list, isEndReached) => ListData(list, isEndReached));
 
@@ -81,25 +81,25 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   Future<bool> updateItem(T item) async {
-    if (await dataSubj.isEmpty) {
+    if (await data.isEmpty) {
       return false;
     } else {
-      final newValue = List.from(dataSubj.value);
+      final newValue = List.from(data.value);
       final itemIndex = newValue.indexOf(item);
       if (itemIndex != -1) {
         newValue[itemIndex] = item;
       }
-      dataSubj.sink.add(newValue);
+      data.sink.add(newValue);
       return itemIndex != -1;
     }
   }
 
   @protected
   Future<bool> removeItem(T itemToRemove) async {
-    if (await dataSubj.isEmpty) {
+    if (await data.isEmpty) {
       return false;
     } else {
-      final newValue = List.from(dataSubj.value);
+      final newValue = List.from(data.value);
       final isRemoved = newValue.remove(itemToRemove);
       onNewList(newValue);
       return isRemoved;
@@ -108,17 +108,17 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   Future<bool> addItems(List<T> items) async {
-    if (await dataSubj.isEmpty) {
+    if (await data.isEmpty) {
       return false;
     } else {
-      onNewList(dataSubj.value + items);
+      onNewList(data.value + items);
       return true;
     }
   }
 
   @override
   void close() {
-    dataSubj.close();
+    data.close();
     _endReachedSubj.close();
   }
 
@@ -129,7 +129,7 @@ abstract class ListRepository<T extends Equatable>
 
     _state = State.MORE_ITEMS_LOADING;
 
-    final lastElement = await dataSubj.isEmpty ? null : dataSubj.value.last;
+    final lastElement = await data.isEmpty ? null : data.value.last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
         loadItems(_currentValueLength, lastElement, defaultPageLength),
         onCancel: () => {logger.log("cancel loadMore operation")});
@@ -149,7 +149,7 @@ abstract class ListRepository<T extends Equatable>
     _currentValueLength = value.length;
     _updateDataOperation = null;
     _loadMoreItemsOperation = null;
-    dataSubj.sink.add(value);
+    data.sink.add(value);
   }
 
   @protected

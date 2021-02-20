@@ -3,6 +3,7 @@ import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core_example/battle_list/data.dart';
 import 'package:applithium_core_example/battle_list/domain.dart';
 import 'package:applithium_core_example/battle_list/presentation.dart';
+import 'package:applithium_core_example/bets_list/presentation.dart';
 import 'package:applithium_core_example/profile/presentation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,16 +23,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = [
-    TopBattlesPage(),
-    TopBattlesPage(),
+    TopBattlesListPage(),
+    UserBetsListPage(),
     UserDetailsPage(),
   ];
 
   static List<Store> _stores = [
       Store()..add<BattlesSource>((provider) => MockedBattlesSource())
         ..add((provider) => TopBattlesRepository(provider.get())..preloadData()),
-      Store()..add<BattlesSource>((provider) => MockedBattlesSource())
-        ..add((provider) => TopBattlesRepository(provider.get())..preloadData()),
+      null,
       null
     ];
 

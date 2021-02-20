@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:applithium_core_example/battle_list/domain.dart';
-import 'package:applithium_core_example/bet_details/domain.dart';
 import 'package:tuple/tuple.dart';
 
 import 'domain.dart';
@@ -9,7 +8,7 @@ import 'domain.dart';
 class MockedBattleDetailsSource extends BattleDetailsSource {
   final _random = Random();
 
-  final BattleItemModel _model;
+  final BattleLiteModel _model;
 
   MockedBattleDetailsSource(this._model);
 
@@ -27,8 +26,8 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
   }
 
   @override
-  Future<BetItemModel> makePersonalBet(
-      BetItemModel model, BattleResult result) {
+  Future<BattleBetModel> makePersonalBet(
+      BattleBetModel model, BattleResult result) {
     return Future.delayed(Duration(milliseconds: 1000), () {
       if (result == model.result) {
         return model.increaseAgreed();
@@ -39,7 +38,7 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
   }
 
   @override
-  Future<BetItemModel> makeGeneralBet(
+  Future<BattleBetModel> makeGeneralBet(
       BattleDetailsModel model, BattleResult result) {
     return Future.delayed(Duration(milliseconds: 1000), () => mockBet(result));
   }
@@ -86,8 +85,8 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
     }
   }
 
-  BetItemModel mockBet(BattleResult result) {
-    return BetItemModel(_random.nextInt(1000000), result, _random.nextInt(1000),
+  BattleBetModel mockBet(BattleResult result) {
+    return BattleBetModel(_random.nextInt(1000000), result, _random.nextInt(1000),
         _random.nextInt(20), _random.nextInt(20), true);
   }
 

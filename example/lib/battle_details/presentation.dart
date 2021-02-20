@@ -262,7 +262,7 @@ class _MessageWidgetState extends State<_MessagesWidget> {
                   ? MessageWidget(state.value[index])
                   : MessageWithBetWidget(state.value[index], (result) {
                 _bloc.add(PersonalBetClicked(state.value[index], result));
-                });
+              });
             },
             itemCount: state.isEndReached
                 ? state.value.length
@@ -294,6 +294,16 @@ class MessageWithBetWidget extends MessageWidget {
         ? Colors.blueAccent
         : Colors.redAccent;
   }
+
+  static Widget Function(BuildContext) getHeaderBuilder(
+      MessageWithBetItemModel model) =>
+          (BuildContext context) {
+        return Text("${model.bet.cashAmount} \$", style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 17,
+            color: model.bet.result == BattleResult.PARTICIPANT_1_WIN ? Colors
+                .blueAccent : Colors.redAccent),);
+      };
 
   static Widget Function(BuildContext) getFooterBuilder(
       MessageWithBetItemModel model,
@@ -333,6 +343,7 @@ class MessageWithBetWidget extends MessageWidget {
   MessageWithBetWidget(this._model, Function(BattleResult) clickListener)
       : super(_model,
       backgroundColor: getBackgroundColor(_model),
+      headerBuilder: getHeaderBuilder(_model),
       footerBuilder: getFooterBuilder(_model, clickListener));
 }
 
@@ -387,15 +398,8 @@ class MessageWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      child: Row(children: [
-                        Text(_model.user.name),
-                        headerBuilder != null
-                            ? headerBuilder.call(context)
-                            : Container()
-                      ]),
-                      height: 25,
-                    ),
+                    Text(_model.user.name),
+                    headerBuilder != null ? headerBuilder.call(context) : Container(),
                     Container(
                       child: Text(
                         _model.message,

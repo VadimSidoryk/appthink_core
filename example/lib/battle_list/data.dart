@@ -7,24 +7,31 @@ class MockedBattlesSource extends BattlesSource {
   final _random = Random();
 
   @override
-  Future<List<BattleItemModel>> getTopBattles(int page, int itemsPerPage) {
+  Future<List<BattleLiteModel>> getTopBattles(int page, int itemsPerPage) {
     return Future.delayed(Duration(milliseconds: 1500),
-        () => List.generate(itemsPerPage, (i) => mockBattle()));
+            () => List.generate(itemsPerPage, (i) => mockBattle()));
   }
 
-  BattleItemModel mockBattle() {
-    return BattleItemModel(
+  BattleLiteModel mockBattle() {
+    final participant1 = mockParticipant();
+    final participant2 = mockParticipant();
+
+    return BattleLiteModel(
         _random.nextInt(1000000),
-        mockParticipant(),
-        mockParticipant(),
-        DateTime.now().millisecondsSinceEpoch + _random.nextInt(10000),
-        _random.nextInt(1000));
+        participant1,
+        participant2,
+        DateTime
+            .now()
+            .millisecondsSinceEpoch + _random.nextInt(10000),
+        "$participant1 VS $participant2");
   }
 
   ParticipantModel mockParticipant() {
     final id = _random.nextInt(participantNames.length - 1);
 
-    return ParticipantModel(id, participantNames[id], thumbnails[id], fullSizeImages[id], rankings[id]);
+    return ParticipantModel(
+        id, participantNames[id], thumbnails[id], fullSizeImages[id],
+        rankings[id]);
   }
 
   static const List<double> rankings = const [

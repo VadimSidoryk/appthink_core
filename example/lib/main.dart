@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
             HomeScreen.routeName: (context) => HomeScreen(),
             // When navigating to the "/second" route, build the SecondScreen widget.
             BattleDetailsScreen.routeName: (context) {
-              final BattleItemModel model =
+              final BattleLiteModel model =
                   ModalRoute.of(context).settings.arguments;
               return Scope(
                   store: _getBattleStore(context, model),
@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
         ));
   }
 
-  Store _getBattleStore(BuildContext context, BattleItemModel model) {
+  Store _getBattleStore(BuildContext context, BattleLiteModel model) {
     if (_battlesStores.containsKey(model.id)) {
       return _battlesStores[model.id];
     } else {
@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
             BattleDetailsRepository(model.id, provider.get(), provider.get())
               ..preloadData())
         ..add((provider) =>
-            MessagesRepository(model.id, provider.get(), provider.get())
+            MessagesRepository(model, provider.get(), provider.get())
               ..preloadData());
       _battlesStores[model.id] = result;
       return result;

@@ -3,19 +3,19 @@ import 'package:applithium_core/blocs/list_bloc.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:equatable/equatable.dart';
 
-class TopBattlesRepository extends ListRepository<BattleItemModel>  {
+class TopBattlesRepository extends ListRepository<BattleLiteModel>  {
 
   final BattlesSource _source;
 
   TopBattlesRepository(this._source) : super(20);
 
   @override
-  Future<List<BattleItemModel>> loadItems(int startIndex, BattleItemModel lastValue, int itemsToLoad) {
+  Future<List<BattleLiteModel>> loadItems(int startIndex, BattleLiteModel lastValue, int itemsToLoad) {
     return _source.getTopBattles(startIndex ~/ itemsToLoad + 1, itemsToLoad);
   }
 }
 
-class TopBattlesBloc extends ListBloc<BattleItemModel, TopBattlesEvent> {
+class TopBattlesBloc extends ListBloc<BattleLiteModel, TopBattlesEvent> {
   TopBattlesBloc(TopBattlesRepository repository) : super(repository);
 }
 
@@ -36,19 +36,19 @@ class ParticipantModel  extends Equatable {
   List<Object> get props => [id];
 }
 
-class BattleItemModel extends Equatable {
+class BattleLiteModel extends Equatable {
   final int id;
+  final String title;
   final ParticipantModel participant1;
   final ParticipantModel participant2;
   final int startTime;
-  final int waiters;
 
-  BattleItemModel(this.id, this.participant1, this.participant2, this.startTime, this.waiters);
+  BattleLiteModel(this.id, this.participant1, this.participant2, this.startTime, this.title);
 
   @override
   List<Object> get props => [id];
 }
 
 abstract class BattlesSource {
-  Future<List<BattleItemModel>> getTopBattles(int page, int itemsPerPage);
+  Future<List<BattleLiteModel>> getTopBattles(int page, int itemsPerPage);
 }

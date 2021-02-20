@@ -1,13 +1,13 @@
 import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
-import 'package:applithium_core_example/bet_details/domain.dart';
+import 'package:applithium_core_example/bets_list/domain.dart';
 
 class UserDetailsModel {
   final String displayName;
   final int balance;
   final String thumbnailUrl;
   final String backgroundUrl;
-  final List<BetItemModel> betHistory;
+  final List<BetLiteModel> betHistory;
 
   UserDetailsModel(
       this.displayName, this.balance, this.thumbnailUrl, this.backgroundUrl, this.betHistory);
@@ -17,7 +17,7 @@ class UserDetailsModel {
         this.displayName, balance, this.thumbnailUrl, this.backgroundUrl, this.betHistory);
   }
 
-  UserDetailsModel addBet(BetItemModel model) {
+  UserDetailsModel addBet(BetLiteModel model) {
     return UserDetailsModel(
         this.displayName, this.balance, this.thumbnailUrl, this.backgroundUrl, List.from(this.betHistory)..add(model));
   }
@@ -60,7 +60,7 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
     }
   }
 
-  void notifyBetMade(BetItemModel model) {
+  void notifyBetMade(BetLiteModel model) {
     updateLocalData((user) => user.addBet(model));
   }
 }

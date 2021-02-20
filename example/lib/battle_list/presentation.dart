@@ -8,22 +8,22 @@ import 'package:applithium_core/scopes/extensions.dart';
 
 import 'domain.dart';
 
-class TopBattlesPage extends StatefulWidget {
+class TopBattlesListPage extends StatefulWidget {
 
-  const TopBattlesPage();
+  const TopBattlesListPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _TopBattlesPageState();
+    return _TopBattlesListPageState();
   }
 }
 
-class _TopBattlesPageState extends State<TopBattlesPage> {
+class _TopBattlesListPageState extends State<TopBattlesListPage> {
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
   TopBattlesBloc _bloc;
 
-  _TopBattlesPageState() {
+  _TopBattlesListPageState() {
     _scrollController.addListener(_onScroll);
   }
 
@@ -32,7 +32,7 @@ class _TopBattlesPageState extends State<TopBattlesPage> {
     _bloc = TopBattlesBloc(context.get());
     return BlocBuilder(
       cubit: _bloc,
-      builder: (BuildContext context, ListState<BattleItemModel> state) {
+      builder: (BuildContext context, ListState<BattleLiteModel> state) {
         if (state.isLoading) {
           return Center(
             child: CircularProgressIndicator(),
@@ -79,7 +79,7 @@ class _TopBattlesPageState extends State<TopBattlesPage> {
 }
 
 class BattleWidget extends StatelessWidget {
-  final BattleItemModel _model;
+  final BattleLiteModel _model;
 
   const BattleWidget(this._model);
 
@@ -99,7 +99,7 @@ class BattleWidget extends StatelessWidget {
         "${_model.participant1.name} VS ${_model.participant2.name}",
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
-      subtitle: Text("Waiting: ${_model.waiters}"),
+      subtitle: Text("Waiting"),
       onTap: () => Navigator.pushNamed(context, BattleDetailsScreen.routeName,
           arguments: _model),
       dense: true,

@@ -3,7 +3,7 @@ import 'package:applithium_core/blocs/list_bloc.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core_example/battle_list/domain.dart';
-import 'package:applithium_core_example/bet_details/domain.dart';
+import 'package:applithium_core_example/bets_list/domain.dart';
 import 'package:applithium_core_example/profile/domain.dart';
 import 'package:equatable/equatable.dart';
 
@@ -13,16 +13,15 @@ abstract class BattleDetailsSource {
   Future<List<BaseMessageItemModel>> getMessagesFor(
       int battleId, int page, int itemsPerPage);
 
-  Future<BetItemModel> makeGeneralBet(
+  Future<BattleBetModel> makeGeneralBet(
       BattleDetailsModel model, BattleResult result);
 
-  Future<BetItemModel> makePersonalBet(BetItemModel model, BattleResult result);
+  Future<BattleBetModel> makePersonalBet(BattleBetModel model, BattleResult result);
 }
 
 abstract class MessagesListEvent extends BaseListEvent {
   MessagesListEvent._(String analyticTag) : super(analyticTag);
 }
-
 
 class PersonalBetClicked extends MessagesListEvent {
   final MessageWithBetItemModel messageModel;
@@ -109,7 +108,7 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
     } else {
       final bet = await _source.makeGeneralBet(data.value, result);
       if (bet != null) {
-        _userRepo.notifyBetMade(bet);
+        _userRepo.notifyBetMade(BetLiteModel.fromBattle(data.value, bet));
       }
       return bet != null;
     }
@@ -117,12 +116,12 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
 }
 
 class MessagesRepository extends ListRepository<BaseMessageItemModel> {
-  final int _battleId;
+  final BattleDetailsModel _battle;
   final BattleDetailsSource _source;
   final UserDetailsRepository _userRepo;
 
   MessagesRepository(
-    this._battleId,
+    this._battle,
     this._source,
     this._userRepo,
   ) : super(20);
@@ -131,7 +130,7 @@ class MessagesRepository extends ListRepository<BaseMessageItemModel> {
   Future<List<BaseMessageItemModel>> loadItems(
       int startIndex, BaseMessageItemModel lastValue, int itemsToLoad) {
     return _source.getMessagesFor(
-        _battleId, startIndex ~/ itemsToLoad + 1, itemsToLoad);
+        _battle.id, startIndex ~/ itemsToLoad + 1, itemsToLoad);
   }
 
   Future<bool> makePersonalBet(
@@ -143,7 +142,7 @@ class MessagesRepository extends ListRepository<BaseMessageItemModel> {
     } else {
       final bet = await _source.makePersonalBet(model.bet, result);
       if (bet != null) {
-        _userRepo.notifyBetMade(bet);
+        _userRepo.notifyBetMade(BetLiteModel.fromBattle(_battle, bet));
         updateItem(model.withBet(bet));
       }
       return bet != null;
@@ -151,39 +150,58 @@ class MessagesRepository extends ListRepository<BaseMessageItemModel> {
   }
 }
 
-class BattleDetailsModel extends Equatable {
-  final int id;
+class BattleDetailsModel extends BattleLiteModel {
   final String title;
   final String description;
-  final ParticipantModel participant1;
-  final ParticipantModel participant2;
   final BattleResult result;
   final BattleStatus status;
-  final int startTime;
   final int endTime;
   final int watching;
   final String streamUrl;
   final Map<BattleResult, int> generalBets;
 
   BattleDetailsModel(
-      this.id,
+      id,
       this.title,
       this.description,
-      this.participant1,
-      this.participant2,
+      participant1,
+      participant2,
       this.status,
       this.result,
-      this.startTime,
+      startTime,
       this.endTime,
       this.watching,
       this.streamUrl,
-      this.generalBets);
+      this.generalBets): super(id, participant1, participant2, startTime, "$participant1 VS $participant2");
 
   @override
   List<Object> get props => [id];
 }
 
 enum BattleStatus { NOT_STARTED, STARTED, FINISHED }
+
+class BattleBetModel extends Equatable {
+  final int id;
+  final BattleResult result;
+  final int cashAmount;
+  final int agreed;
+  final int disagreed;
+  final bool isOpen;
+
+  BattleBetModel(this.id, this.result, this.cashAmount, this.agreed,
+      this.disagreed, this.isOpen);
+
+  @override
+  List<Object> get props => [id];
+
+  BattleBetModel increaseAgreed() {
+    return BattleBetModel(this.id, this.result, this.cashAmount, this.agreed + 1, this.disagreed, this.isOpen);
+  }
+
+  BattleBetModel increaseDisagreed() {
+    return BattleBetModel(this.id, this.result, this.cashAmount, this.agreed, this.disagreed + 1, this.isOpen);
+  }
+}
 
 abstract class BaseMessageItemModel extends Equatable {
   final int id;
@@ -205,13 +223,13 @@ class MessageItemModel extends BaseMessageItemModel {
 }
 
 class MessageWithBetItemModel extends BaseMessageItemModel {
-  final BetItemModel bet;
+  final BattleBetModel bet;
 
   MessageWithBetItemModel(
       int id, String message, UserModel user, int timeSend, this.bet)
       : super(id, message, true, user, timeSend);
 
-  MessageWithBetItemModel withBet(BetItemModel newBet) {
+  MessageWithBetItemModel withBet(BattleBetModel newBet) {
     return MessageWithBetItemModel(
         this.id, this.message, this.user, this.timeSend, newBet);
   }
