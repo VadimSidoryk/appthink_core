@@ -50,7 +50,7 @@ class MockedBattlesSource extends BattlesSource {
   static const List<String> participantNames = const [
     "Snail Kick",
     "Karamba",
-    "Хач",
+    "Амиран",
     "Эдвард Билл",
     "Пельмень",
     "Zombie boy",

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:applithium_core/analytics/trackable.dart';
 import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
@@ -12,8 +14,10 @@ class ContentBloc<VM, Event extends BaseContentEvent> extends Bloc<BaseContentEv
   @protected
   final Logger logger;
 
-  ContentBloc(this._repository, { this.logger = const DefaultLogger() }) : super(ContentState(null, true, null)) {
-    _repository.updatesStream.listen((data) {
+  StreamSubscription _subscription;
+
+  ContentBloc(this._repository, { this.logger = const DefaultLogger("ContentBloc") }) : super(ContentState(null, true, null)) {
+   _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
   }

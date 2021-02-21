@@ -1,4 +1,5 @@
 import 'package:applithium_core/blocs/content_bloc.dart';
+import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core_example/bets_list/domain.dart';
 
@@ -33,6 +34,7 @@ abstract class UserDetailsSource {
 
 class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
   final UserDetailsSource _source;
+  final _logger = DefaultLogger("UserDetailsRepo");
 
   UserDetailsRepository(this._source);
 
@@ -47,7 +49,9 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
   }
 
   Future<bool> reserveBalance(int amount) async {
-    if (data.value.balance > amount) {
+    print("reserveBalance");
+    if ((await data.first).balance > amount) {
+      print("reserveBalance updateUI");
       updateLocalData((user) => user.copyWithBalance(user.balance - amount));
     }
 
@@ -61,7 +65,18 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
   }
 
   void notifyBetMade(BetLiteModel model) {
-    updateLocalData((user) => user.addBet(model));
+    _logger.log("notify bet made $model");
+    updateLocalData((user) {
+      _logger.log("update local data notifier $user");
+      return user.addBet(model);
+    });
+  }
+
+  Stream<List<BetLiteModel>> getUserBetsStream() {
+    _logger.log("getUserBetsStream");
+    return data.stream.map((data) {
+      _logger.log("map called $data");
+      return data.betHistory;});
   }
 }
 

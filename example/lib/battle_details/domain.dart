@@ -16,7 +16,8 @@ abstract class BattleDetailsSource {
   Future<BattleBetModel> makeGeneralBet(
       BattleDetailsModel model, BattleResult result);
 
-  Future<BattleBetModel> makePersonalBet(BattleBetModel model, BattleResult result);
+  Future<BattleBetModel> makePersonalBet(
+      BattleBetModel model, BattleResult result);
 }
 
 abstract class MessagesListEvent extends BaseListEvent {
@@ -92,8 +93,7 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
   final BattleDetailsSource _source;
   final UserDetailsRepository _userRepo;
 
-  BattleDetailsRepository(
-      this._battleId, this._source, this._userRepo);
+  BattleDetailsRepository(this._battleId, this._source, this._userRepo);
 
   @override
   Future<BattleDetailsModel> loadData() {
@@ -101,12 +101,15 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
   }
 
   Future<bool> makeGeneralBet(BattleResult result) async {
-    final amount = data.value.generalBets[result];
+    print("makeGeneralBet");
+    final amount = (await data.first).generalBets[result];
     final reserved = await _userRepo.reserveBalance(amount);
+    print("reserved = $reserved");
     if (!reserved) {
       return false;
     } else {
       final bet = await _source.makeGeneralBet(data.value, result);
+      print("bet= $bet");
       if (bet != null) {
         _userRepo.notifyBetMade(BetLiteModel.fromBattle(data.value, bet));
       }
@@ -116,7 +119,7 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
 }
 
 class MessagesRepository extends ListRepository<BaseMessageItemModel> {
-  final BattleDetailsModel _battle;
+  final BattleLiteModel _battle;
   final BattleDetailsSource _source;
   final UserDetailsRepository _userRepo;
 
@@ -135,12 +138,19 @@ class MessagesRepository extends ListRepository<BaseMessageItemModel> {
 
   Future<bool> makePersonalBet(
       MessageWithBetItemModel model, BattleResult result) async {
+    print("makePersonalBet");
+    updateItem(model.withBet(result == model.bet.result
+        ? model.bet.increaseAgreed()
+        : model.bet.increaseDisagreed()));
     final amount = model.bet.cashAmount;
     final reserved = await _userRepo.reserveBalance(amount);
+    print("reserved = $reserved");
+
     if (!reserved) {
       return false;
     } else {
       final bet = await _source.makePersonalBet(model.bet, result);
+      print("bet= $bet");
       if (bet != null) {
         _userRepo.notifyBetMade(BetLiteModel.fromBattle(_battle, bet));
         updateItem(model.withBet(bet));
@@ -164,15 +174,17 @@ class BattleDetailsModel extends BattleLiteModel {
       id,
       this.title,
       this.description,
-      participant1,
-      participant2,
+      ParticipantModel participant1,
+      ParticipantModel participant2,
       this.status,
       this.result,
       startTime,
       this.endTime,
       this.watching,
       this.streamUrl,
-      this.generalBets): super(id, participant1, participant2, startTime, "$participant1 VS $participant2");
+      this.generalBets)
+      : super(id, participant1, participant2, startTime,
+            "${participant1.name} VS ${participant2.name}");
 
   @override
   List<Object> get props => [id];
@@ -195,11 +207,13 @@ class BattleBetModel extends Equatable {
   List<Object> get props => [id];
 
   BattleBetModel increaseAgreed() {
-    return BattleBetModel(this.id, this.result, this.cashAmount, this.agreed + 1, this.disagreed, this.isOpen);
+    return BattleBetModel(this.id, this.result, this.cashAmount,
+        this.agreed + 1, this.disagreed, this.isOpen);
   }
 
   BattleBetModel increaseDisagreed() {
-    return BattleBetModel(this.id, this.result, this.cashAmount, this.agreed, this.disagreed + 1, this.isOpen);
+    return BattleBetModel(this.id, this.result, this.cashAmount, this.agreed,
+        this.disagreed + 1, this.isOpen);
   }
 }
 

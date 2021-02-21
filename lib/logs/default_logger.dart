@@ -2,15 +2,17 @@ import 'logger.dart';
 
 class DefaultLogger extends Logger {
 
-  const DefaultLogger();
+  final String _tag;
+
+  const DefaultLogger(this._tag);
 
   @override
   void error(Exception exception) {
-    print("Exception : $exception");
+    print("$_tag : Exception : $exception");
   }
 
   @override
   void log(String message) {
-    print(message);
+    print("$_tag : $message");
   }
 }

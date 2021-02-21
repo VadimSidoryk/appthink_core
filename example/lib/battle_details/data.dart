@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core_example/battle_list/domain.dart';
 import 'package:tuple/tuple.dart';
 
@@ -7,6 +8,7 @@ import 'domain.dart';
 
 class MockedBattleDetailsSource extends BattleDetailsSource {
   final _random = Random();
+  final _logger = DefaultLogger("MockedBattleDetailsSource");
 
   final BattleLiteModel _model;
 
@@ -28,7 +30,9 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
   @override
   Future<BattleBetModel> makePersonalBet(
       BattleBetModel model, BattleResult result) {
+    _logger.log("makePersonalBet");
     return Future.delayed(Duration(milliseconds: 1000), () {
+      _logger.log("makePersonalBet received");
       if (result == model.result) {
         return model.increaseAgreed();
       } else {
@@ -40,6 +44,7 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
   @override
   Future<BattleBetModel> makeGeneralBet(
       BattleDetailsModel model, BattleResult result) {
+    _logger.log("makeGeneralBetImpl");
     return Future.delayed(Duration(milliseconds: 1000), () => mockBet(result));
   }
 

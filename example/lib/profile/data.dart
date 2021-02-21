@@ -2,7 +2,7 @@ import 'package:applithium_core_example/profile/domain.dart';
 
 class MockedUserSource extends UserDetailsSource {
 
-  int balance = 500;
+  int balance = 10000;
 
   @override
   Future<UserDetailsModel> getUserDetails() {

@@ -14,7 +14,7 @@ class HttpClientFirstImpl extends HttpClient {
   @protected
   final Logger logger;
 
-  HttpClientFirstImpl(this._host, {this.logger = const DefaultLogger()});
+  HttpClientFirstImpl(this._host, {this.logger = const DefaultLogger("HttpClient")});
 
   @override
   Future<dynamic> getImpl(String path,

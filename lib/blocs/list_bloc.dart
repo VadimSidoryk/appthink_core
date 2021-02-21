@@ -14,7 +14,7 @@ class ListBloc<M extends Equatable, Event extends BaseListEvent>
   @protected
   final Logger logger;
 
-  ListBloc(this._repository, { this.logger = const DefaultLogger() }) : super(  ListState(null, true, false, false, null)) {
+  ListBloc(this._repository, { this.logger = const DefaultLogger("ListBloc") }) : super(  ListState(null, true, false, false, null)) {
     _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });

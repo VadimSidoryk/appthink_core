@@ -18,7 +18,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   @override
   Stream<T> get updatesStream => data.stream;
 
-  ContentRepository({this.logger = const DefaultLogger()});
+  ContentRepository({this.logger = const DefaultLogger("ContentRepository")});
 
   Future<T> loadData();
 

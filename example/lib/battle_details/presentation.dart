@@ -160,7 +160,7 @@ class _BattleDetailsWidget extends StatelessWidget {
                       child: FlatButton(
                         color: Colors.blueAccent,
                         child: Text(
-                          "${_model.participant1.name}",
+                          "${_model.participant1.name} X1.2",
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () => _voteForParticipant1.call(),
@@ -177,7 +177,7 @@ class _BattleDetailsWidget extends StatelessWidget {
                     child: Padding(
                         padding: EdgeInsets.all(10),
                         child: FlatButton(
-                          child: Text("Ничья",
+                          child: Text("Ничья X1.4",
                               style: TextStyle(color: Colors.white)),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
@@ -194,7 +194,7 @@ class _BattleDetailsWidget extends StatelessWidget {
                       child: FlatButton(
                         color: Colors.redAccent,
                         child: Text(
-                          "${_model.participant2.name}",
+                          "${_model.participant2.name} X1.5",
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () => _voteForParticipant2.call(),

@@ -43,7 +43,7 @@ abstract class ListRepository<T extends Equatable>
       _endReachedSubj.stream,
       (list, isEndReached) => ListData(list, isEndReached));
 
-  ListRepository(this.defaultPageLength, {this.logger = const DefaultLogger()});
+  ListRepository(this.defaultPageLength, {this.logger = const DefaultLogger("ListRepository")});
 
   Future<List<T>> loadItems(int startIndex, T lastValue, int itemsToLoad);
 
@@ -84,8 +84,8 @@ abstract class ListRepository<T extends Equatable>
     if (await data.isEmpty) {
       return false;
     } else {
-      final newValue = List.from(data.value);
-      final itemIndex = newValue.indexOf(item);
+      final List<T> newValue = List.from(data.value);
+      final int itemIndex = newValue.indexOf(item);
       if (itemIndex != -1) {
         newValue[itemIndex] = item;
       }
@@ -129,7 +129,7 @@ abstract class ListRepository<T extends Equatable>
 
     _state = State.MORE_ITEMS_LOADING;
 
-    final lastElement = await data.isEmpty ? null : data.value.last;
+    final lastElement = (await data.first).last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
         loadItems(_currentValueLength, lastElement, defaultPageLength),
         onCancel: () => {logger.log("cancel loadMore operation")});
