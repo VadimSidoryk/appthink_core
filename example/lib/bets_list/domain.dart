@@ -16,14 +16,18 @@ class BetLiteModel extends Equatable {
   final int creationTime;
   final int cashAmount;
   final String battleTitle;
+  final String battleResultTitle;
   final BetStatus status;
 
   BetLiteModel(this.id, this.creationTime, this.cashAmount, this.battleTitle,
+      this.battleResultTitle,
       this.status);
 
   factory BetLiteModel.fromBattle(BattleLiteModel battle, BattleBetModel bet) {
     return BetLiteModel(-1, DateTime.now().millisecondsSinceEpoch,
-        bet.cashAmount, battle.title, BetStatus.NOT_FINISHED);
+        bet.cashAmount, battle.title,
+        bet.result == BattleResult.PARTICIPANT_1_WIN ? battle.participant1.name : battle.participant2.name,
+        BetStatus.NOT_FINISHED);
   }
 
   @override

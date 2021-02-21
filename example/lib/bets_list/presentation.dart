@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 
 class UserBetsListPage extends StatefulWidget {
-
   const UserBetsListPage();
 
   @override
@@ -16,7 +15,6 @@ class UserBetsListPage extends StatefulWidget {
 }
 
 class _BetsListState extends State<UserBetsListPage> {
-
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
   BetsListBloc _bloc;
@@ -54,7 +52,7 @@ class _BetsListState extends State<UserBetsListPage> {
                 : BetWidget(state.value[index]);
           },
           itemCount:
-          state.isEndReached ? state.value.length : state.value.length + 1,
+              state.isEndReached ? state.value.length : state.value.length + 1,
           controller: _scrollController,
         );
       },
@@ -84,14 +82,16 @@ class BetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-          leading: Container(
-            width: 50,
-            height: 50,
-            decoration:
-            BoxDecoration(shape: BoxShape.circle, color: Colors.redAccent),
-          ),
-
-      title: Text(_model.battleTitle),
+      leading:  Text(
+        "${_model.cashAmount}",
+        style: TextStyle(
+            color: Colors.green, fontWeight: FontWeight.bold, fontSize: 21),
+      ),
+      title: Text(
+        _model.battleResultTitle,
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+      ),
+      subtitle: Text(_model.battleTitle),
     );
   }
 }
@@ -113,4 +113,3 @@ class BottomLoader extends StatelessWidget {
     );
   }
 }
-

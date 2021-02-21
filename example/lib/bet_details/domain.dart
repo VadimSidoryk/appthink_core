@@ -9,8 +9,9 @@ class BetModel extends BetLiteModel {
       creationTime,
       cashAmount,
       battleTitle,
+      resultTitle,
       status,
-      this.battleId) : super(id, creationTime, cashAmount, battleTitle, status);
+      this.battleId) : super(id, creationTime, cashAmount, battleTitle, resultTitle, status);
   
 
 }
