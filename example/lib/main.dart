@@ -13,21 +13,48 @@ import 'battle_details/domain.dart';
 import 'battle_details/presentation.dart';
 import 'battle_list/domain.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final firebaseApp = await createFirebaseApp();
+  print("starting App");
+  runApp(MyApp(firebaseApp: firebaseApp));
+}
+
+Future<FirebaseApp> createFirebaseApp() async {
+  return Firebase.initializeApp(
+    name: 'db2',
+    options: Platform.isAndroid
+        ? FirebaseOptions(
+            appId: '1:162446775805:android:f2ad2d9c200e989720b594',
+            apiKey:
+                'AAAAJdKVFf0:APA91bFyE7zKpUlVpGc43gjOKesDtDHxXOt6jNVj3oCbL7lu3eVztuZNfkEQiwvj0r_T1z6jtNvKnVT3Gg7tVlri8_Yxw60CH0NEnsEQCaneCyPaO7UBaIt6sIRUMfzESbSL9gUBRt2I',
+            messagingSenderId: '162446775805',
+            projectId: 'battler-65393',
+            databaseURL: 'https://battler-65393-default-rtdb.firebaseio.com/',
+          )
+        : throw Exception(),
+  );
 }
 
 class MyApp extends StatefulWidget {
+  final FirebaseApp firebaseApp;
+
+  const MyApp({@required this.firebaseApp}) : super();
+
   @override
-  _MyAppState createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState(firebaseApp);
 }
 
 class _MyAppState extends State<MyApp> {
   Map<int, Store> _battlesStores = {};
   Store _globalStore = Store()
-    ..add<UserDetailsSource>((provider) => MockedUserSource())
-    ..add((provider) => UserDetailsRepository(provider.get())..preloadData())
-  ..add((provider) => createFirebaseApp());
+    ..add<UserDetailsSource>((provider) => FirebaseUserSource())
+    ..add((provider) => UserDetailsRepository(provider.get()));
+
+  _MyAppState(FirebaseApp firebaseApp) {
+    print("add firebase to globalStore");
+    _globalStore.add((provider) => firebaseApp);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,20 +93,5 @@ class _MyAppState extends State<MyApp> {
       _battlesStores[model.id] = result;
       return result;
     }
-  }
-
-  static Future<FirebaseApp> createFirebaseApp() async {
-    return await Firebase.initializeApp(
-      name: 'db2',
-      options: Platform.isIOS || Platform.isMacOS
-          ? throw Exception()
-          : FirebaseOptions(
-        appId: '1:162446775805:android:f2ad2d9c200e989720b594',
-        apiKey: 'AIzaSyD_shO5mfO9lhy2TVWhfo1VUmARKlG4suk',
-        messagingSenderId: '297855924061',
-        projectId: 'flutter-firebase-plugins',
-        databaseURL: 'https://flutterfire-cd2f7.firebaseio.com',
-      ),
-    )
   }
 }
