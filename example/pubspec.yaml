@@ -17,6 +17,8 @@ dependencies:
   cached_network_image: 2.5.0
   tuple: ^1.0.3
   intl: ^0.16.1
+  firebase_core: ^1.0.0
+  firebase_database: ^6.1.0
 
   applithium_core:
     # When depending on this package from a real application you should use:

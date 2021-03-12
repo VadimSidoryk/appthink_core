@@ -16,7 +16,6 @@ dependencies:
   async: ^2.4.2
   http: ^0.12.2
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

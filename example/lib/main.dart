@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core_example/home/presentation.dart';
 import 'package:applithium_core_example/profile/data.dart';
 import 'package:applithium_core_example/profile/domain.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'battle_details/data.dart';
@@ -23,7 +26,8 @@ class _MyAppState extends State<MyApp> {
   Map<int, Store> _battlesStores = {};
   Store _globalStore = Store()
     ..add<UserDetailsSource>((provider) => MockedUserSource())
-    ..add((provider) => UserDetailsRepository(provider.get())..preloadData());
+    ..add((provider) => UserDetailsRepository(provider.get())..preloadData())
+  ..add((provider) => createFirebaseApp());
 
   @override
   Widget build(BuildContext context) {
@@ -62,5 +66,20 @@ class _MyAppState extends State<MyApp> {
       _battlesStores[model.id] = result;
       return result;
     }
+  }
+
+  static Future<FirebaseApp> createFirebaseApp() async {
+    return await Firebase.initializeApp(
+      name: 'db2',
+      options: Platform.isIOS || Platform.isMacOS
+          ? throw Exception()
+          : FirebaseOptions(
+        appId: '1:162446775805:android:f2ad2d9c200e989720b594',
+        apiKey: 'AIzaSyD_shO5mfO9lhy2TVWhfo1VUmARKlG4suk',
+        messagingSenderId: '297855924061',
+        projectId: 'flutter-firebase-plugins',
+        databaseURL: 'https://flutterfire-cd2f7.firebaseio.com',
+      ),
+    )
   }
 }
