@@ -59,7 +59,7 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
 
     return BattleDetailsModel(
         _model.id,
-        "Epic Battle: ${_model.participant1.name} VS ${_model.participant2.name}!!!",
+        "Epic Battle: ${_model.participant1.displayName} VS ${_model.participant2.displayName}!!!",
         "Is it what you waiting for? Absolutely!!",
         _model.participant1,
         _model.participant2,
@@ -91,8 +91,8 @@ class MockedBattleDetailsSource extends BattleDetailsSource {
   }
 
   BattleBetModel mockBet(BattleResult result) {
-    return BattleBetModel(_random.nextInt(1000000), result, _random.nextInt(1000),
-        _random.nextInt(20), _random.nextInt(20), true);
+    return BattleBetModel(_random.nextInt(1000000), result,
+        _random.nextInt(1000), _random.nextInt(20), _random.nextInt(20), true);
   }
 
   Map<BattleResult, int> mockCacheAmount() => {
@@ -133,14 +133,29 @@ const messages = const [
 ];
 
 const users = const [
-  UserModel(121, "Мариша Учиха",
-      "https://yt3.ggpht.com/ytc/AAUvwngUIVRnwlWhOpf6FhanN343KhUYFBOTO2wcJ_U9=s88-c-k-c0x00ffffff-no-rj"),
-  UserModel(2512, "Thomas takes a toll for the dark",
-      "https://yt3.ggpht.com/ytc/AAUvwnjodhCq2xpdjzjxnoqJWnbTXOvxyqGWa1-mSv3V=s88-c-k-c0x00ffffff-no-rj"),
-  UserModel(201, "Дмитрий Мешков",
-      "https://yt3.ggpht.com/ytc/AAUvwnjX-Oc3WwMO0bttGYDBySFluTKA9zGmqb-vZ6u86g=s88-c-k-c0x00ffffff-no-rj"),
-  UserModel(12, "6CaNceR9 Official",
-      "https://yt3.ggpht.com/ytc/AAUvwng4QmIJpYJ3XH9qQMf_IDSWlikTZb0J7eSUqyyHfA=s88-c-k-c0x00ffffff-no-rj"),
-  UserModel(5420, "Хриплый Биток",
-      "https://yt3.ggpht.com/ytc/AAUvwniWYWcxMtvUa3lqrnbkFviPIEBwHxbSC6JRzBgPKA=s88-c-k-c0x00ffffff-no-rj")
+  UserLiteModel(
+      "c2cc697d-eb28-49e1-a9b9-3ede1c9d71b9",
+      "Мариша Учиха",
+      "https://yt3.ggpht.com/ytc/AAUvwngUIVRnwlWhOpf6FhanN343KhUYFBOTO2wcJ_U9=s88-c-k-c0x00ffffff-no-rj",
+      false),
+  UserLiteModel(
+      "45702c30-9495-49ad-a573-6308e4161bd6",
+      "Thomas takes a toll for the dark",
+      "https://yt3.ggpht.com/ytc/AAUvwnjodhCq2xpdjzjxnoqJWnbTXOvxyqGWa1-mSv3V=s88-c-k-c0x00ffffff-no-rj",
+      false),
+  UserLiteModel(
+      "1b34fdb5-ca9a-4717-bb49-83ef0269730a",
+      "Дмитрий Мешков",
+      "https://yt3.ggpht.com/ytc/AAUvwnjX-Oc3WwMO0bttGYDBySFluTKA9zGmqb-vZ6u86g=s88-c-k-c0x00ffffff-no-rj",
+      false),
+  UserLiteModel(
+      "46d3500e-c73c-4326-ad9d-57909df7296a",
+      "6CaNceR9 Official",
+      "https://yt3.ggpht.com/ytc/AAUvwng4QmIJpYJ3XH9qQMf_IDSWlikTZb0J7eSUqyyHfA=s88-c-k-c0x00ffffff-no-rj",
+      false),
+  UserLiteModel(
+      "6d9238e6-c7cf-4956-b607-48fd1fc9b893",
+      "Хриплый Биток",
+      "https://yt3.ggpht.com/ytc/AAUvwniWYWcxMtvUa3lqrnbkFviPIEBwHxbSC6JRzBgPKA=s88-c-k-c0x00ffffff-no-rj",
+      false)
 ];

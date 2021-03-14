@@ -1,26 +1,44 @@
 import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
+import 'package:applithium_core_example/battle_details/domain.dart';
 import 'package:applithium_core_example/bets_list/domain.dart';
 
-class UserDetailsModel {
-  final String displayName;
+class UserDetailsModel extends UserLiteModel {
   final int balance;
-  final String thumbnailUrl;
   final String backgroundUrl;
   final List<BetLiteModel> betHistory;
 
   UserDetailsModel(
-      this.displayName, this.balance, this.thumbnailUrl, this.backgroundUrl, this.betHistory);
+      String id,
+      String displayName,
+      String thumbnailUrl,
+      bool isBattleParticipant,
+      this.balance,
+      this.backgroundUrl,
+      this.betHistory
+      ): super(id, displayName, thumbnailUrl, isBattleParticipant);
 
   UserDetailsModel copyWithBalance(int balance) {
     return UserDetailsModel(
-        this.displayName, balance, this.thumbnailUrl, this.backgroundUrl, this.betHistory);
+        this.id,
+        this.displayName,
+        this.thumbnailUrl,
+        this.isBattleParticipant,
+        balance,
+         this.backgroundUrl,
+        this.betHistory);
   }
 
   UserDetailsModel addBet(BetLiteModel model) {
     return UserDetailsModel(
-        this.displayName, this.balance, this.thumbnailUrl, this.backgroundUrl, List.from(this.betHistory)..add(model));
+        this.id,
+        this.displayName,
+        this.thumbnailUrl,
+        this.isBattleParticipant,
+        this.balance,
+        this.backgroundUrl,
+        List.from(this.betHistory)..add(model));
   }
 }
 
@@ -56,7 +74,7 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
     }
 
     final result = await _source.reserveBalance(amount);
-    if(result > 0) {
+    if (result > 0) {
       updateLocalData((user) => user.copyWithBalance(result));
       return true;
     } else {
@@ -76,7 +94,8 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
     _logger.log("getUserBetsStream");
     return data.stream.map((data) {
       _logger.log("map called $data");
-      return data.betHistory;});
+      return data.betHistory;
+    });
   }
 }
 

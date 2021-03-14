@@ -26,7 +26,7 @@ class BetLiteModel extends Equatable {
   factory BetLiteModel.fromBattle(BattleLiteModel battle, BattleBetModel bet) {
     return BetLiteModel(-1, DateTime.now().millisecondsSinceEpoch,
         bet.cashAmount, battle.title,
-        bet.result == BattleResult.PARTICIPANT_1_WIN ? battle.participant1.name : battle.participant2.name,
+        bet.result == BattleResult.PARTICIPANT_1_WIN ? battle.participant1.displayName : battle.participant2.displayName,
         BetStatus.NOT_FINISHED);
   }
 

@@ -135,14 +135,14 @@ class _BattleDetailsWidget extends StatelessWidget {
           child: Stack(children: [
             Align(
                 alignment: Alignment.topLeft,
-                child: Text(_model.participant1.name,
+                child: Text(_model.participant1.displayName,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 30))),
             Align(
                 alignment: Alignment.bottomRight,
-                child: Text(_model.participant2.name,
+                child: Text(_model.participant2.displayName,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -160,7 +160,7 @@ class _BattleDetailsWidget extends StatelessWidget {
                       child: FlatButton(
                         color: Colors.blueAccent,
                         child: Text(
-                          "${_model.participant1.name} X1.2",
+                          "${_model.participant1.displayName} X1.2",
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () => _voteForParticipant1.call(),
@@ -194,7 +194,7 @@ class _BattleDetailsWidget extends StatelessWidget {
                       child: FlatButton(
                         color: Colors.redAccent,
                         child: Text(
-                          "${_model.participant2.name} X1.5",
+                          "${_model.participant2.displayName} X1.5",
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () => _voteForParticipant2.call(),
@@ -380,7 +380,7 @@ class MessageWidget extends StatelessWidget {
             Padding(
                 padding: EdgeInsets.only(right: 5),
                 child: CachedNetworkImage(
-                  imageUrl: _model.user.thumbnail,
+                  imageUrl: _model.user.thumbnailUrl,
                   imageBuilder: (context, imageProvider) =>
                       Container(
                         width: 40.0,
@@ -398,7 +398,7 @@ class MessageWidget extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_model.user.name),
+                    Text(_model.user.displayName),
                     headerBuilder != null ? headerBuilder.call(context) : Container(),
                     Container(
                       child: Text(

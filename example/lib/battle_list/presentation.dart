@@ -96,7 +96,7 @@ class BattleWidget extends StatelessWidget {
         )
       ]),
       title: Text(
-        "${_model.participant1.name} VS ${_model.participant2.name}",
+        "${_model.participant1.displayName} VS ${_model.participant2.displayName}",
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
       subtitle: Text("Waiting"),
@@ -115,7 +115,7 @@ class ParticipantWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-      imageUrl: _model.thumbnail,
+      imageUrl: _model.thumbnailUrl,
       imageBuilder: (context, imageProvider) => Container(
         width: 40.0,
         height: 40.0,

@@ -184,7 +184,7 @@ class BattleDetailsModel extends BattleLiteModel {
       this.streamUrl,
       this.generalBets)
       : super(id, participant1, participant2, startTime,
-            "${participant1.name} VS ${participant2.name}");
+            "${participant1.displayName} VS ${participant2.displayName}");
 
   @override
   List<Object> get props => [id];
@@ -221,7 +221,7 @@ abstract class BaseMessageItemModel extends Equatable {
   final int id;
   final String message;
   final bool isBet;
-  final UserModel user;
+  final UserLiteModel user;
   final int timeSend;
 
   BaseMessageItemModel(
@@ -232,7 +232,7 @@ abstract class BaseMessageItemModel extends Equatable {
 }
 
 class MessageItemModel extends BaseMessageItemModel {
-  MessageItemModel(int id, String message, UserModel user, int timeSend)
+  MessageItemModel(int id, String message, UserLiteModel user, int timeSend)
       : super(id, message, false, user, timeSend);
 }
 
@@ -240,7 +240,7 @@ class MessageWithBetItemModel extends BaseMessageItemModel {
   final BattleBetModel bet;
 
   MessageWithBetItemModel(
-      int id, String message, UserModel user, int timeSend, this.bet)
+      int id, String message, UserLiteModel user, int timeSend, this.bet)
       : super(id, message, true, user, timeSend);
 
   MessageWithBetItemModel withBet(BattleBetModel newBet) {
@@ -251,10 +251,15 @@ class MessageWithBetItemModel extends BaseMessageItemModel {
 
 enum BattleResult { PARTICIPANT_1_WIN, PARTICIPANT_2_WIN, DRAW }
 
-class UserModel {
-  final int id;
-  final String name;
-  final String thumbnail;
+class UserLiteModel extends Equatable {
+  final String id;
+  final String displayName;
+  final String thumbnailUrl;
+  final bool isBattleParticipant;
 
-  const UserModel(this.id, this.name, this.thumbnail);
+  const UserLiteModel(
+      this.id, this.displayName, this.thumbnailUrl, this.isBattleParticipant);
+
+  @override
+  List<Object> get props => [id];
 }

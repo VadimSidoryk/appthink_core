@@ -1,22 +1,29 @@
 import 'package:applithium_core_example/profile/domain.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseUserSource extends UserDetailsSource {
+  final String id;
   int _balance;
 
-  DatabaseReference get _userRecord => FirebaseDatabase.instance
-      .reference()
-      .child("users")
-      .child("052d28f9-658b-4c6e-bab3-788cd42279be");
+  FirebaseUserSource(this.id);
+
+  DatabaseReference get _userRecord =>
+      FirebaseDatabase.instance.reference().child("users").child(id);
 
   @override
   Future<UserDetailsModel> getUserDetails() {
     return _userRecord.once().then((data) {
       _balance = data.value["balance"];
 
-      return UserDetailsModel(data.value["displayName"], _balance,
-          data.value["thumbnail"], data.value["background"], []);
+      return UserDetailsModel(
+          id,
+          data.value["displayName"],
+          data.value["thumbnail"],
+          data.value["battleParticipant"],
+          _balance,
+          data.value["background"], []);
     });
   }
 
@@ -62,9 +69,11 @@ class MockedUserSource extends UserDetailsSource {
 
   UserDetailsModel mockUserDetails() {
     return UserDetailsModel(
+        Uuid().v4(),
         "Maksim Kaz",
-        balance,
         "https://yt3.ggpht.com/ytc/AAUvwnhj7hF3uTbk1UIOENKZ3P5XSh_gILMNaOznAbeU6w=s68-c-k-c0x00ffffff-no-rj",
+        false,
+        balance,
         "https://uaay.org/wp-content/uploads/2019/12/profile-background.png",
         []);
   }

@@ -1,10 +1,13 @@
 import 'dart:math';
 
+import 'package:uuid/uuid.dart';
+
 import 'domain.dart';
 
 
 class MockedBattlesSource extends BattlesSource {
   final _random = Random();
+  final _uuid = Uuid();
 
   @override
   Future<List<BattleLiteModel>> getTopBattles(int page, int itemsPerPage) {
@@ -23,14 +26,15 @@ class MockedBattlesSource extends BattlesSource {
         DateTime
             .now()
             .millisecondsSinceEpoch + _random.nextInt(10000),
-        "${participant1.name} VS ${participant2.name}");
+        "${participant1.displayName} VS ${participant2.displayName}");
   }
 
   ParticipantModel mockParticipant() {
     final id = _random.nextInt(participantNames.length - 1);
 
     return ParticipantModel(
-        id, participantNames[id], thumbnails[id], fullSizeImages[id],
+        _uuid.v4(),
+        participantNames[id], thumbnails[id], fullSizeImages[id],
         rankings[id]);
   }
 

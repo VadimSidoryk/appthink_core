@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static Store createStore(BuildContext context, int index) {
       if(index == 0) {
         return  Store.extend(context)..add<BattlesSource>((provider) => MockedBattlesSource())
-          ..add((provider) => TopBattlesRepository(provider.get())..preloadData());
+          ..add((provider) => BattleListRepository(provider.get())..preloadData());
       } else if(index == 1) {
         return Store.extend(context)..add((provider) => provider.get<UserDetailsRepository>().getUserBetsStream());
       } else {

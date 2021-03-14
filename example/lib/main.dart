@@ -48,7 +48,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Map<int, Store> _battlesStores = {};
   Store _globalStore = Store()
-    ..add<UserDetailsSource>((provider) => FirebaseUserSource())
+    ..add<UserDetailsSource>((provider) => FirebaseUserSource("052d28f9-658b-4c6e-bab3-788cd42279be"))
     ..add((provider) => UserDetailsRepository(provider.get()));
 
   _MyAppState(FirebaseApp firebaseApp) {
