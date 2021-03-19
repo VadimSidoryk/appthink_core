@@ -58,4 +58,23 @@ class FirebaseCreateBattleSource extends CreateBattleSource {
 
   }
 
+  static BattleDetailsModel fromJson(String id, Map<String, dynamic> data) {
+    return BattleDetailsModel(
+      id,
+      data["title"],
+      data["description"],
+      ParticipantModel(),
+      ParticipantModel(),
+      data[""],
+
+
+    );
+  }
+
+  static Map<String, dynamic> toJson(BattleDetailsModel model) {
+    return {
+      "title": model.title,
+      "status": model.status
+    };
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-abstract class AnalystImpl {
+abstract class Analyst {
 
   void trackRevenue(String productName, {double price, int quantity = 1});
 

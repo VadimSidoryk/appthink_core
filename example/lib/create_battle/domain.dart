@@ -16,9 +16,13 @@ abstract class CreateBattleEvent extends BaseContentEvent {
   CreateBattleEvent._(String analyticTag) : super(analyticTag);
 }
 
-class ScreenOpened extends CreateBattleEvent {}
+class ScreenOpened extends CreateBattleEvent {
+  ScreenOpened() : super._("screen_opened");
+}
 
-class CreateButtonClicked extends CreateBattleEvent {}
+class CreateButtonClicked extends CreateBattleEvent {
+  CreateButtonClicked() : super._("create_button_clicked");
+}
 
 class CreateBattleRepository {
   final BattleListRepository _listRepository;
@@ -27,8 +31,10 @@ class CreateBattleRepository {
   CreateBattleRepository(this._listRepository, this._source);
 
   Future<bool> createBattle(
-      String title, UserDetailsModel participant, int startDate) async {
-    return _source.createBattle(title, participant.id, startDate).then((model) {
+      String title, String desc, UserDetailsModel participant, int startDate) async {
+    return _source
+        .createBattle(title, desc, participant.id, startDate)
+        .then((model) {
       if (model != null) {
         _listRepository.notifyBattleAdded(model);
       }

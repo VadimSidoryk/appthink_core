@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-import 'analyst_impl.dart';
+import 'analyst.dart';
 import 'trackable.dart';
 
 class Analytics {
 
-  final Set<AnalystImpl> _impls;
+  final Set<Analyst> _impls;
 
   Analytics(this._impls);
 

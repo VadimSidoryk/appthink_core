@@ -161,7 +161,6 @@ class MessagesRepository extends ListRepository<BaseMessageItemModel> {
 }
 
 class BattleDetailsModel extends BattleLiteModel {
-  final String title;
   final String description;
   final BattleResult result;
   final BattleStatus status;
@@ -172,7 +171,7 @@ class BattleDetailsModel extends BattleLiteModel {
 
   BattleDetailsModel(
       id,
-      this.title,
+      title,
       this.description,
       ParticipantModel participant1,
       ParticipantModel participant2,
@@ -183,14 +182,37 @@ class BattleDetailsModel extends BattleLiteModel {
       this.watching,
       this.streamUrl,
       this.generalBets)
-      : super(id, participant1, participant2, startTime,
-            "${participant1.displayName} VS ${participant2.displayName}");
+      : super(id, participant1, participant2, startTime, title);
 
   @override
   List<Object> get props => [id];
 }
 
 enum BattleStatus { NOT_STARTED, STARTED, FINISHED }
+
+int statusToInt(BattleStatus status) {
+    switch(status) {
+      case BattleStatus.NOT_STARTED:
+        return -1;
+      case BattleStatus.STARTED:
+        return 0;
+      case BattleStatus.FINISHED:
+      default:
+        return 1;
+    }
+}
+
+BattleStatus statusFromInt(int value) {
+  switch(value) {
+    case -1:
+      return BattleStatus.NOT_STARTED;
+    case 0: 
+      return BattleStatus.STARTED;
+    case 1:
+    default:
+      return BattleStatus.FINISHED;
+  }
+}
 
 class BattleBetModel extends Equatable {
   final int id;
@@ -250,6 +272,22 @@ class MessageWithBetItemModel extends BaseMessageItemModel {
 }
 
 enum BattleResult { PARTICIPANT_1_WIN, PARTICIPANT_2_WIN, DRAW }
+
+BattleResult resultFromInt(int value) {
+
+}
+
+int resultToInt(BattleResult result) {
+  switch(result) {
+    case BattleResult.PARTICIPANT_1_WIN:
+      return 0;
+    case BattleResult.PARTICIPANT_2_WIN:
+      return 1;
+    case BattleResult.DRAW:
+    default:
+      return 2;
+  }
+}
 
 class UserLiteModel extends Equatable {
   final String id;
