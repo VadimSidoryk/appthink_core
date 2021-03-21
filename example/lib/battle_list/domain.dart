@@ -19,7 +19,7 @@ class BattleListRepository extends ListRepository<BattleLiteModel> {
   }
 }
 
-class TopBattlesBloc extends ListBloc<BattleLiteModel, TopBattlesEvent> {
+class TopBattlesBloc extends ListBloc<TopBattlesEvent, BattleLiteModel> {
   TopBattlesBloc(BattleListRepository repository) : super(repository);
 }
 
@@ -34,6 +34,16 @@ class ParticipantModel extends UserLiteModel {
   ParticipantModel(String id, String displayName, String thumbnailUrl,
       this.fullSizeImage, this.ranking)
       : super(id, displayName, thumbnailUrl, true);
+
+  factory ParticipantModel.fromJson(String id, Map<String, dynamic> data) {
+    return ParticipantModel(
+      id,
+      data["displayName"],
+      data["thumbnailUrl"],
+      data["fullSizeImage"],
+      data["ranking"]
+    );
+  }
 
   @override
   List<Object> get props => [id];

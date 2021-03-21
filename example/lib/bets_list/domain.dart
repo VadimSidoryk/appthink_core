@@ -1,7 +1,6 @@
 import 'package:applithium_core/blocs/list_bloc.dart';
 import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
-import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core_example/battle_details/domain.dart';
 import 'package:applithium_core_example/battle_list/domain.dart';
 import 'package:applithium_core_example/profile/domain.dart';
@@ -12,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 enum BetStatus { NOT_FINISHED, WIN, LOSE }
 
 class BetLiteModel extends Equatable {
-  final int id;
+  final String id;
   final int creationTime;
   final int cashAmount;
   final String battleTitle;
@@ -22,13 +21,6 @@ class BetLiteModel extends Equatable {
   BetLiteModel(this.id, this.creationTime, this.cashAmount, this.battleTitle,
       this.battleResultTitle,
       this.status);
-
-  factory BetLiteModel.fromBattle(BattleLiteModel battle, BattleBetModel bet) {
-    return BetLiteModel(-1, DateTime.now().millisecondsSinceEpoch,
-        bet.cashAmount, battle.title,
-        bet.result == BattleResult.PARTICIPANT_1_WIN ? battle.participant1.displayName : battle.participant2.displayName,
-        BetStatus.NOT_FINISHED);
-  }
 
   @override
   List<Object> get props => [id];
@@ -54,7 +46,7 @@ class BetsListBloc extends Bloc<BaseListEvent, ListState<BetLiteModel>> {
 
   BetsListBloc(this._listStream,
       {this.logger = const DefaultLogger("BetsListBloc")})
-      : super(ListState(null, true, false, false, null)) {
+      : super(ListState(null, true, false, false, null, null)) {
     _listStream.listen((items) {
       add(DisplayData(items, true));
     });

@@ -99,7 +99,7 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
   }
 }
 
-class UserDetailsBloc extends ContentBloc<UserDetailsModel, UserDetailsEvent> {
+class UserDetailsBloc extends ContentBloc<UserDetailsEvent, UserDetailsModel> {
   final UserDetailsRepository _repository;
 
   UserDetailsBloc(this._repository) : super(_repository);

@@ -40,8 +40,8 @@ class FirebaseCreateBattleSource extends CreateBattleSource {
           uuid,
           title,
           description,
-          ParticipantModel(),
-          ParticipantModel(),
+          null,
+          null,
           BattleStatus.NOT_STARTED,
           null,
           startTime,
@@ -56,19 +56,6 @@ class FirebaseCreateBattleSource extends CreateBattleSource {
   @override
   Future<List<UserDetailsModel>> getParticipants() {
 
-  }
-
-  static BattleDetailsModel fromJson(String id, Map<String, dynamic> data) {
-    return BattleDetailsModel(
-      id,
-      data["title"],
-      data["description"],
-      ParticipantModel(),
-      ParticipantModel(),
-      data[""],
-
-
-    );
   }
 
   static Map<String, dynamic> toJson(BattleDetailsModel model) {

@@ -12,6 +12,10 @@ class BetModel extends BetLiteModel {
       resultTitle,
       status,
       this.battleId) : super(id, creationTime, cashAmount, battleTitle, resultTitle, status);
+
+  factory BetModel.fromJson(String id, Map<String, dynamic> data) {
+    return null;
+  }
   
 
 }

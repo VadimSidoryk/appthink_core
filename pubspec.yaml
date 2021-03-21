@@ -17,6 +17,7 @@ dependencies:
   http: ^0.12.2
   shared_preferences: ^2.0.5
   rate_my_app: ^1.1.0
+  launch_review: ^3.0.1
 
 dev_dependencies:
   flutter_test:

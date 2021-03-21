@@ -3,6 +3,7 @@ import 'package:applithium_core/blocs/list_bloc.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core_example/battle_list/domain.dart';
+import 'package:applithium_core_example/bet_details/domain.dart';
 import 'package:applithium_core_example/bets_list/domain.dart';
 import 'package:applithium_core_example/profile/domain.dart';
 import 'package:equatable/equatable.dart';
@@ -33,7 +34,7 @@ class PersonalBetClicked extends MessagesListEvent {
 }
 
 class MessagesListBloc
-    extends ListBloc<BaseMessageItemModel, MessagesListEvent> {
+    extends ListBloc<MessagesListEvent, BaseMessageItemModel> {
   final MessagesRepository _repository;
 
   MessagesListBloc(this._repository) : super(_repository);
@@ -48,7 +49,7 @@ class MessagesListBloc
 }
 
 class BattleDetailsBloc
-    extends ContentBloc<BattleDetailsModel, BattleDetailsEvents> {
+    extends ContentBloc<BattleDetailsEvents, BattleDetailsModel> {
   final BattleDetailsRepository _detailsRepository;
 
   BattleDetailsBloc(this._detailsRepository) : super(_detailsRepository);
@@ -111,7 +112,7 @@ class BattleDetailsRepository extends ContentRepository<BattleDetailsModel> {
       final bet = await _source.makeGeneralBet(data.value, result);
       print("bet= $bet");
       if (bet != null) {
-        _userRepo.notifyBetMade(BetLiteModel.fromBattle(data.value, bet));
+        _userRepo.notifyBetMade(null);
       }
       return bet != null;
     }
@@ -152,7 +153,7 @@ class MessagesRepository extends ListRepository<BaseMessageItemModel> {
       final bet = await _source.makePersonalBet(model.bet, result);
       print("bet= $bet");
       if (bet != null) {
-        _userRepo.notifyBetMade(BetLiteModel.fromBattle(_battle, bet));
+        _userRepo.notifyBetMade(null);
         updateItem(model.withBet(bet));
       }
       return bet != null;
@@ -183,6 +184,23 @@ class BattleDetailsModel extends BattleLiteModel {
       this.streamUrl,
       this.generalBets)
       : super(id, participant1, participant2, startTime, title);
+  //
+  // factory BattleDetailsModel.fromJson(String id, Map<String, dynamic> data) {
+  //   return BattleDetailsModel(
+  //     id,
+  //     data["title"],
+  //     data["description"],
+  //     ParticipantModel.fromJson(data["participant1"]),
+  //     ParticipantModel.fromJson(data["participant2"]),
+  //     statusFromInt(data["status"]),
+  //     resultFromInt(data["result"]),
+  //     data["startTime"],
+  //     data["endTime"],
+  //     data["watching"],
+  //     data["streamUrl"],
+  //     (data["bets"] as List<dynamic>).map((item) => BetModel.fromJson(null, item))
+  //   );
+  // }
 
   @override
   List<Object> get props => [id];

@@ -1,9 +1,18 @@
-abstract class Ads {
+typedef void AdListener(AdEvent event);
+
+abstract class Ad {
   Future<bool> isLoaded();
   Future<bool> show();
   void load();
+  AdListener listener;
 }
 
-abstract class AdsListener {
-
+enum AdEvent {
+  loaded,
+  failedToLoad,
+  clicked,
+  impression,
+  opened,
+  leftApplication,
+  closed,
 }

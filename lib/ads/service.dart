@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:applithium_core/events/model.dart';
+import 'package:applithium_core/logs/logger.dart';
 import 'package:flutter/widgets.dart';
 
 import 'ads.dart';
@@ -8,7 +9,8 @@ import 'ads.dart';
 class AdsService {
   static const int RETRY_COUNT = 2;
 
-  static final AdsService instance = AdsService._();
+  final Logger _logger;
+  final Ad Function() Function(AdType type, String id) _lazyAdsFactory;
 
   final _initializedSubject = Completer();
 
@@ -16,81 +18,66 @@ class AdsService {
 
   bool _isEnabled;
 
+  AdsService(this._logger, this._lazyAdsFactory);
+
   Map<EventTriggerModel, Future<bool> Function(BuildContext)>
-  get triggerHandlers => {
-    for (final entry in _ads.entries)
-      entry.key: (context) async {
-        if (_isEnabled) {
-          return await entry.value.show();
-        } else {
-          return Future.value(false);
-        }
-      }
-  };
+      get triggerHandlers => {
+            for (final entry in _ads.entries)
+              entry.key: (context) async {
+                if (_isEnabled) {
+                  return await entry.value.show();
+                } else {
+                  return Future.value(false);
+                }
+              }
+          };
 
-  AdsService._();
+  void init(AdsConfig config, Future<bool> isEnabledFuture) async {
+    _logger.log("init");
+    final isEnabled = await isEnabledFuture;
+    if (_isEnabled == null && isEnabled) {
+      _initImpl(config);
+      _initializedSubject.complete(null);
+    }
 
-  void init(AdConfig config, Observable<bool> isEnabledObs) async {
-    isEnabledObs.listen((isEnabled) {
-      if(_isEnabled == null && isEnabled) {
-        _initImpl(config);
-        _initializedSubject.complete(null);
-      }
-
-      _isEnabled = isEnabled;
-    });
+    _isEnabled = isEnabled;
 
     return _initializedSubject.future;
   }
 
-  void _initImpl(AdConfig config) {
-    FirebaseAdMob.instance.initialize(appId: LocalConfiguration.adMobAppId);
-
-    _targetingInfo = MobileAdTargetingInfo(
-      keywords: config.keyWords,
-      childDirected: false,
-      testDevices: <String>[], // Android emulators are considered test devices
-    );
-
+  void _initImpl(AdsConfig config) {
+    _logger.log("initImpl $config");
     config.placements.forEach((placement) => _bindAd(placement.trigger,
-        _getBuilder(_targetingInfo, placement.type, placement.placementId)));
+        _lazyAdsFactory.call(placement.type, placement.placementId)));
 
     _loadAll();
   }
 
-  Ads Function() _getBuilder(
-      MobileAdTargetingInfo info, AdType type, String id) {
-    switch (type) {
-      case AdType.interstitial:
-        return () => InterstitialAd(adUnitId: id, targetingInfo: info);
-      case AdType.banner:
-        return () => BannerAd(adUnitId: id, targetingInfo: info);
-    }
-  }
-
-  void _bindAd(EventTriggerModel trigger, Ads Function() builder) {
+  void _bindAd(EventTriggerModel trigger, Ad Function() builder) {
+    _logger.log("bindAd trigger: $trigger, builder = $builder");
     final future = _AdFuture(builder);
     _ads[trigger] = future;
   }
 
   void _loadAll() {
+    _logger.log("loadAll");
     _ads.values.forEach((value) => value.load());
   }
 }
 
 class _AdFuture {
-  final Ads Function() builder;
+  final Ad Function() builder;
 
-  Ads instance;
+  Ad instance;
   int retryCount = AdsService.RETRY_COUNT;
 
   _AdFuture(this.builder);
 
   void load() async {
     instance = builder();
-    instance.listener = (MobileAdEvent event) {
+    instance.listener = (AdEvent event) {
       switch (event) {
-        case MobileAdEvent.failedToLoad:
+        case AdEvent.failedToLoad:
           if (retryCount > 0) {
             instance.load();
             retryCount--;
@@ -132,60 +119,39 @@ class _AdFuture {
   }
 }
 
-class AdConfig {
-  static const String _adKeyWords = "keywords";
-
+class AdsConfig {
+  static const String _adKeyWordsKey = "keywords";
   static const String _adPlacementsKey = "placements";
 
-  static const String _adPlacementIdKey = "placement";
-  static const String _adTypeKey = "type";
-  static const String _adTriggerKey = "trigger";
+  final List<AdPlacement> placements;
+  final List<String> keyWords;
 
-  static AdType _parseType(String stringValue) {
-    return AdType.values.firstWhere((val) => val.toString() == stringValue,
-        orElse: () => AdType.interstitial);
-  }
-
-  static Map<String, dynamic> defaultParams() => {
-    _adKeyWords: ["instagram", "beautiful apps"],
-    _adPlacementsKey: [
-      {
-        _adPlacementIdKey: LocalConfiguration.downloadedInterstitialAdId,
-        _adTypeKey: AdType.interstitial.toString(),
-        _adTriggerKey:
-        EventTriggerModel(DOWNLOAD_STARTED_TAG, Operator.mod, 2).toMap()
-      }
-    ]
-  };
-
-  List<AdPlacement> get placements {
-    final List<AdPlacement> result = [];
-    List<dynamic> placements = _params[_adPlacementsKey];
-    for (Map<String, dynamic> item in placements) {
-      Map<String, dynamic> triggerJson = item[_adTriggerKey];
-      final trigger = EventTriggerModel.fromMap(triggerJson);
-      final placement = AdPlacement(
-          item[_adPlacementIdKey], _parseType(item[_adTypeKey]), trigger);
-      result.add(placement);
-    }
-
-    return result;
-  }
-
-  List<String> get keyWords =>
-      (_params[_adKeyWords] as List<dynamic>).cast<String>();
-
-  final Map<String, dynamic> _params;
-
-  AdConfig(this._params);
+  AdsConfig(Map<String, dynamic> params)
+      : keyWords = (params[_adKeyWordsKey] as List<dynamic>).cast<String>(),
+        placements = (params[_adPlacementsKey] as List<dynamic>)
+            .map((item) => AdPlacement.fromJson(item));
 }
 
 class AdPlacement {
+  static const String _adPlacementIdKey = "id";
+  static const String _adTypeKey = "type";
+  static const String _adTriggerKey = "trigger";
+
   final String placementId;
   final AdType type;
   final EventTriggerModel trigger;
+
+  factory AdPlacement.fromJson(Map<String, dynamic> json) {
+    return AdPlacement(json[_adPlacementIdKey], _parseType(json[_adTypeKey]),
+        EventTriggerModel.fromMap(json[_adTriggerKey]));
+  }
 
   AdPlacement(this.placementId, this.type, this.trigger);
 }
 
 enum AdType { interstitial, banner }
+
+AdType _parseType(String stringValue) {
+  return AdType.values.firstWhere((val) => val.toString() == stringValue,
+      orElse: () => AdType.interstitial);
+}
