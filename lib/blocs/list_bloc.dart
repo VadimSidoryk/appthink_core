@@ -1,28 +1,38 @@
+import 'dart:async';
+
 import 'package:applithium_core/analytics/trackable.dart';
+import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core/router/route.dart';
+import 'package:applithium_core/router/router.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ListBloc<Event extends BaseListEvent, VM extends Equatable>
     extends Bloc<BaseListEvent, ListState<VM>> {
+  @protected
+  final AplRouter router;
 
   final ListRepository<VM> _repository;
-  
+
   @protected
   final Logger logger;
 
-  ListBloc(this._repository, { this.logger = const DefaultLogger("ListBloc") }) : super(  ListState(null, true, false, false, null, null)) {
-    _repository.updatesStream.listen((data) {
+  StreamSubscription _subscription;
+
+  ListBloc(this.router, this._repository,
+      {this.logger = const DefaultLogger("ListBloc")})
+      : super(ListState.initial()) {
+    _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });
   }
 
   @protected
-  Stream<ListState<VM>> mapCustomEventToState(Event event) async* { }
+  Stream<ListState<VM>> mapCustomEventToState(Event event) async* {}
 
   @override
   Stream<ListState<VM>> mapEventToState(BaseListEvent event) async* {
@@ -41,10 +51,16 @@ class ListBloc<Event extends BaseListEvent, VM extends Equatable>
       yield* mapCustomEventToState(event);
     }
   }
+
+  @override
+  @mustCallSuper
+  Future<void> close() async {
+    await super.close();
+    return _subscription.cancel();
+  }
 }
 
 abstract class BaseListEvent extends Trackable {
-
   @override
   final String analyticTag;
 
@@ -55,55 +71,128 @@ abstract class BaseListEvent extends Trackable {
 }
 
 class Shown extends BaseListEvent {
-  Shown(): super("screen_shown");
+  Shown() : super("screen_shown");
 }
 
 class UpdateRequested extends BaseListEvent {
-  UpdateRequested(): super("screen_update");
+  UpdateRequested() : super("screen_update");
 }
 
 class DisplayData<T> extends BaseListEvent {
   final T data;
   final isEndReached;
 
-  DisplayData(this.data, this.isEndReached): super("data_updated");
+  DisplayData(this.data, this.isEndReached) : super("data_updated");
 }
 
 class ScrolledToEnd extends BaseListEvent {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 
-class ListState<T>  {
+class OnDialogResult<VM, R> extends BaseListEvent {
+  final VM source;
+  final bool isPositiveResult;
+  final R result;
+
+  OnDialogResult(this.source, this.isPositiveResult, this.result): super(isPositiveResult ? "dialog_accepted" : "dialog_dismissed");
+
+  @override
+  Map<String, Object> get analyticParams => {
+    "source" : source
+  };
+}
+
+class ListState<T> {
   final List<T> value;
   final bool isLoading;
   final dynamic error;
+  final dynamic dialogModel;
   final bool isPageLoading;
   final bool isEndReached;
-  final CustomRoute route;
 
-  ListState(this.value, this.isLoading, this.error, this.isPageLoading, this.isEndReached, this.route);
+  ListState(
+      {this.value,
+      this.isLoading,
+      this.error,
+      this.dialogModel,
+      this.isPageLoading,
+      this.isEndReached});
+
+  factory ListState.initial() => ListState(
+      value: null,
+      isLoading: true,
+      error: null,
+      dialogModel: null,
+      isPageLoading: false,
+      isEndReached: false);
 
   ListState<T> withValue(List<T> value, bool endReached) {
-    return ListState(value, false, null, false, endReached, null);
+    return ListState(
+        value: value,
+        isLoading: false,
+        error: null,
+        dialogModel: dialogModel,
+        isPageLoading: false,
+        isEndReached: endReached);
   }
 
   ListState<T> withLoading(bool isLoading) {
-    return ListState(value, true, null, false, false, null);
+    return ListState(
+        value: value,
+        isLoading: true,
+        error: null,
+        dialogModel: dialogModel,
+        isPageLoading: false,
+        isEndReached: false);
   }
 
-  ListState withError(dynamic error) {
-    return ListState(value, false, error, false, false, null);
+  ListState<T> withError(dynamic error) {
+    return ListState(
+        value: value,
+        isLoading: false,
+        error: error,
+        dialogModel: dialogModel,
+        isPageLoading: false,
+        isEndReached: isEndReached);
   }
 
-  ListState withPageLoading(bool isPageLoading) {
-    return ListState(this.value, false, isPageLoading, false, null, null);
+  ListState<T> withPageLoading(bool isPageLoading) {
+    return ListState(
+        value: value,
+        isLoading: false,
+        error: error,
+        dialogModel: dialogModel,
+        isPageLoading: isPageLoading,
+        isEndReached: isEndReached);
   }
 
-  ListState endReached() {
-    return ListState(this.value, false, false, true, null, null);
+  ListState<T> endReached() {
+    return ListState(
+        value: value,
+        isLoading: false,
+        error: error,
+        dialogModel: dialogModel,
+        isPageLoading: false,
+        isEndReached: true);
   }
 
-  ListState withRoute(CustomRoute route) {
-    return ListState(this.value, false, false, true, null, route);
+  ListState<T> showDialog(dynamic dialogModel) {
+    return ListState(
+        value: value,
+        isLoading: isLoading,
+        error: error,
+        dialogModel: dialogModel,
+        isPageLoading: isPageLoading,
+        isEndReached: isEndReached);
+  }
+
+  ListState<T> hideDialog() {
+    return ListState(
+        value: value,
+        isLoading: isLoading,
+        error: error,
+        dialogModel: null,
+        isPageLoading: isPageLoading,
+        isEndReached: isEndReached);
   }
 }

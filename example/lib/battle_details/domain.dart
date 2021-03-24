@@ -35,15 +35,15 @@ class PersonalBetClicked extends MessagesListEvent {
 
 class MessagesListBloc
     extends ListBloc<MessagesListEvent, BaseMessageItemModel> {
-  final MessagesRepository _repository;
+  final MessagesRepository repository;
 
-  MessagesListBloc(this._repository) : super(_repository);
+  MessagesListBloc(this.repository) : super(repository);
 
   @override
   Stream<ListState<MessageItemModel>> mapCustomEventToState(
       MessagesListEvent event) async* {
     if (event is PersonalBetClicked) {
-      _repository.makePersonalBet(event.messageModel, event.result);
+      repository.makePersonalBet(event.messageModel, event.result);
     }
   }
 }

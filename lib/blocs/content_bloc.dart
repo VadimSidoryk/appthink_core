@@ -5,10 +5,14 @@ import 'package:applithium_core/logs/default_logger.dart';
 import 'package:applithium_core/logs/logger.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/router/route.dart';
+import 'package:applithium_core/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEvent, ContentState<VM>> {
+
+  @protected
+  final AplRouter router;
 
   final ContentRepository<VM> _repository;
   
@@ -17,7 +21,7 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
 
   StreamSubscription _subscription;
 
-  ContentBloc(this._repository, { this.logger = const DefaultLogger("ContentBloc") }) : super(ContentState(null, true, null, null)) {
+  ContentBloc(this.router, this._repository, { this.logger = const DefaultLogger("ContentBloc") }) : super(ContentState.initial()) {
    _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
@@ -37,9 +41,16 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
       yield state.withLoading(false);
     } else if(event is DisplayData<VM>) {
       yield state.withValue(event.data);
-    } else {
+    }  else {
       yield* mapCustomEventToState(event);
     }
+  }
+
+  @override
+  @mustCallSuper
+  Future<void> close() async {
+    await super.close();
+    return _subscription.cancel();
   }
 }
 
@@ -67,28 +78,51 @@ class DisplayData<T> extends BaseContentEvent {
   DisplayData(this.data): super("data_updated");
 }
 
+class OnDialogResult<VM, R> extends BaseContentEvent {
+  final VM source;
+  final bool isPositiveResult;
+  final R result;
+
+  OnDialogResult(this.source, this.isPositiveResult, this.result): super(isPositiveResult ? "dialog_accepted" : "dialog_dismissed");
+
+  @override
+  Map<String, Object> get analyticParams => {
+    "source" : source
+  };
+}
+
  class ContentState<T> {
   final T value;
   final bool isLoading;
   final dynamic error;
-  final CustomRoute route;
+  final dynamic dialogModel;
 
-  ContentState(this.value, this.isLoading, this.error, this.route);
+  ContentState(this.value, this.isLoading, this.error, this.dialogModel);
+
+  factory ContentState.initial() => ContentState(null, true, null, null);
 
   ContentState<T> withValue(T value) {
     return ContentState(value, false, null, null);
   }
 
-  ContentState<T> withRoute(CustomRoute route) {
-    return ContentState(value, false, null, route);
+  ContentState<T> withRoute(AplRoute route) {
+    return ContentState(value, false, null, null);
   }
 
   ContentState<T> withLoading(bool isLoading) {
     return ContentState(value, isLoading, null, null);
   }
 
-  ContentState withError(dynamic error) {
+  ContentState<T> withError(dynamic error) {
     return ContentState(value, false, error, null);
+  }
+
+  ContentState<T> showDialog(dynamic dialogModel) {
+    return ContentState(value, false, null, dialogModel);
+  }
+
+  ContentState<T> hideDialog() {
+    return ContentState(value, false, null, null);
   }
 }
 

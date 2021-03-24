@@ -100,15 +100,15 @@ class UserDetailsRepository extends ContentRepository<UserDetailsModel> {
 }
 
 class UserDetailsBloc extends ContentBloc<UserDetailsEvent, UserDetailsModel> {
-  final UserDetailsRepository _repository;
+  final UserDetailsRepository repository;
 
-  UserDetailsBloc(this._repository) : super(_repository);
+  UserDetailsBloc(this.repository) : super(repository);
 
   @override
   Stream<ContentState<UserDetailsModel>> mapCustomEventToState(
       UserDetailsEvent event) async* {
     if (event is IncreaseBalanceClicked) {
-      _repository.increaseBalance(100);
+      repository.increaseBalance(100);
     }
   }
 }

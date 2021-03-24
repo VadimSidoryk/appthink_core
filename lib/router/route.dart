@@ -1,5 +1,10 @@
-class CustomRoute {
-  final String key;
+abstract class AplRoute {
+  final String name;
+  final Object arguments;
 
-  CustomRoute(this.key);
+  AplRoute(this.name, {this.arguments});
+}
+
+class Back extends AplRoute {
+  Back() : super("");
 }

@@ -35,7 +35,10 @@ abstract class ListRepository<T extends Equatable>
   @protected
   final Logger logger;
 
-  Future<bool> isOutdated;
+  bool _isOutdated = true;
+  StreamSubscription _subscription;
+
+  final int timeToLiveMillis;
 
   @override
   Stream<ListData<T>> get updatesStream => CombineLatestStream.combine2(
@@ -43,13 +46,13 @@ abstract class ListRepository<T extends Equatable>
       _endReachedSubj.stream,
       (list, isEndReached) => ListData(list, isEndReached));
 
-  ListRepository(this.defaultPageLength, {this.logger = const DefaultLogger("ListRepository")});
+  ListRepository(this.defaultPageLength, {this.logger = const DefaultLogger("ListRepository"), this.timeToLiveMillis = 60 * 1000});
 
   Future<List<T>> loadItems(int startIndex, T lastValue, int itemsToLoad);
 
   @override
-  Future<bool> updateData(bool isForced) async {
-    final needToUpdate = await checkNeedToUpdate(isForced);
+  Future<bool> updateData(bool isCalledByUser) async {
+    final needToUpdate = await checkNeedToUpdate(isCalledByUser);
     if (_loadMoreItemsOperation != null) {
       _loadMoreItemsOperation.cancel();
       _loadMoreItemsOperation = null;
@@ -66,12 +69,14 @@ abstract class ListRepository<T extends Equatable>
           onCancel: () => {logger.log("cancel update operation")});
 
       return _updateDataOperation.valueOrCancellation(false).then((value) {
-        _state = State.DATA_UPDATED;
+        markAsUpdated();
         _endReachedSubj.sink.add(value.length < defaultPageLength);
         onNewList(value);
         return true;
       }, onError: (obj, exception) {
         logger.error(Exception(exception));
+        //error flow we don't need to reset isOutdated field
+        _state = State.DATA_UPDATED;
         return false;
       });
     } else {
@@ -84,7 +89,7 @@ abstract class ListRepository<T extends Equatable>
     if (await data.isEmpty) {
       return false;
     } else {
-      final List<T> newValue = List.from(data.value);
+      final List<T> newValue = List.of(data.value);
       final int itemIndex = newValue.indexOf(item);
       if (itemIndex != -1) {
         newValue[itemIndex] = item;
@@ -99,7 +104,7 @@ abstract class ListRepository<T extends Equatable>
     if (await data.isEmpty) {
       return false;
     } else {
-      final newValue = List.from(data.value);
+      final newValue = List.of(data.value);
       final isRemoved = newValue.remove(itemToRemove);
       onNewList(newValue);
       return isRemoved;
@@ -114,6 +119,35 @@ abstract class ListRepository<T extends Equatable>
       onNewList(data.value + items);
       return true;
     }
+  }
+
+  @protected
+  void markAsOutdated() {
+    if(_subscription != null) {
+      _subscription.cancel();
+      _subscription = null;
+    }
+
+    _isOutdated = true;
+  }
+
+  @protected
+  void markAsUpdated() {
+    _state = State.DATA_UPDATED;
+
+    if(_subscription != null) {
+      _subscription.cancel();
+      _subscription = null;
+    }
+
+    _isOutdated = false;
+
+    _subscription = Future.delayed(Duration(milliseconds: timeToLiveMillis), () { return true; })
+        .asStream()
+        .listen((value) {
+      _isOutdated = value;
+      _subscription = null;
+    });
   }
 
   @override
@@ -154,7 +188,7 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return _state != State.DATA_UPDATING && (isForced || await isOutdated);
+    return _state != State.DATA_UPDATING && (isForced || _isOutdated);
   }
 
   @protected
