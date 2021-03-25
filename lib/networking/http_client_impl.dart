@@ -1,7 +1,5 @@
 import 'dart:convert';
-
-import 'package:applithium_core/logs/default_logger.dart';
-import 'package:applithium_core/logs/logger.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
@@ -11,10 +9,7 @@ import 'http_errors.dart';
 class HttpClientFirstImpl extends HttpClient {
   final String _host;
 
-  @protected
-  final Logger logger;
-
-  HttpClientFirstImpl(this._host, {this.logger = const DefaultLogger("HttpClient")});
+  HttpClientFirstImpl(this._host);
 
   @override
   Future<dynamic> getImpl(String path,
@@ -43,19 +38,19 @@ class HttpClientFirstImpl extends HttpClient {
       }
     }
 
-    logger.log("request get query = " + querySb.toString());
-    logger.log("request get headers = " + headers.toString());
+    log("request get query = " + querySb.toString());
+    log("request get headers = " + headers.toString());
 
     try {
       response = await get(querySb.toString(), headers: headers);
     } catch (e) {
-      logger.error(e);
+      logError(e);
       throw NotConnectedError();
     }
 
-    logger.log("response get body = " + response.body.toString());
-    logger.log("response get code = " + response.statusCode.toString());
-    logger.log("response get headers = " + response.headers.toString());
+    log("response get body = " + response.body.toString());
+    log("response get code = " + response.statusCode.toString());
+    log("response get headers = " + response.headers.toString());
 
     if (response.statusCode != 200) {
       throw RemoteServerError();
@@ -77,21 +72,21 @@ class HttpClientFirstImpl extends HttpClient {
     }
     querySb.write(path);
 
-    logger.log("request post query = " + querySb.toString());
-    logger.log("request post headers = " + headers.toString());
-    logger.log("request post body = " + body.toString());
+    log("request post query = " + querySb.toString());
+    log("request post headers = " + headers.toString());
+    log("request post body = " + body.toString());
 
     try {
       response = await post(querySb.toString(),
           headers: headers, body: json.encode(body));
     } catch (e) {
-      logger.log("error post = " + e.toString());
+      log("error post = " + e.toString());
       throw NotConnectedError();
     }
 
-    logger.log("response post body = " + response.body.toString());
-    logger.log("response post code = " + response.statusCode.toString());
-    logger.log("response post headers = " + response.headers.toString());
+    log("response post body = " + response.body.toString());
+    log("response post code = " + response.statusCode.toString());
+    log("response post headers = " + response.headers.toString());
 
     if (response.statusCode != 200) {
       throw RemoteServerError();

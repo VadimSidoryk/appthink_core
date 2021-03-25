@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:applithium_core/analytics/trackable.dart';
-import 'package:applithium_core/logs/default_logger.dart';
-import 'package:applithium_core/logs/logger.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/router/route.dart';
 import 'package:applithium_core/router/router.dart';
@@ -15,13 +14,10 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
   final AplRouter router;
 
   final ContentRepository<VM> _repository;
-  
-  @protected
-  final Logger logger;
 
   StreamSubscription _subscription;
 
-  ContentBloc(this.router, this._repository, { this.logger = const DefaultLogger("ContentBloc") }) : super(ContentState.initial()) {
+  ContentBloc(this.router, this._repository) : super(ContentState.initial()) {
    _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
@@ -37,7 +33,7 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
     } else if(event is UpdateRequested) {
       yield state.withLoading(true);
       final isUpdated = await _repository.updateData(true);
-      logger.log("isUpdated: $isUpdated");
+      log("isUpdated: $isUpdated");
       yield state.withLoading(false);
     } else if(event is DisplayData<VM>) {
       yield state.withValue(event.data);

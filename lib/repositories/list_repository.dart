@@ -1,5 +1,4 @@
-import 'package:applithium_core/logs/default_logger.dart';
-import 'package:applithium_core/logs/logger.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:async/async.dart';
 import 'package:equatable/equatable.dart';
@@ -32,9 +31,6 @@ abstract class ListRepository<T extends Equatable>
 
   final int defaultPageLength;
 
-  @protected
-  final Logger logger;
-
   bool _isOutdated = true;
   StreamSubscription _subscription;
 
@@ -46,7 +42,7 @@ abstract class ListRepository<T extends Equatable>
       _endReachedSubj.stream,
       (list, isEndReached) => ListData(list, isEndReached));
 
-  ListRepository(this.defaultPageLength, {this.logger = const DefaultLogger("ListRepository"), this.timeToLiveMillis = 60 * 1000});
+  ListRepository(this.defaultPageLength, {this.timeToLiveMillis = 60 * 1000});
 
   Future<List<T>> loadItems(int startIndex, T lastValue, int itemsToLoad);
 
@@ -66,7 +62,7 @@ abstract class ListRepository<T extends Equatable>
       }
       _updateDataOperation = CancelableOperation.fromFuture(
           loadItems(0, null, defaultPageLength),
-          onCancel: () => {logger.log("cancel update operation")});
+          onCancel: () => {log("cancel update operation")});
 
       return _updateDataOperation.valueOrCancellation(false).then((value) {
         markAsUpdated();
@@ -74,7 +70,7 @@ abstract class ListRepository<T extends Equatable>
         onNewList(value);
         return true;
       }, onError: (obj, exception) {
-        logger.error(Exception(exception));
+        logError(Exception(exception));
         //error flow we don't need to reset isOutdated field
         _state = State.DATA_UPDATED;
         return false;
@@ -166,14 +162,14 @@ abstract class ListRepository<T extends Equatable>
     final lastElement = (await data.first).last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
         loadItems(_currentValueLength, lastElement, defaultPageLength),
-        onCancel: () => {logger.log("cancel loadMore operation")});
+        onCancel: () => {log("cancel loadMore operation")});
 
     return _loadMoreItemsOperation.valueOrCancellation(false).then((value) {
       _state = State.MORE_ITEMS_LOADED;
       _endReachedSubj.sink.add(value.length < defaultPageLength);
       return addItems(value);
     }, onError: (obj, exception) {
-      logger.error(exception);
+      logError(exception);
       return false;
     });
   }

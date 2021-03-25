@@ -1,16 +1,12 @@
 import 'dart:async';
 
-import 'package:applithium_core/logs/default_logger.dart';
-import 'package:applithium_core/logs/logger.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class ContentRepository<T> extends BaseRepository<T> {
   State _state = State.INITIAL;
-
-  @protected
-  final Logger logger;
 
   bool _isOutdated = true;
   StreamSubscription _subscription;
@@ -23,7 +19,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   @override
   Stream<T> get updatesStream => data.stream;
 
-  ContentRepository( {this.logger = const DefaultLogger("ContentRepository"), this.timeToLiveMillis = 60 * 1000});
+  ContentRepository({this.timeToLiveMillis = 60 * 1000});
 
   Future<T> loadData();
 
@@ -37,7 +33,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
         markAsUpdated();
         return true;
       }, onError: (ebj, exception) {
-        logger.error(exception);
+        logError(exception);
         //error flow we don't need to reset isOutdated field
         _state = State.UPDATED;
         return false;

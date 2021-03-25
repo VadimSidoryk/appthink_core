@@ -2,18 +2,17 @@ import 'dart:io';
 
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/model.dart';
-import 'package:applithium_core/logs/logger.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
 class PromoService {
 
-  final Logger _logger;
   final Configuration _config;
   final Future<RateMyApp> _rateMyApp;
 
-  PromoService(this._logger, this._config, this._rateMyApp);
+  PromoService(this._config, this._rateMyApp);
 
   Map<EventTriggerModel,
       Future<bool> Function(BuildContext)> get triggerHandlers =>
@@ -32,7 +31,7 @@ class PromoService {
   }
 
   Future<bool> _showRateUs(BuildContext context, RateUsDetails details) async {
-    _logger.log("call _showRateUs");
+    log("call _showRateUs");
 
     final service = await _rateMyApp;
     await service.showStarRateDialog(
@@ -56,7 +55,7 @@ class PromoService {
     return [FlatButton(
       child: Text(details.buttonTitle),
       onPressed: () {
-        _logger.log('Thanks for the ' +
+        log('Thanks for the ' +
             (stars == null ? '0' : stars.round().toString()) +
             ' star(s) !');
         if (stars == 5) {

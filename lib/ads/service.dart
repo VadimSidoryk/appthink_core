@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:applithium_core/events/model.dart';
-import 'package:applithium_core/logs/logger.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 import 'ads.dart';
@@ -9,7 +9,6 @@ import 'ads.dart';
 class AdsService {
   static const int RETRY_COUNT = 2;
 
-  final Logger _logger;
   final Ad Function() Function(AdType type, String id) _lazyAdsFactory;
 
   final _initializedSubject = Completer();
@@ -18,7 +17,7 @@ class AdsService {
 
   bool _isEnabled;
 
-  AdsService(this._logger, this._lazyAdsFactory);
+  AdsService(this._lazyAdsFactory);
 
   Map<EventTriggerModel, Future<bool> Function(BuildContext)>
       get triggerHandlers => {
@@ -33,7 +32,7 @@ class AdsService {
           };
 
   void init(AdsConfig config, Future<bool> isEnabledFuture) async {
-    _logger.log("init");
+    log("init");
     final isEnabled = await isEnabledFuture;
     if (_isEnabled == null && isEnabled) {
       _initImpl(config);
@@ -46,7 +45,7 @@ class AdsService {
   }
 
   void _initImpl(AdsConfig config) {
-    _logger.log("initImpl $config");
+    log("initImpl $config");
     config.placements.forEach((placement) => _bindAd(placement.trigger,
         _lazyAdsFactory.call(placement.type, placement.placementId)));
 
@@ -54,13 +53,13 @@ class AdsService {
   }
 
   void _bindAd(EventTriggerModel trigger, Ad Function() builder) {
-    _logger.log("bindAd trigger: $trigger, builder = $builder");
+    log("bindAd trigger: $trigger, builder = $builder");
     final future = _AdFuture(builder);
     _ads[trigger] = future;
   }
 
   void _loadAll() {
-    _logger.log("loadAll");
+    log("loadAll");
     _ads.values.forEach((value) => value.load());
   }
 }
