@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -10,6 +11,8 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 
   bool _isOutdated = true;
   StreamSubscription _subscription;
+
+  CancelableOperation _updateOperation;
 
   @protected
   final data = BehaviorSubject<T>();
@@ -28,7 +31,16 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
     final needToUpdate = await checkNeedToUpdate(isCalledByUser);
     if (needToUpdate) {
       _state = State.UPDATING;
-      return loadData().then((value) {
+      if(_updateOperation != null) {
+        _updateOperation.cancel();
+        _updateOperation = null;
+      }
+
+      _updateOperation = CancelableOperation.fromFuture(
+        loadData(),
+        onCancel: () => { log("cancel update operation")});
+
+      return _updateOperation.valueOrCancellation(false).then((value) {
         onNewData(value);
         markAsUpdated();
         return true;

@@ -26,7 +26,7 @@ class BetLiteModel extends Equatable {
   List<Object> get props => [id];
 }
 
-class BaseBetsListEvent extends BaseListEvent {
+class BaseBetsListEvent extends BaseListEvents {
   BaseBetsListEvent._(String analyticTag) : super(analyticTag);
 
   factory BaseBetsListEvent.betClicked(BattleBetModel model) =>
@@ -38,7 +38,7 @@ class BetItemClicked extends BaseBetsListEvent {
 }
 
 
-class BetsListBloc extends Bloc<BaseListEvent, ListState<BetLiteModel>> {
+class BetsListBloc extends Bloc<BaseListEvents, ListState<BetLiteModel>> {
   final Stream<List<BetLiteModel>> _listStream;
 
   @protected
@@ -53,7 +53,7 @@ class BetsListBloc extends Bloc<BaseListEvent, ListState<BetLiteModel>> {
   }
 
   @override
-  Stream<ListState<BetLiteModel>> mapEventToState(BaseListEvent event) async* {
+  Stream<ListState<BetLiteModel>> mapEventToState(BaseListEvents event) async* {
     if (event is DisplayData<List<BetLiteModel>>) {
       yield state.withValue(event.data, event.isEndReached);
     }

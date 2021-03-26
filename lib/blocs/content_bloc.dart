@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:applithium_core/analytics/trackable.dart';
+import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/router/route.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEvent, ContentState<VM>> {
+class ContentBloc<Event extends BaseContentEvents, VM> extends BaseBloc<BaseContentEvents, ContentState<VM>> {
 
   @protected
   final AplRouter router;
@@ -23,11 +23,8 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
     });
   }
 
-  @protected
-  Stream<ContentState<VM>> mapCustomEventToState(Event event) async* { }
-
   @override
-  Stream<ContentState<VM>> mapEventToState(BaseContentEvent event) async* {
+  Stream<ContentState<VM>> mapEventToStateImpl(BaseContentEvents event) async* {
     if(event is Shown) {
       _repository.updateData(false);
     } else if(event is UpdateRequested) {
@@ -42,6 +39,8 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
     }
   }
 
+  Stream<ContentState<VM>> mapCustomEventToState(Event event) {}
+
   @override
   @mustCallSuper
   Future<void> close() async {
@@ -50,36 +49,34 @@ class ContentBloc<Event extends BaseContentEvent, VM> extends Bloc<BaseContentEv
   }
 }
 
-abstract class BaseContentEvent extends Trackable {
+abstract class BaseContentEvents extends BaseEvents  {
   @override
   final String analyticTag;
 
   @override
   Map<String, Object> get analyticParams => {};
 
-  BaseContentEvent(this.analyticTag);
+  BaseContentEvents(this.analyticTag): super(analyticTag);
 }
 
-class Shown extends BaseContentEvent {
-  Shown(): super("screen_shown");
-}
 
-class UpdateRequested extends BaseContentEvent {
+
+class UpdateRequested extends BaseContentEvents {
   UpdateRequested(): super("screen_update");
 }
 
-class DisplayData<T> extends BaseContentEvent {
+class DisplayData<T> extends BaseContentEvents {
   final T data;
 
   DisplayData(this.data): super("data_updated");
 }
 
-class OnDialogResult<VM, R> extends BaseContentEvent {
+class DialogClosed<VM, R> extends BaseContentEvents {
   final VM source;
   final bool isPositiveResult;
   final R result;
 
-  OnDialogResult(this.source, this.isPositiveResult, this.result): super(isPositiveResult ? "dialog_accepted" : "dialog_dismissed");
+  DialogClosed(this.source, this.isPositiveResult, this.result): super(isPositiveResult ? "dialog_accepted" : "dialog_dismissed");
 
   @override
   Map<String, Object> get analyticParams => {
@@ -87,13 +84,12 @@ class OnDialogResult<VM, R> extends BaseContentEvent {
   };
 }
 
- class ContentState<T> {
+ class ContentState<T> extends BaseState {
   final T value;
   final bool isLoading;
-  final dynamic error;
-  final dynamic dialogModel;
 
-  ContentState(this.value, this.isLoading, this.error, this.dialogModel);
+
+  ContentState(this.value, this.isLoading, error, dialogModel): super(error, dialogModel);
 
   factory ContentState.initial() => ContentState(null, true, null, null);
 

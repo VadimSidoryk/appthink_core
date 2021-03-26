@@ -1,17 +1,15 @@
 import 'dart:async';
 
-import 'package:applithium_core/analytics/trackable.dart';
-import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
-import 'package:applithium_core/router/route.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ListBloc<Event extends BaseListEvent, VM extends Equatable>
-    extends Bloc<BaseListEvent, ListState<VM>> {
+import 'base_bloc.dart';
+
+class ListBloc<Event extends BaseListEvents, VM extends Equatable>
+    extends BaseBloc<BaseListEvents, ListState<VM>> {
   @protected
   final AplRouter router;
 
@@ -30,7 +28,7 @@ class ListBloc<Event extends BaseListEvent, VM extends Equatable>
   Stream<ListState<VM>> mapCustomEventToState(Event event) async* {}
 
   @override
-  Stream<ListState<VM>> mapEventToState(BaseListEvent event) async* {
+  Stream<ListState<VM>> mapEventToStateImpl(BaseListEvents event) async* {
     if (event is Shown) {
       _repository.updateData(false);
     } else if (event is UpdateRequested) {
@@ -55,63 +53,44 @@ class ListBloc<Event extends BaseListEvent, VM extends Equatable>
   }
 }
 
-abstract class BaseListEvent extends Trackable {
+abstract class BaseListEvents extends BaseEvents {
   @override
   final String analyticTag;
 
   @override
   Map<String, Object> get analyticParams => {};
 
-  BaseListEvent(this.analyticTag);
+  BaseListEvents(this.analyticTag): super(analyticTag);
 }
 
-class Shown extends BaseListEvent {
-  Shown() : super("screen_shown");
-}
-
-class UpdateRequested extends BaseListEvent {
+class UpdateRequested extends BaseListEvents {
   UpdateRequested() : super("screen_update");
 }
 
-class DisplayData<T> extends BaseListEvent {
+class DisplayData<T> extends BaseListEvents {
   final T data;
   final isEndReached;
 
   DisplayData(this.data, this.isEndReached) : super("data_updated");
 }
 
-class ScrolledToEnd extends BaseListEvent {
+class ScrolledToEnd extends BaseListEvents {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 
-class OnDialogResult<VM, R> extends BaseListEvent {
-  final VM source;
-  final bool isPositiveResult;
-  final R result;
-
-  OnDialogResult(this.source, this.isPositiveResult, this.result): super(isPositiveResult ? "dialog_accepted" : "dialog_dismissed");
-
-  @override
-  Map<String, Object> get analyticParams => {
-    "source" : source
-  };
-}
-
-class ListState<T> {
+class ListState<T> extends BaseState {
   final List<T> value;
   final bool isLoading;
-  final dynamic error;
-  final dynamic dialogModel;
   final bool isPageLoading;
   final bool isEndReached;
 
   ListState(
       {this.value,
       this.isLoading,
-      this.error,
-      this.dialogModel,
+      error,
+      dialogModel,
       this.isPageLoading,
-      this.isEndReached});
+      this.isEndReached}): super(error, dialogModel);
 
   factory ListState.initial() => ListState(
       value: null,

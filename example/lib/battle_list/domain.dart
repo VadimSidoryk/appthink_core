@@ -23,7 +23,7 @@ class TopBattlesBloc extends ListBloc<TopBattlesEvent, BattleLiteModel> {
   TopBattlesBloc(BattleListRepository repository) : super(repository);
 }
 
-class TopBattlesEvent extends BaseListEvent {
+class TopBattlesEvent extends BaseListEvents {
   TopBattlesEvent(String analyticTag) : super(analyticTag);
 }
 

@@ -113,7 +113,7 @@ class UserDetailsBloc extends ContentBloc<UserDetailsEvent, UserDetailsModel> {
   }
 }
 
-class UserDetailsEvent extends BaseContentEvent {
+class UserDetailsEvent extends BaseContentEvents {
   UserDetailsEvent._(String analyticTag) : super(analyticTag);
 
   factory UserDetailsEvent.increaseBalance() => IncreaseBalanceClicked();

@@ -8,3 +8,10 @@ abstract class AplRoute {
 class Back extends AplRoute {
   Back() : super("");
 }
+
+class DialogResult<O> extends AplRoute {
+  final bool result;
+  final O output;
+
+  DialogResult(this.result, this.output) : super('');
+}

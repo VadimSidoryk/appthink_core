@@ -12,7 +12,7 @@ abstract class CreateBattleSource {
       String title, String description, String participant2, int startDate);
 }
 
-abstract class CreateBattleEvent extends BaseContentEvent {
+abstract class CreateBattleEvent extends BaseContentEvents {
   CreateBattleEvent._(String analyticTag) : super(analyticTag);
 }
 

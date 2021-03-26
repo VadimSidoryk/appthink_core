@@ -21,7 +21,7 @@ abstract class BattleDetailsSource {
       BattleBetModel model, BattleResult result);
 }
 
-abstract class MessagesListEvent extends BaseListEvent {
+abstract class MessagesListEvent extends BaseListEvents {
   MessagesListEvent._(String analyticTag) : super(analyticTag);
 }
 
@@ -67,7 +67,7 @@ class BattleDetailsBloc
   }
 }
 
-abstract class BattleDetailsEvents extends BaseContentEvent {
+abstract class BattleDetailsEvents extends BaseContentEvents {
   BattleDetailsEvents._(String analyticTag) : super(analyticTag);
 
   factory BattleDetailsEvents.participant1Clicked() => Participant1Clicked();
