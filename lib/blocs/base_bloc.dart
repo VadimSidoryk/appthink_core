@@ -1,5 +1,8 @@
 import 'package:applithium_core/analytics/trackable.dart';
 import 'package:applithium_core/blocs/supervisor.dart';
+import 'package:applithium_core/router/route.dart';
+import 'package:applithium_core/router/router.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class BaseEvents extends Trackable {
@@ -48,27 +51,31 @@ abstract class BaseState {
 
 abstract class BaseBloc<Event extends BaseEvents, State extends BaseState>
     extends Bloc<Event, State> {
-  BaseBloc(State initialState) : super(initialState);
+
+  @protected
+  final AplRouter router;
+
+  BaseBloc(this.router, State initialState) : super(initialState);
 
   @override
   Stream<State> mapEventToState(Event event) async* {
     try {
-      if (BlocSupervisor.delegate != null) {
-        BlocSupervisor.delegate.onNewEvent(this, event);
+      if (BlocSupervisor.listener != null) {
+        BlocSupervisor.listener.onNewEvent(this, event);
       }
       mapEventToStateImpl(event).map((data) {
-        if (BlocSupervisor.delegate != null) {
-          BlocSupervisor.delegate.onNewState(this, data);
+        if (BlocSupervisor.listener != null) {
+          BlocSupervisor.listener.onNewState(this, data);
         }
         return data;
       }).handleError((e) {
-        if (BlocSupervisor.delegate != null) {
-          BlocSupervisor.delegate.onError(this, e);
+        if (BlocSupervisor.listener != null) {
+          BlocSupervisor.listener.onError(this, e);
         }
       });
     } catch (e) {
-      if (BlocSupervisor.delegate != null) {
-        BlocSupervisor.delegate.onError(this, e);
+      if (BlocSupervisor.listener != null) {
+        BlocSupervisor.listener.onError(this, e);
       }
       yield state.withError(e);
     }

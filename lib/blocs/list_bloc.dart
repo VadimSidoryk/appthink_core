@@ -10,15 +10,13 @@ import 'base_bloc.dart';
 
 class ListBloc<Event extends BaseListEvents, VM extends Equatable>
     extends BaseBloc<BaseListEvents, ListState<VM>> {
-  @protected
-  final AplRouter router;
 
   final ListRepository<VM> _repository;
 
   StreamSubscription _subscription;
 
-  ListBloc(this.router, this._repository)
-      : super(ListState.initial()) {
+  ListBloc(router, this._repository)
+      : super(router, ListState.initial()) {
     _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });

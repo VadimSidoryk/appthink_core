@@ -10,14 +10,11 @@ import 'package:flutter/material.dart';
 
 class ContentBloc<Event extends BaseContentEvents, VM> extends BaseBloc<BaseContentEvents, ContentState<VM>> {
 
-  @protected
-  final AplRouter router;
-
   final ContentRepository<VM> _repository;
 
   StreamSubscription _subscription;
 
-  ContentBloc(this.router, this._repository) : super(ContentState.initial()) {
+  ContentBloc(router, this._repository) : super(router, ContentState.initial()) {
    _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
