@@ -63,7 +63,7 @@ abstract class BaseBloc<Event extends BaseEvents, State extends BaseState>
       if (BlocSupervisor.listener != null) {
         BlocSupervisor.listener.onNewEvent(this, event);
       }
-      mapEventToStateImpl(event).map((data) {
+      yield* mapEventToStateImpl(event).map((data) {
         if (BlocSupervisor.listener != null) {
           BlocSupervisor.listener.onNewState(this, data);
         }
