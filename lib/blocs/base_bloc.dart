@@ -1,6 +1,5 @@
 import 'package:applithium_core/analytics/trackable.dart';
 import 'package:applithium_core/blocs/supervisor.dart';
-import 'package:applithium_core/router/route.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,20 +48,20 @@ abstract class BaseState {
   BaseState hideDialog();
 }
 
-abstract class BaseBloc<Event extends BaseEvents, State extends BaseState>
-    extends Bloc<Event, State> {
-
+abstract class BaseBloc<State extends BaseState>
+    extends Bloc<BaseEvents, State> {
   @protected
   final AplRouter router;
 
   BaseBloc(this.router, State initialState) : super(initialState);
 
   @override
-  Stream<State> mapEventToState(Event event) async* {
+  Stream<State> mapEventToState(BaseEvents event) async* {
     try {
       if (BlocSupervisor.listener != null) {
         BlocSupervisor.listener.onNewEvent(this, event);
       }
+
       yield* mapEventToStateImpl(event).map((data) {
         if (BlocSupervisor.listener != null) {
           BlocSupervisor.listener.onNewState(this, data);
@@ -81,5 +80,5 @@ abstract class BaseBloc<Event extends BaseEvents, State extends BaseState>
     }
   }
 
-  Stream<State> mapEventToStateImpl(Event event);
+  Stream<State> mapEventToStateImpl(BaseEvents event);
 }

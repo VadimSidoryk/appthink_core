@@ -1,14 +1,12 @@
 import 'dart:async';
 
-import 'package:applithium_core/analytics/trackable.dart';
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:applithium_core/router/route.dart';
-import 'package:applithium_core/router/router.dart';
 import 'package:flutter/material.dart';
 
-class ContentBloc<Event extends BaseContentEvents, VM> extends BaseBloc<BaseContentEvents, ContentState<VM>> {
+class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
 
   final ContentRepository<VM> _repository;
 
@@ -21,7 +19,7 @@ class ContentBloc<Event extends BaseContentEvents, VM> extends BaseBloc<BaseCont
   }
 
   @override
-  Stream<ContentState<VM>> mapEventToStateImpl(BaseContentEvents event) async* {
+  Stream<ContentState<VM>> mapEventToStateImpl(BaseEvents event) async* {
     if(event is Shown) {
       _repository.updateData(false);
     } else if(event is UpdateRequested) {
@@ -31,12 +29,8 @@ class ContentBloc<Event extends BaseContentEvents, VM> extends BaseBloc<BaseCont
       yield state.withLoading(false);
     } else if(event is DisplayData<VM>) {
       yield state.withValue(event.data);
-    }  else {
-      yield* mapCustomEventToState(event);
     }
   }
-
-  Stream<ContentState<VM>> mapCustomEventToState(Event event) {}
 
   @override
   @mustCallSuper
@@ -56,8 +50,6 @@ abstract class BaseContentEvents extends BaseEvents  {
   BaseContentEvents(this.analyticTag): super(analyticTag);
 }
 
-
-
 class UpdateRequested extends BaseContentEvents {
   UpdateRequested(): super("screen_update");
 }
@@ -66,19 +58,6 @@ class DisplayData<T> extends BaseContentEvents {
   final T data;
 
   DisplayData(this.data): super("data_updated");
-}
-
-class DialogClosed<VM, R> extends BaseContentEvents {
-  final VM source;
-  final bool isPositiveResult;
-  final R result;
-
-  DialogClosed(this.source, this.isPositiveResult, this.result): super(isPositiveResult ? "dialog_accepted" : "dialog_dismissed");
-
-  @override
-  Map<String, Object> get analyticParams => {
-    "source" : source
-  };
 }
 
  class ContentState<T> extends BaseState {

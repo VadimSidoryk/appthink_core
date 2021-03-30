@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
-import 'package:applithium_core/router/router.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'base_bloc.dart';
 
-class ListBloc<Event extends BaseListEvents, VM extends Equatable>
-    extends BaseBloc<BaseListEvents, ListState<VM>> {
+class ListBloc<VM extends Equatable>
+    extends BaseBloc<ListState<VM>> {
 
   final ListRepository<VM> _repository;
 
@@ -22,11 +21,8 @@ class ListBloc<Event extends BaseListEvents, VM extends Equatable>
     });
   }
 
-  @protected
-  Stream<ListState<VM>> mapCustomEventToState(Event event) async* {}
-
   @override
-  Stream<ListState<VM>> mapEventToStateImpl(BaseListEvents event) async* {
+  Stream<ListState<VM>> mapEventToStateImpl(BaseEvents event) async* {
     if (event is Shown) {
       _repository.updateData(false);
     } else if (event is UpdateRequested) {
@@ -38,8 +34,6 @@ class ListBloc<Event extends BaseListEvents, VM extends Equatable>
       _repository.loadMoreItems();
     } else if (event is DisplayData<List<VM>>) {
       yield state.withValue(event.data, event.isEndReached);
-    } else {
-      yield* mapCustomEventToState(event);
     }
   }
 
