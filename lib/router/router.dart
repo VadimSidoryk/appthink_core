@@ -1,11 +1,13 @@
+import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/router/route.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:applithium_core/logs/extension.dart';
+import 'package:flutter/widgets.dart';
 
-abstract class AplRouter<R> {
-  void applyRoute(R model);
+abstract class AplRouter {
+  void applyRoute(AplRoute route);
 }
 
-class MainRouter extends AplRouter<AplRoute> {
+class MainRouter extends AplRouter {
 
   String startRoute;
   Map<String, Widget Function(BuildContext)> routes;
@@ -26,8 +28,37 @@ class MainRouter extends AplRouter<AplRoute> {
   void applyRoute(AplRoute route) {
     if(route is Back) {
       _backWithResult(route.result);
-    } else if(route is Push){
+    } else if(route is PushScreen){
       _navigationKey.currentState.pushNamed(route.name, arguments: route.arguments);
+    } else {
+      logError("MainRoute can't handle this type of route");
     }
   }
+
+  DialogRouter<D> withDialogs<D extends OpenDialog> (Future<dynamic> Function(D) dialogBuilder) {
+    return DialogRouter(dialogBuilder, this);
+  }
+}
+
+class DialogRouter<M> extends AplRouter {
+
+  final Future<dynamic> Function(M) dialogBuilder;
+  final MainRouter parentRouter;
+
+  DialogRouter(this.dialogBuilder, this.parentRouter);
+  
+  void openDialog(BaseBloc from, M model) {
+    applyRoute(OpenDialog(model, from));
+  }
+
+  @override
+  void applyRoute(AplRoute route) {
+    if(route is OpenDialog<M>) {
+      dialogBuilder.call(route.model)
+          .then((result) => route.notifyDialogClosed(result));
+    } else {
+      parentRouter.applyRoute(route);
+    }
+  }
+  
 }

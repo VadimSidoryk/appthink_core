@@ -14,8 +14,8 @@ class ListBloc<VM extends Equatable>
 
   StreamSubscription _subscription;
 
-  ListBloc(router, this._repository)
-      : super(router, ListState.initial()) {
+  ListBloc(this._repository)
+      : super(ListState.initial()) {
     _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });
@@ -82,13 +82,12 @@ class ListState<T> extends BaseState {
       error,
       dialogModel,
       this.isPageLoading,
-      this.isEndReached}): super(error, dialogModel);
+      this.isEndReached}): super(error);
 
   factory ListState.initial() => ListState(
       value: null,
       isLoading: true,
       error: null,
-      dialogModel: null,
       isPageLoading: false,
       isEndReached: false);
 
@@ -97,7 +96,6 @@ class ListState<T> extends BaseState {
         value: value,
         isLoading: false,
         error: null,
-        dialogModel: dialogModel,
         isPageLoading: false,
         isEndReached: endReached);
   }
@@ -107,7 +105,6 @@ class ListState<T> extends BaseState {
         value: value,
         isLoading: true,
         error: null,
-        dialogModel: dialogModel,
         isPageLoading: false,
         isEndReached: false);
   }
@@ -117,7 +114,6 @@ class ListState<T> extends BaseState {
         value: value,
         isLoading: false,
         error: error,
-        dialogModel: dialogModel,
         isPageLoading: false,
         isEndReached: isEndReached);
   }
@@ -127,7 +123,6 @@ class ListState<T> extends BaseState {
         value: value,
         isLoading: false,
         error: error,
-        dialogModel: dialogModel,
         isPageLoading: isPageLoading,
         isEndReached: isEndReached);
   }
@@ -137,28 +132,7 @@ class ListState<T> extends BaseState {
         value: value,
         isLoading: false,
         error: error,
-        dialogModel: dialogModel,
         isPageLoading: false,
         isEndReached: true);
-  }
-
-  ListState<T> showDialog(dynamic dialogModel) {
-    return ListState(
-        value: value,
-        isLoading: isLoading,
-        error: error,
-        dialogModel: dialogModel,
-        isPageLoading: isPageLoading,
-        isEndReached: isEndReached);
-  }
-
-  ListState<T> dialogHidden() {
-    return ListState(
-        value: value,
-        isLoading: isLoading,
-        error: error,
-        dialogModel: null,
-        isPageLoading: isPageLoading,
-        isEndReached: isEndReached);
   }
 }

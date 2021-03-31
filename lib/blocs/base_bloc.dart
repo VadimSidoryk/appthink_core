@@ -36,33 +36,22 @@ class DialogClosed<VM, R> extends BaseEvents {
 
 abstract class BaseState {
   final dynamic error;
-  final dynamic dialogModel;
 
-  BaseState(this.error, this.dialogModel);
+  BaseState(this.error);
 
   BaseState withError(dynamic error);
-
-  BaseState showDialog(dynamic dialogVM);
-
-  BaseState dialogHidden();
 }
 
 abstract class BaseBloc<State extends BaseState>
     extends Bloc<BaseEvents, State> {
-  @protected
-  final AplRouter router;
 
-  BaseBloc(this.router, State initialState) : super(initialState);
+  BaseBloc(State initialState) : super(initialState);
 
   @override
   Stream<State> mapEventToState(BaseEvents event) async* {
     try {
       if (BlocSupervisor.listener != null) {
         BlocSupervisor.listener.onNewEvent(this, event);
-      }
-
-      if(event is DialogClosed) {
-        yield state.dialogHidden();
       }
 
       yield* mapEventToStateImpl(event).map((data) {

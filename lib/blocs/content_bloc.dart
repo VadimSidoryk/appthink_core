@@ -12,7 +12,7 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
 
   StreamSubscription _subscription;
 
-  ContentBloc(router, this._repository) : super(router, ContentState.initial()) {
+  ContentBloc(this._repository) : super(ContentState.initial()) {
    _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
@@ -65,32 +65,24 @@ class DisplayData<T> extends BaseContentEvents {
   final bool isLoading;
 
 
-  ContentState(this.value, this.isLoading, error, dialogModel): super(error, dialogModel);
+  ContentState(this.value, this.isLoading, error): super(error);
 
-  factory ContentState.initial() => ContentState(null, true, null, null);
+  factory ContentState.initial() => ContentState(null, true, null);
 
   ContentState<T> withValue(T value) {
-    return ContentState(value, false, null, null);
+    return ContentState(value, false, null);
   }
 
   ContentState<T> withRoute(AplRoute route) {
-    return ContentState(value, false, null, null);
+    return ContentState(value, false, null);
   }
 
   ContentState<T> withLoading(bool isLoading) {
-    return ContentState(value, isLoading, null, null);
+    return ContentState(value, isLoading, null);
   }
 
   ContentState<T> withError(dynamic error) {
-    return ContentState(value, false, error, null);
-  }
-
-  ContentState<T> showDialog(dynamic dialogModel) {
-    return ContentState(value, false, null, dialogModel);
-  }
-
-  ContentState<T> dialogHidden() {
-    return ContentState(value, false, null, null);
+    return ContentState(value, false, error);
   }
 }
 
