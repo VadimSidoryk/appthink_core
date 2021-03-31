@@ -1,17 +1,15 @@
 abstract class AplRoute {
   final String name;
-  final Object arguments;
 
-  AplRoute(this.name, {this.arguments});
+  AplRoute(this.name);
+}
+
+abstract class Push extends AplRoute {
+  final dynamic arguments;
+   Push(name, {this.arguments}): super(name);
 }
 
 class Back extends AplRoute {
-  Back() : super("");
-}
-
-class DialogResult<O> extends AplRoute {
-  final bool result;
-  final O output;
-
-  DialogResult(this.result, this.output) : super('');
+  final dynamic result;
+  Back({this.result}) : super("<-");
 }

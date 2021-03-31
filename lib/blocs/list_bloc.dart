@@ -152,7 +152,7 @@ class ListState<T> extends BaseState {
         isEndReached: isEndReached);
   }
 
-  ListState<T> hideDialog() {
+  ListState<T> dialogHidden() {
     return ListState(
         value: value,
         isLoading: isLoading,

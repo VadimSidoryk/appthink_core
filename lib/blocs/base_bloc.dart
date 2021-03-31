@@ -15,8 +15,8 @@ abstract class BaseEvents extends Trackable {
 
   factory BaseEvents.screenShown() => Shown._();
 
-  factory BaseEvents.dialogClosed(source, isAccepted, result) =>
-      DialogClosed._(source, isAccepted, result);
+  factory BaseEvents.dialogClosed(source, result) =>
+      DialogClosed._(source, result);
 }
 
 class Shown extends BaseEvents {
@@ -25,11 +25,10 @@ class Shown extends BaseEvents {
 
 class DialogClosed<VM, R> extends BaseEvents {
   final VM source;
-  final bool isAccepted;
   final R result;
 
-  DialogClosed._(this.source, this.isAccepted, this.result)
-      : super(isAccepted ? "dialog_accepted" : "dialog_dismissed");
+  DialogClosed._(this.source, this.result)
+      : super(result != null ? "dialog_accepted" : "dialog_dismissed");
 
   @override
   Map<String, Object> get analyticParams => {"source": source};
@@ -45,7 +44,7 @@ abstract class BaseState {
 
   BaseState showDialog(dynamic dialogVM);
 
-  BaseState hideDialog();
+  BaseState dialogHidden();
 }
 
 abstract class BaseBloc<State extends BaseState>
@@ -60,6 +59,10 @@ abstract class BaseBloc<State extends BaseState>
     try {
       if (BlocSupervisor.listener != null) {
         BlocSupervisor.listener.onNewEvent(this, event);
+      }
+
+      if(event is DialogClosed) {
+        yield state.dialogHidden();
       }
 
       yield* mapEventToStateImpl(event).map((data) {

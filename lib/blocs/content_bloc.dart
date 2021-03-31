@@ -89,7 +89,7 @@ class DisplayData<T> extends BaseContentEvents {
     return ContentState(value, false, null, dialogModel);
   }
 
-  ContentState<T> hideDialog() {
+  ContentState<T> dialogHidden() {
     return ContentState(value, false, null, null);
   }
 }
