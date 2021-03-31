@@ -16,7 +16,7 @@ class MainRouter extends AplRouter {
 
   MainRouter(this._navigationKey);
 
-  void _backWithResult(bool result) {
+  void _backWithResult(dynamic result) {
     _navigationKey.currentState.pop(result);
   }
   
@@ -35,7 +35,7 @@ class MainRouter extends AplRouter {
     }
   }
 
-  DialogRouter<D> withDialogs<D extends OpenDialog> (Future<dynamic> Function(D) dialogBuilder) {
+  DialogRouter<M> withDialogs<M> (Future<dynamic> Function(M) dialogBuilder) {
     return DialogRouter(dialogBuilder, this);
   }
 }
