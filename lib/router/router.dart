@@ -48,7 +48,7 @@ class DialogRouter<M> extends AplRouter {
   DialogRouter(this.dialogBuilder, this.parentRouter);
   
   void openDialog(BaseBloc from, M model) {
-    applyRoute(OpenDialog(model, from));
+    applyRoute(OpenDialog(model, (result) => from.add(BaseEvents.dialogClosed(model, result))));
   }
 
   @override
