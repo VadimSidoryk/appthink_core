@@ -35,17 +35,17 @@ class MainRouter extends AplRouter {
     }
   }
 
-  DialogRouter<M> withDialogs<M> (Future<dynamic> Function(M) dialogBuilder) {
-    return DialogRouter(dialogBuilder, this);
+  RouterWithDialogs<M> withDialogs<M> (Future<dynamic> Function(M) dialogBuilder) {
+    return RouterWithDialogs(dialogBuilder, this);
   }
 }
 
-class DialogRouter<M> extends AplRouter {
+class RouterWithDialogs<M> extends AplRouter {
 
   final Future<dynamic> Function(M) dialogBuilder;
   final MainRouter parentRouter;
 
-  DialogRouter(this.dialogBuilder, this.parentRouter);
+  RouterWithDialogs(this.dialogBuilder, this.parentRouter);
   
   void openDialog(BaseBloc from, M model) {
     applyRoute(OpenDialog(model, (result) => from.add(BaseEvents.dialogClosed(model, result))));

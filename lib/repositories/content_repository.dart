@@ -95,9 +95,10 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   }
 
   @protected
-  updateLocalData(T func(T)) {
+  updateLocalData(T Function(T) func) {
     if (data.hasValue) {
-      data.sink.add(func(data.value));
+      final newValue = func(data.value);
+      onNewData(newValue);
     }
   }
 
