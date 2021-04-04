@@ -7,10 +7,10 @@ import 'package:flutter/cupertino.dart';
 
 import 'base_bloc.dart';
 
-class ListBloc<VM extends Equatable>
-    extends BaseBloc<ListState<VM>> {
+class ListBloc<IM extends Equatable>
+    extends BaseBloc<ListState<IM>> {
 
-  final ListRepository<VM> _repository;
+  final ListRepository<IM> _repository;
 
   StreamSubscription _subscription;
 
@@ -22,7 +22,7 @@ class ListBloc<VM extends Equatable>
   }
 
   @override
-  Stream<ListState<VM>> mapEventToStateImpl(BaseEvents event) async* {
+  Stream<ListState<IM>> mapEventToStateImpl(BaseEvents event) async* {
     if (event is Shown) {
       _repository.updateData(false);
     } else if (event is UpdateRequested) {
@@ -32,7 +32,7 @@ class ListBloc<VM extends Equatable>
       yield state.withLoading(false);
     } else if (event is ScrolledToEnd) {
       _repository.loadMoreItems();
-    } else if (event is DisplayData<List<VM>>) {
+    } else if (event is DisplayData<List<IM>>) {
       yield state.withValue(event.data, event.isEndReached);
     }
   }

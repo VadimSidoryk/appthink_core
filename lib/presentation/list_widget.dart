@@ -4,14 +4,15 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class ListScreenState<VM extends Equatable, Bloc extends ListBloc<VM>, Screen extends StatefulWidget> extends State<Screen> {
+abstract class ListWidgetState<IM extends Equatable, Bloc extends ListBloc<IM>,
+    Screen extends StatefulWidget> extends State<Screen> {
   @protected
   Bloc bloc;
 
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
 
-  ListScreenState() {
+  ListWidgetState() {
     _scrollController.addListener(onScroll);
   }
 
@@ -22,21 +23,14 @@ abstract class ListScreenState<VM extends Equatable, Bloc extends ListBloc<VM>, 
     bloc = buildBloc()..add(BaseEvents.screenShown());
     return BlocBuilder(
       cubit: bloc,
-      builder: (BuildContext context, ListState<VM> state) {
+      builder: (BuildContext context, ListState<IM> state) {
         if (state.isLoading) {
           return buildLoading(context);
         } else if (state.value != null && state.error == null) {
-          return Expanded(child: ListView.builder(
-            itemCount: state.isEndReached
-                ? state.value.length
-                : state.value.length + 1,
-            itemBuilder: (context, pos) =>
-            pos >= state.value.length ? buildBottomLoader(context)
-                : buildItem(context, state.value[pos]),
-            controller: _scrollController,
-          ));
+          return buildContent(context, state);
         } else {
-          return buildError(context, state.error != null ? state.error : Exception("Undefined error"));
+          return buildError(context,
+              state.error != null ? state.error : Exception("Undefined error"));
         }
       },
     );
@@ -46,7 +40,25 @@ abstract class ListScreenState<VM extends Equatable, Bloc extends ListBloc<VM>, 
 
   Widget buildLoading(BuildContext context);
 
-  Widget buildItem(BuildContext context, VM model);
+  Widget buildContent(BuildContext context, ListState<IM> state) {
+    if (state.value.isNotEmpty) {
+      return ListView.builder(
+            itemCount: state.isEndReached
+                ? state.value.length
+                : state.value.length + 1,
+            itemBuilder: (context, pos) => pos >= state.value.length
+                ? buildBottomLoader(context)
+                : buildItem(context, state.value[pos]),
+            controller: _scrollController,
+          );
+    } else {
+      return buildEmptyView(context);
+    }
+  }
+
+  Widget buildItem(BuildContext context, IM model);
+
+  Widget buildEmptyView(BuildContext context);
 
   Widget buildBottomLoader(BuildContext context);
 

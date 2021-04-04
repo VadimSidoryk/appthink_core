@@ -3,7 +3,7 @@ import 'package:applithium_core/blocs/content_bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class ContentScreenState<VM, Bloc extends ContentBloc<VM>, Screen extends StatefulWidget> extends State<Screen> {
+abstract class ContentWidgetState<VM, Bloc extends ContentBloc<VM>, Screen extends StatefulWidget> extends State<Screen> {
 
   @protected
   Bloc bloc;
