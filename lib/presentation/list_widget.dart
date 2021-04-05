@@ -21,6 +21,11 @@ abstract class ListWidgetState<IM extends Equatable, Bloc extends ListBloc<IM>,
   @override
   Widget build(BuildContext context) {
     bloc = buildBloc()..add(BaseEvents.screenShown());
+    return buildListBlocBuilder();
+  }
+  
+  @protected
+  Widget buildListBlocBuilder() {
     return BlocBuilder(
       cubit: bloc,
       builder: (BuildContext context, ListState<IM> state) {
@@ -36,10 +41,13 @@ abstract class ListWidgetState<IM extends Equatable, Bloc extends ListBloc<IM>,
     );
   }
 
+  @protected
   Widget buildError(BuildContext context, dynamic e);
 
+  @protected
   Widget buildLoading(BuildContext context);
 
+  @protected
   Widget buildContent(BuildContext context, ListState<IM> state) {
     if (state.value.isNotEmpty) {
       return ListView.builder(
@@ -56,10 +64,13 @@ abstract class ListWidgetState<IM extends Equatable, Bloc extends ListBloc<IM>,
     }
   }
 
+  @protected
   Widget buildItem(BuildContext context, IM model);
 
+  @protected
   Widget buildEmptyView(BuildContext context);
 
+  @protected
   Widget buildBottomLoader(BuildContext context);
 
   @protected

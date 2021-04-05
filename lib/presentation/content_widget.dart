@@ -13,6 +13,11 @@ abstract class ContentWidgetState<VM, Bloc extends ContentBloc<VM>, Screen exten
   @override
   Widget build(BuildContext context) {
     bloc = buildBloc()..add(BaseEvents.screenShown());
+    return buildContentBlocBuilder();
+  }
+
+  @protected
+  Widget buildContentBlocBuilder() {
     return BlocBuilder(
       cubit: bloc,
       builder: (BuildContext context, ContentState<VM> state) {
@@ -27,10 +32,13 @@ abstract class ContentWidgetState<VM, Bloc extends ContentBloc<VM>, Screen exten
     );
   }
 
+  @protected
   Widget buildError(BuildContext context, dynamic e);
 
+  @protected
   Widget buildLoading(BuildContext context);
 
+  @protected
   Widget buildContent(BuildContext context, VM model);
 
 }
