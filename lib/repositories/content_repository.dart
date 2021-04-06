@@ -7,7 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class ContentRepository<T> extends BaseRepository<T> {
-  State _state = State.INITIAL;
+  @protected
+  State state = State.INITIAL;
 
   bool _isOutdated = true;
   StreamSubscription _subscription;
@@ -30,7 +31,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   Future<bool> updateData(bool isCalledByUser) async {
     final needToUpdate = await checkNeedToUpdate(isCalledByUser);
     if (needToUpdate) {
-      _state = State.UPDATING;
+      state = State.UPDATING;
       if(_updateOperation != null) {
         _updateOperation.cancel();
         _updateOperation = null;
@@ -47,7 +48,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
       }, onError: (ebj, exception) {
         logError(exception);
         //error flow we don't need to reset isOutdated field
-        _state = State.UPDATED;
+        state = State.UPDATED;
         return false;
       });
     } else {
@@ -67,7 +68,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 
   @protected
   void markAsUpdated() {
-    _state = State.UPDATED;
+    state = State.UPDATED;
 
     if(_subscription != null) {
       _subscription.cancel();
@@ -104,7 +105,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return _state != State.UPDATING && (isForced || _isOutdated);
+    return state != State.UPDATING && (isForced || _isOutdated);
   }
 }
 
