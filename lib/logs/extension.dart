@@ -6,4 +6,9 @@ extension Loggable on Object {
      void logError(dynamic exception) {
           print("$this/Error : $exception ");
      }
+
+     Object logResult(Object source, String methodName) {
+          source.log("$methodName returns $this");
+          return this;
+     }
 }
