@@ -96,9 +96,9 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   }
 
   @protected
-  updateLocalData(T Function(T) func) {
+  updateLocalData(FutureOr<T> Function(T) func) async {
     if (data.hasValue) {
-      final newValue = func(data.value);
+      final newValue = await func(data.value);
       onNewData(newValue);
     }
   }

@@ -1,4 +1,4 @@
-import 'package:applithium_core/analytics/analyst.dart';
+import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/src/widgets/navigator.dart';
 

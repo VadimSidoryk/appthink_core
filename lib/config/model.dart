@@ -1,5 +1,7 @@
-import 'package:applithium_core/ads/service.dart';
-import 'package:applithium_core/promo/service.dart';
+
+
+import 'package:applithium_core/services/ads/service.dart';
+import 'package:applithium_core/services/promo/service.dart';
 
 abstract class Configuration {
   String preferencesName;

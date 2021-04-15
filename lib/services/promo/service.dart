@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/events/model.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/services/events/model.dart';
 import 'package:flutter/material.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:rate_my_app/rate_my_app.dart';
