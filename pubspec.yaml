@@ -14,7 +14,7 @@ dependencies:
   flutter_bloc: ^6.1.2
   rxdart: ^0.25.0
   async: ^2.4.2
-  http: ^0.12.2
+  http: ^0.13.1
   shared_preferences: ^2.0.5
   rate_my_app: ^1.1.0
   launch_review: ^3.0.1
