@@ -17,32 +17,12 @@ class HttpClientFirstImpl extends HttpClient {
       Map<String, String> headers = const {}}) async {
     Response response;
 
-    final querySb = StringBuffer(_host);
-    if (path != null && path.length > 1 && path[0] != "/") {
-      querySb.write("/");
-    }
-    querySb.write(path);
-
-    if (queryParams != null && queryParams.length > 0) {
-      querySb.write("?");
-      var iterator = queryParams.entries.iterator;
-      var isFirst = true;
-      while(iterator.moveNext()) {
-        if(!isFirst) {
-          querySb.write("&");
-        }
-        isFirst = false;
-
-        final entry = iterator.current;
-        querySb.write("${entry.key}=${entry.value}");
-      }
-    }
-
-    log("request get query = " + querySb.toString());
-    log("request get headers = " + headers.toString());
-
     try {
-      response = await get(querySb.toString(), headers: headers);
+      final uri = Uri(host: _host, path: path, queryParameters: queryParams);
+      log("request get uri = " + uri.toString());
+      log("request get headers = " + headers.toString());
+
+      response = await get(uri, headers: headers);
     } catch (e) {
       logError(e);
       throw NotConnectedError();
@@ -65,19 +45,12 @@ class HttpClientFirstImpl extends HttpClient {
         'content-type': 'application/json'
       }}) async {
     Response response;
-
-    final querySb = StringBuffer(_host);
-    if (path != null && path.length > 1 && path[0] != "/") {
-      querySb.write("/");
-    }
-    querySb.write(path);
-
-    log("request post query = " + querySb.toString());
-    log("request post headers = " + headers.toString());
-    log("request post body = " + body.toString());
-
     try {
-      response = await post(querySb.toString(),
+      final uri = Uri(host: _host, path: path);
+      log("request post uri = " + uri.toString());
+      log("request post headers = " + headers.toString());
+      log("request post body = " + body.toString());
+      response = await post(uri,
           headers: headers, body: json.encode(body));
     } catch (e) {
       log("error post = " + e.toString());
