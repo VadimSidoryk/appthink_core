@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/events/model.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,7 @@ import 'package:rate_my_app/rate_my_app.dart';
 
 class PromoService {
 
-  final Configuration _config;
+  final PromoConfig _config;
   final Future<RateMyApp> _rateMyApp;
 
   PromoService(this._config, this._rateMyApp);
@@ -17,7 +16,7 @@ class PromoService {
   Map<EventTriggerModel,
       Future<bool> Function(BuildContext)> get triggerHandlers =>
       {
-        for (final placement in _config.promoConfig.placements)
+        for (final placement in _config.placements)
           placement.trigger: _createHandler(placement.type, placement.details)
       };
 
