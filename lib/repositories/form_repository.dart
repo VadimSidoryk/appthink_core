@@ -9,7 +9,7 @@ abstract class FormRepository<T> extends ContentRepository<T> {
   @override
   Stream<T> get updatesStream => data.stream.first.asStream();
 
-  Future<T> applyForm() async {
+  Future<T?> applyForm() async {
     state = State.UPDATING;
     try {
       if(!data.hasValue) {

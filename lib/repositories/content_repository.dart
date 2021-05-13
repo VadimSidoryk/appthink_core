@@ -11,9 +11,9 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   State state = State.INITIAL;
 
   bool _isOutdated = true;
-  StreamSubscription _subscription;
+  StreamSubscription? _subscription;
 
-  CancelableOperation _updateOperation;
+  CancelableOperation? _updateOperation;
 
   @protected
   final data = BehaviorSubject<T>();
@@ -33,7 +33,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
     if (needToUpdate) {
       state = State.UPDATING;
       if(_updateOperation != null) {
-        _updateOperation.cancel();
+        _updateOperation?.cancel();
         _updateOperation = null;
       }
 
@@ -41,7 +41,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
         loadData(),
         onCancel: () => { log("cancel update operation")});
 
-      return _updateOperation.valueOrCancellation(false).then((value) {
+      return (_updateOperation as CancelableOperation).valueOrCancellation(false).then((value) {
         onNewData(value);
         markAsUpdated();
         return true;
@@ -59,7 +59,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   @protected
   void markAsOutdated() {
     if(_subscription != null) {
-      _subscription.cancel();
+      _subscription?.cancel();
       _subscription = null;
     }
     
@@ -71,7 +71,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
     state = State.UPDATED;
 
     if(_subscription != null) {
-      _subscription.cancel();
+      _subscription?.cancel();
       _subscription = null;
     }
 

@@ -1,5 +1,5 @@
 abstract class BaseRepository<T> {
-  Stream<T> updatesStream;
+  Stream<T>? updatesStream;
 
   Future<bool> updateData(bool isForced);
 

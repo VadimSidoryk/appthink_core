@@ -1,6 +1,5 @@
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/navigator.dart';
 
 import 'service.dart';
 
@@ -35,7 +34,7 @@ class AnalyticEventsAdapter extends Analyst {
   }
 
   @override
-  void trackRevenue(String productName, {double price, int quantity = 1}) async {
+  void trackRevenue(String productName, {required double price, int quantity = 1}) async {
     final service = await _initializedService;
     service.checkEvent(_getRevenueEvent(productName));
   }
@@ -49,28 +48,29 @@ class _NavigatorEventsObserver extends NavigatorObserver {
 
   _NavigatorEventsObserver(this._initializedService);
 
+
   @override
-  void didPop(Route newRoute, Route previousRoute) async {
+  void didPop(Route newRoute, Route? previousRoute) async {
     if(previousRoute is PageRoute && newRoute is PageRoute) {
       final service = await _initializedService;
-      service.checkEvent(_getScreenEvent(previousRoute.settings.name));
+      service.checkEvent(_getScreenEvent(previousRoute.settings.name ?? "undefined"));
     }
 
   }
 
   @override
-  void didPush(Route route, Route previousRoute) async {
+  void didPush(Route route, Route? previousRoute) async {
     if (route is PageRoute) {
       final service = await _initializedService;
-      service.checkEvent(_getScreenEvent(route.settings.name));
+      service.checkEvent(_getScreenEvent(route.settings.name ?? "undefined"));
     }
   }
 
   @override
-  void didReplace({Route<dynamic> newRoute, Route<dynamic> oldRoute}) async {
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) async {
     if(newRoute is PageRoute) {
       final service = await _initializedService;
-      service.checkEvent(_getScreenEvent(newRoute.settings.name));
+      service.checkEvent(_getScreenEvent(newRoute.settings.name ?? "undefined"));
     }
   }
 }

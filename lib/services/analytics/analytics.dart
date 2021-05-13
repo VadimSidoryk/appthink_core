@@ -30,7 +30,7 @@ class Analytics {
     _impls.forEach((impl) => impl.trackEventWithParams(eventName, params));
   }
 
-  void trackRevenue(String productName, {double price, int quantity = 1}) {
+  void trackRevenue(String productName, {required double price, int quantity = 1}) {
     print("trackRevenue $productName price=$price qunantity=$quantity");
     _impls.forEach((impl) =>
         impl.trackRevenue(productName, price: price, quantity: quantity));

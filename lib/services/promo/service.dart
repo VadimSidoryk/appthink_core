@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/events/model.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +36,7 @@ class PromoService {
       title: details.title,
       message: details.message,
       actionsBuilder: (context, stars) =>
-          _ratingChangedContent(context, service, details, stars),
+          _ratingChangedContent(context, service, details, stars ?? 5),
       dialogStyle: DialogStyle(
         titleAlign: TextAlign.center,
         messageAlign: TextAlign.center,
@@ -49,7 +47,7 @@ class PromoService {
     return true;
   }
 
-  List<Widget> _ratingChangedContent(BuildContext context, RateMyApp service,
+  List<Widget>  _ratingChangedContent(BuildContext context, RateMyApp service,
       RateUsDetails details, double stars) {
     return [FlatButton(
       child: Text(details.buttonTitle),

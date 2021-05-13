@@ -4,7 +4,7 @@ abstract class Ad {
   Future<bool> isLoaded();
   Future<bool> show();
   void load();
-  AdListener listener;
+  AdListener? listener;
 }
 
 enum AdEvent {

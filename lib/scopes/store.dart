@@ -25,7 +25,7 @@ class Store extends InstanceProvider {
   
   @override
   T get<T>() {
-    _StoreFactory<T> sf = _map[T];
+    _StoreFactory<T> sf = _map[T] as _StoreFactory<T>;
     if (sf == null) {
       throw new Exception("${T.toString()} is not mapped in store.");
     }
@@ -54,7 +54,7 @@ class Store extends InstanceProvider {
 class _StoreFactory<T> {
   _StoreFactoryType type;
   final T Function() _func;
-  Object _instance;
+  T? _instance;
 
   _StoreFactory(this.type, {func, instance})
       : _func = func,
@@ -69,13 +69,12 @@ class _StoreFactory<T> {
           }
           return _instance as T;
         case _StoreFactoryType.factory:
-          return _func() as T;
+          return _func();
       }
     } catch (e, s) {
       print("Error while creating ${T.toString()}");
       print('Stack trace:\n $s');
       rethrow;
     }
-    return null; //this is only to silence the analyser
   }
 }

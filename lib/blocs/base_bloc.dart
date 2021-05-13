@@ -31,7 +31,7 @@ class DialogClosed<VM, R> extends BaseEvents {
       : super(result != null ? "dialog_accepted" : "dialog_dismissed");
 
   @override
-  Map<String, Object> get analyticParams => {"source": source};
+  Map<String, Object> get analyticParams => {"source": source.toString()};
 }
 
 abstract class BaseState {
@@ -43,31 +43,26 @@ abstract class BaseState {
 }
 
 abstract class BaseBloc<State extends BaseState>
-    extends Bloc<BaseEvents, State> {
+    extends Bloc<BaseEvents, BaseState> {
+
+  @protected
+  State get currentState => state as State;
 
   BaseBloc(State initialState) : super(initialState);
 
   @override
-  Stream<State> mapEventToState(BaseEvents event) async* {
+  Stream<BaseState> mapEventToState(BaseEvents event) async* {
     try {
-      if (BlocSupervisor.listener != null) {
-        BlocSupervisor.listener.onNewEvent(this, event);
-      }
+      BlocSupervisor.listener?.onNewEvent(this, event);
 
       yield* mapEventToStateImpl(event).map((data) {
-        if (BlocSupervisor.listener != null) {
-          BlocSupervisor.listener.onNewState(this, data);
-        }
+        BlocSupervisor.listener?.onNewState(this, data);
         return data;
       }).handleError((e) {
-        if (BlocSupervisor.listener != null) {
-          BlocSupervisor.listener.onError(this, e);
-        }
+        BlocSupervisor.listener?.onError(this, e);
       });
     } catch (e) {
-      if (BlocSupervisor.listener != null) {
-        BlocSupervisor.listener.onError(this, e);
-      }
+      BlocSupervisor.listener?.onError(this, e);
       yield state.withError(e);
     }
   }

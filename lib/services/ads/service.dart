@@ -16,7 +16,7 @@ class AdsService {
 
   final Map<EventTriggerModel, _AdFuture> _ads = {};
 
-  bool _isEnabled;
+  bool? _isEnabled;
 
   AdsService(this._lazyAdsFactory);
 
@@ -24,7 +24,7 @@ class AdsService {
       get triggerHandlers => {
             for (final entry in _ads.entries)
               entry.key: (context) async {
-                if (_isEnabled) {
+                if (_isEnabled == true) {
                   return await entry.value.show();
                 } else {
                   return Future.value(false);
@@ -68,18 +68,18 @@ class AdsService {
 class _AdFuture {
   final Ad Function() builder;
 
-  Ad instance;
+  Ad? instance;
   int retryCount = AdsService.RETRY_COUNT;
 
   _AdFuture(this.builder);
 
   void load() async {
     instance = builder();
-    instance.listener = (AdEvent event) {
+    (instance as Ad).listener = (AdEvent event) {
       switch (event) {
         case AdEvent.failedToLoad:
           if (retryCount > 0) {
-            instance.load();
+            instance?.load();
             retryCount--;
           }
           break;
@@ -88,7 +88,7 @@ class _AdFuture {
       }
     };
 
-    instance.load();
+    instance?.load();
   }
 
   Future<bool> show() async {
@@ -98,9 +98,9 @@ class _AdFuture {
 
   Future<bool> _showImpl(bool waitingToLoad) {
     if (instance != null) {
-      return instance.isLoaded().then((isLoaded) {
+      return (instance as Ad).isLoaded().then((isLoaded) {
         if (isLoaded) {
-          return instance.show().whenComplete(() {
+          return (instance as Ad).show().whenComplete(() {
             load();
           });
         } else {

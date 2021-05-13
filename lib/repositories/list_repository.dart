@@ -17,8 +17,8 @@ abstract class ListRepository<T extends Equatable>
     extends BaseRepository<ListData<T>> {
   State _state = State.INITIAL;
 
-  CancelableOperation _updateDataOperation;
-  CancelableOperation _loadMoreItemsOperation;
+  CancelableOperation? _updateDataOperation;
+  CancelableOperation? _loadMoreItemsOperation;
 
   int _currentValueLength = 0;
 
@@ -32,7 +32,7 @@ abstract class ListRepository<T extends Equatable>
   final int defaultPageLength;
 
   bool _isOutdated = true;
-  StreamSubscription _subscription;
+  StreamSubscription? _subscription;
 
   final int timeToLiveMillis;
 
@@ -40,31 +40,29 @@ abstract class ListRepository<T extends Equatable>
   Stream<ListData<T>> get updatesStream => CombineLatestStream.combine2(
       data.stream,
       _endReachedSubj.stream,
-      (list, isEndReached) => ListData(list, isEndReached));
+      (List<T> list, bool isEndReached) => ListData(list, isEndReached));
 
   ListRepository(this.defaultPageLength, {this.timeToLiveMillis = 60 * 1000});
 
-  Future<List<T>> loadItems(int startIndex, T lastValue, int itemsToLoad);
+  Future<List<T>> loadItems(int startIndex, T? lastValue, int itemsToLoad);
 
   @override
   Future<bool> updateData(bool isCalledByUser) async {
     final needToUpdate = await checkNeedToUpdate(isCalledByUser);
-    if (_loadMoreItemsOperation != null) {
-      _loadMoreItemsOperation.cancel();
-      _loadMoreItemsOperation = null;
-    }
+    _loadMoreItemsOperation?.cancel();
+    _loadMoreItemsOperation = null;
+
 
     if (needToUpdate) {
       _state = State.DATA_UPDATING;
-      if (_updateDataOperation != null) {
-        _updateDataOperation.cancel();
-        _updateDataOperation = null;
-      }
+      _updateDataOperation?.cancel();
+      _updateDataOperation = null;
+
       _updateDataOperation = CancelableOperation.fromFuture(
           loadItems(0, null, defaultPageLength),
           onCancel: () => {log("cancel update operation")});
 
-      return _updateDataOperation.valueOrCancellation(false).then((value) {
+      return (_updateDataOperation as CancelableOperation).valueOrCancellation(false).then((value) {
         markAsUpdated();
         _endReachedSubj.sink.add(value.length < defaultPageLength);
         onNewList(value);
@@ -119,10 +117,9 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   void markAsOutdated() {
-    if(_subscription != null) {
-      _subscription.cancel();
-      _subscription = null;
-    }
+    _subscription?.cancel();
+    _subscription = null;
+
 
     _isOutdated = true;
   }
@@ -131,10 +128,8 @@ abstract class ListRepository<T extends Equatable>
   void markAsUpdated() {
     _state = State.DATA_UPDATED;
 
-    if(_subscription != null) {
-      _subscription.cancel();
-      _subscription = null;
-    }
+    _subscription?.cancel();
+    _subscription = null;
 
     _isOutdated = false;
 
@@ -164,7 +159,7 @@ abstract class ListRepository<T extends Equatable>
         loadItems(_currentValueLength, lastElement, defaultPageLength),
         onCancel: () => {log("cancel loadMore operation")});
 
-    return _loadMoreItemsOperation.valueOrCancellation(false).then((value) {
+    return (_loadMoreItemsOperation as CancelableOperation).valueOrCancellation(false).then((value) {
       _state = State.MORE_ITEMS_LOADED;
       _endReachedSubj.sink.add(value.length < defaultPageLength);
       return addItems(value);

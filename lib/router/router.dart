@@ -9,19 +9,19 @@ abstract class AplRouter {
 
 class MainRouter extends AplRouter {
 
-  String startRoute;
-  Map<String, Widget Function(BuildContext)> routes;
+  String? startRoute;
+  Map<String, Widget Function(BuildContext)>? routes;
 
   final GlobalKey<NavigatorState> _navigationKey;
 
   MainRouter(this._navigationKey);
 
   void _backWithResult(dynamic result) {
-    _navigationKey.currentState.pop(result);
+    _navigationKey.currentState?.pop(result);
   }
   
-  static T getArgs<T>(BuildContext context) {
-    return ModalRoute.of(context).settings.arguments as T;
+  static T? getArgs<T>(BuildContext context) {
+    return ModalRoute.of(context)?.settings.arguments as T?;
   }
 
   @override
@@ -29,7 +29,7 @@ class MainRouter extends AplRouter {
     if(route is Back) {
       _backWithResult(route.result);
     } else if(route is PushScreen){
-      _navigationKey.currentState.pushNamed(route.name, arguments: route.arguments);
+      _navigationKey.currentState?.pushNamed(route.name, arguments: route.arguments);
     } else {
       logError("MainRoute can't handle this type of route");
     }

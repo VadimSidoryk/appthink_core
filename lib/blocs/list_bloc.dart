@@ -12,7 +12,7 @@ class ListBloc<IM extends Equatable>
 
   final ListRepository<IM> _repository;
 
-  StreamSubscription _subscription;
+  StreamSubscription? _subscription;
 
   ListBloc(this._repository)
       : super(ListState.initial()) {
@@ -26,14 +26,14 @@ class ListBloc<IM extends Equatable>
     if (event is Shown) {
       _repository.updateData(false);
     } else if (event is UpdateRequested) {
-      yield state.withLoading(true);
+      yield currentState.withLoading(true);
       final isUpdated = await _repository.updateData(true);
       log("isUpdated: $isUpdated");
-      yield state.withLoading(false);
+      yield currentState.withLoading(false);
     } else if (event is ScrolledToEnd) {
       _repository.loadMoreItems();
     } else if (event is DisplayData<List<IM>>) {
-      yield state.withValue(event.data, event.isEndReached);
+      yield currentState.withValue(event.data, event.isEndReached);
     }
   }
 
@@ -41,7 +41,7 @@ class ListBloc<IM extends Equatable>
   @mustCallSuper
   Future<void> close() async {
     await super.close();
-    return _subscription.cancel();
+    return _subscription?.cancel();
   }
 }
 
@@ -71,18 +71,18 @@ class ScrolledToEnd extends BaseListEvents {
 }
 
 class ListState<T> extends BaseState {
-  final List<T> value;
+  final List<T>? value;
   final bool isLoading;
   final bool isPageLoading;
   final bool isEndReached;
 
   ListState(
       {this.value,
-      this.isLoading,
+      required this.isLoading,
       error,
       dialogModel,
-      this.isPageLoading,
-      this.isEndReached}): super(error);
+      required this.isPageLoading,
+      required this.isEndReached}): super(error);
 
   factory ListState.initial() => ListState(
       value: null,

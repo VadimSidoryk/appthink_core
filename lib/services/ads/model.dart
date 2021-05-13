@@ -10,7 +10,8 @@ class AdsConfig {
   AdsConfig(Map<String, dynamic> params)
       : keyWords = (params[_adKeyWordsKey] as List<dynamic>).cast<String>(),
         placements = (params[_adPlacementsKey] as List<dynamic>)
-            .map((item) => AdPlacement.fromJson(item));
+            .map((item) => AdPlacement.fromJson(item))
+            .toList();
 }
 
 class AdPlacement {

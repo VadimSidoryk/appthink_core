@@ -41,25 +41,26 @@ class UsageHistoryService {
   }
 
   Future<int> daysFromFirstSession() async {
-    final prefs = await _preferencesFuture;
-    final year = prefs.getInt(firstSessionYearKey);
-    final month = prefs.getInt(firstSessionMonthKey);
-    final day =  prefs.getInt(firstSessionDayKey);
-
     final now = DateTime.now();
+    final prefs = await _preferencesFuture;
+    final year = prefs.getInt(firstSessionYearKey) ?? now.year;
+    final month = prefs.getInt(firstSessionMonthKey) ?? now.month;
+    final day =  prefs.getInt(firstSessionDayKey) ?? now.day;
 
     return now.difference(new DateTime(year, month, day)).inDays;
   }
 
   Future<int> daysFromLastSession() async {
+    final now = DateTime.now();
+
+
     final prefs = await _preferencesFuture;
-    final year = prefs.getInt(lastSessionYearKey);
-    final month = prefs.getInt(lastSessionMonthKey);
-    final day = prefs.getInt(lastSessionDayKey);
+    final year = prefs.getInt(lastSessionYearKey) ?? now.year;
+    final month = prefs.getInt(lastSessionMonthKey) ?? now.month;
+    final day = prefs.getInt(lastSessionDayKey) ?? now.day;
 
     _saveLastSessionDayTime();
 
-    final now = DateTime.now();
     return now.difference(new DateTime(year, month, day)).inDays;
   }
 

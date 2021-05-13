@@ -10,10 +10,10 @@ class ResourceConfig {
   }
 
   Map<String, String> getStringsForLanguage(String locale) {
-    return _stringData[locale];
+    return _stringData[locale] ?? getDefaultStrings();
   }
 
   Map<String, String> getDefaultStrings() {
-    return _stringData[null];
+    return _stringData[null] as Map<String, String>;
   }
 }

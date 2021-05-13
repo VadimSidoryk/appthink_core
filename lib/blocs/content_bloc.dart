@@ -10,7 +10,7 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
 
   final ContentRepository<VM> _repository;
 
-  StreamSubscription _subscription;
+  StreamSubscription? _subscription;
 
   ContentBloc(this._repository) : super(ContentState.initial()) {
    _subscription = _repository.updatesStream.listen((data) {
@@ -23,12 +23,12 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
     if(event is Shown) {
       _repository.updateData(false);
     } else if(event is UpdateRequested) {
-      yield state.withLoading(true);
+      yield currentState.withLoading(true);
       final isUpdated = await _repository.updateData(true);
       log("isUpdated: $isUpdated");
-      yield state.withLoading(false);
+      yield currentState.withLoading(false);
     } else if(event is DisplayData<VM>) {
-      yield state.withValue(event.data);
+      yield currentState.withValue(event.data);
     }
   }
 
@@ -36,7 +36,7 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
   @mustCallSuper
   Future<void> close() async {
     await super.close();
-    return _subscription.cancel();
+    return _subscription?.cancel();
   }
 }
 
@@ -60,10 +60,9 @@ class DisplayData<T> extends BaseContentEvents {
   DisplayData(this.data): super("data_updated");
 }
 
- class ContentState<T> extends BaseState {
-  final T value;
+class ContentState<T> extends BaseState {
+  final T? value;
   final bool isLoading;
-
 
   ContentState(this.value, this.isLoading, error): super(error);
 

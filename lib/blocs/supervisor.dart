@@ -1,7 +1,7 @@
 import 'package:applithium_core/blocs/base_bloc.dart';
 
 class BlocSupervisor {
-  static BlocsListener listener;
+  static BlocsListener? listener;
 }
 
 abstract class BlocsListener {

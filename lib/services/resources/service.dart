@@ -17,6 +17,6 @@ class ResourceService {
   ResourceService(BuildContext context, ResourceConfig config): _stringResources = getResourcesForLocale(context, config);
 
   String getString(String key) {
-    return _stringResources[key];
+    return _stringResources[key] as String;
   }
 }

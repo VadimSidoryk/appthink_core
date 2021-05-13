@@ -7,24 +7,6 @@ import 'model.dart';
 
 class AppEventsService  {
 
-  static Future<AppEventsService> get onInitialized => _initializedSubject.future;
-  static final _initializedSubject = Completer<AppEventsService>();
-
-  static AppEventsService _instance;
-
-  static AppEventsService get instance {
-    if (_instance == null) {
-      throw "Service is not initialized";
-    } else {
-      return _instance;
-    }
-  }
-
-  static void init(GlobalKey<NavigatorState> navigatorKey, SharedPreferences preferences) {
-    _instance = AppEventsService._(navigatorKey, preferences);
-    _initializedSubject.complete(_instance);
-  }
-
   final SharedPreferences _preferences;
   final GlobalKey<NavigatorState> _navigatorKey;
   final Map<String, List<Future<bool> Function(BuildContext, int)>>
@@ -52,7 +34,7 @@ class AppEventsService  {
         break;
     }
 
-    list.add(trigger);
+    list?.add(trigger);
   }
 
   void checkEvent(String name) async {
@@ -60,21 +42,30 @@ class AppEventsService  {
     final count = (_preferences.getInt(key) ?? 0) + 1;
     _preferences.setInt(key, count);
 
+    final context = _navigatorKey.currentState?.overlay?.context;
+    if(context == null) {
+      return;
+    }
+
     if (_eventCheckers.containsKey(name)) {
-      final context = _navigatorKey.currentState.overlay.context;
 
-      for (final checker in _eventCheckers[name]) {
-        bool isHandled;
-        try {
-          isHandled = await checker(context, count);
-        } catch (exception) {
-          isHandled = false;
-        }
+      final checkers = _eventCheckers[name];
+      if(checkers != null) {
+        for (final checker in checkers) {
+          bool isHandled;
+          try {
+            isHandled = await checker(context, count);
+          } catch (exception) {
+            isHandled = false;
+          }
 
-        if (isHandled) {
-          return;
+          if (isHandled) {
+            return;
+          }
         }
       }
+
+
     }
   }
 
