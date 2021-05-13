@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:async/async.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-import 'dart:async';
 
 class ListData<T extends Equatable> {
   final List<T> items;

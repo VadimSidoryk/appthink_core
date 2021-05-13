@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
 import 'package:flutter/foundation.dart';
-import 'package:applithium_core/logs/extension.dart';
 
 abstract class FormRepository<T> extends ContentRepository<T> {
 

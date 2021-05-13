@@ -1,6 +1,6 @@
 import 'dart:convert';
+
 import 'package:applithium_core/logs/extension.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
 import 'http_client.dart';

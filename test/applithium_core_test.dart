@@ -1,6 +1,6 @@
+import 'package:applithium_core/applithium_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:applithium_core/applithium_core.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('applithium_core');

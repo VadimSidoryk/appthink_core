@@ -1,6 +1,6 @@
 import 'package:applithium_core/blocs/base_bloc.dart';
-import 'package:applithium_core/router/route.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/router/route.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class AplRouter {

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import 'scope.dart';
 
 extension ScopedContext on BuildContext {

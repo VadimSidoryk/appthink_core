@@ -1,5 +1,4 @@
 import 'package:applithium_core/blocs/supervisor.dart';
-import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/services/analytics/trackable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
