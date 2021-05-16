@@ -15,17 +15,14 @@ class Store extends InstanceProvider {
   Store();
   
   Store.extend(BuildContext parentsSource) {
-    if(parentsSource != null) {
-      final parentScope = Scope.of(parentsSource);
-      if(parentScope != null) {
-        _map.addAll(parentScope.store._map);
-      }
-    }
+    final parentScope = Scope.of(parentsSource);
+    _map.addAll(parentScope.store._map);
   }
   
   @override
   T get<T>() {
     _StoreFactory<T> sf = _map[T] as _StoreFactory<T>;
+    // ignore: unnecessary_null_comparison
     if (sf == null) {
       throw new Exception("${T.toString()} is not mapped in store.");
     }
