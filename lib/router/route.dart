@@ -5,13 +5,13 @@ abstract class AplRoute {
 }
 
 abstract class PushScreen extends AplRoute {
-  final dynamic arguments;
+  final Object? arguments;
    PushScreen(name, {this.arguments}): super(name);
 }
 
 class OpenDialog<M> extends AplRoute {
   final M model; 
-  final Function(dynamic) _resultListener;
+  final Function(Object?) _resultListener;
   OpenDialog(this.model, this._resultListener) : super("dialog/$model");
   
   void notifyDialogClosed(dynamic result) {
