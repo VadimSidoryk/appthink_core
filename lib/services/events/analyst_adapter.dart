@@ -4,13 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'service.dart';
 
 
-class PromoEventsAdapter extends Analyst {
+class PromoEventsAnalyticsAdapter extends Analyst {
 
   static String _getRevenueEvent(String productName) => "${productName}_purchased";
 
   final Future<AppEventsService> _initializedService;
 
-  PromoEventsAdapter(this._initializedService);
+  PromoEventsAnalyticsAdapter(this._initializedService);
 
   @override
   void addUserProperty(String name, num value) { }

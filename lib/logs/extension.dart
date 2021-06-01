@@ -3,6 +3,10 @@ extension Loggable on Object {
         print("$this/Logs  : $message");
      }
 
+     void logMethod({Object? source, required String methodName, List<Object> params = const []}) {
+        log("$source : $methodName with params $params");
+     }
+
      void logError(dynamic exception) {
           print("$this/Error : $exception ");
      }
