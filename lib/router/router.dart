@@ -7,10 +7,10 @@ abstract class AplRouter {
   void applyRoute(AplRoute route);
 }
 
-class MainRouter extends AplRouter {
+abstract class MainRouter extends AplRouter {
 
   String? startRoute;
-  Map<String, Widget Function(BuildContext)>? routes;
+  abstract final Map<String, Widget Function(BuildContext)> routes;
 
   final GlobalKey<NavigatorState> _navigationKey;
 

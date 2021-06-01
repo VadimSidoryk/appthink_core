@@ -15,7 +15,7 @@ class MyRouter extends MainRouter {
   final startRoute = _ROUTE_MAIN;
 
   @override
-  final routes = {
+  get routes => {
     _ROUTE_MAIN: (context) => Scope(child: MyScreen(), store: _getMyDependencies(context))
   };
 

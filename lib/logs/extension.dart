@@ -4,7 +4,7 @@ extension Loggable on Object {
      }
 
      void logMethod({Object? source, required String methodName, List<Object> params = const []}) {
-        log("$source : $methodName with params $params");
+        log("${source ?? this } : $methodName with params $params");
      }
 
      void logError(dynamic exception) {

@@ -24,12 +24,17 @@ class AnalyticsUsageAdapter extends UsageListener {
       daysFromLastSessionProperty: daysFromLastSession
     });
     analytics.setUserProperty(sessionCountProperty, count);
-    subscription = analytics.periodicUpdatedUserProperty(secondsInAppProperty, Duration(seconds: 1));
+    subscription = analytics.periodicUpdatedUserProperty<int>(secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
   }
 
   @override
-  void onSessionStopped() {
+  void onSessionPaused() {
     subscription?.cancel();
     subscription = null;
+  }
+
+  @override
+  void onSessionResumed() {
+    subscription = analytics.periodicUpdatedUserProperty<int>(secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
   }
 }
