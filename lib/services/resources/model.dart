@@ -14,6 +14,6 @@ class ResourceConfig {
   }
 
   Map<String, String> getDefaultStrings() {
-    return _stringData[null] as Map<String, String>;
+    return _stringData[""] as Map<String, String>;
   }
 }

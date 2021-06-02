@@ -13,15 +13,10 @@ class ResourceService extends AplService<ResourceConfig> {
     }
   }
 
-  Map<String, String>? _stringResources;
+  late Map<String, String> _stringResources;
 
-  String? getString(String key) {
-    final res = _stringResources;
-    if(res == null) {
-      return null;
-    } else {
-      return res[key];
-    }
+  String getString(String key) {
+    return _stringResources[key] as String;
   }
 
   @override
