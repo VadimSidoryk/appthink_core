@@ -1,7 +1,9 @@
 import 'package:applithium_core/blocs/supervisor.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/module/base.dart';
 import 'package:applithium_core/router/router.dart';
+import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/services/analytics/service.dart';
@@ -24,13 +26,15 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
+  final Set<Module> modules;
 
   BaseAppState(
       {required this.title,
       required this.configProvider,
       required MainRouter Function(GlobalKey<NavigatorState>) routerBuilder,
       required this.splashBuilder,
-      required this.analysts}) {
+      required this.analysts,
+      required this.modules}) {
     _router = routerBuilder.call(_navigatorKey);
   }
 
@@ -86,10 +90,12 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
     BlocSupervisor.listener =
         globalStore!.get<AnalyticsService>().asBlocListener();
     globalStore!.get<UsageHistoryService>().openSession();
-    return MaterialApp(home: _SplashScreen(
-      builder: splashBuilder,
-      loader: (context) => _initAsyncComponents(context),
-      nextScreenBuilder: buildApp,
+    return _wrapWithGlobalScope(MaterialApp(
+      home: _SplashScreen(
+        builder: splashBuilder,
+        loader: (context) => _initAsyncComponents(context),
+        nextScreenBuilder: (context) => _wrapWithGlobalScope(buildApp(context)),
+      ),
     ));
   }
 
@@ -98,16 +104,25 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
     globalStore!
         .get<ResourceService>()
         .init(context, ResourceConfig.fromMap(config.resources));
+    modules.forEach((module) => module.init(context, config));
   }
 
   Store createDependencyTree() {
-    return Store()
+    final result = Store()
       ..add((provider) => AnalyticsService(impls: analysts))
       ..add((provider) => UsageHistoryService(
           preferencesProvider: SharedPreferences.getInstance(),
           listener: provider.get<AnalyticsService>().asUsageListener()))
       ..add((provider) => ResourceService())
       ..add((provider) => _router);
+
+    modules.forEach((module) => result.add(module.create));
+
+    return result;
+  }
+
+  Widget _wrapWithGlobalScope(Widget wrapped) {
+    return Scope(store: globalStore!, child: wrapped);
   }
 }
 
