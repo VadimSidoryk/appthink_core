@@ -1,11 +1,12 @@
 import 'dart:async';
 
+import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'model.dart';
 
-class AppEventsService  {
+class AppEventsService  extends AplService {
 
   final SharedPreferences _preferences;
   final GlobalKey<NavigatorState> _navigatorKey;
@@ -98,4 +99,9 @@ class AppEventsService  {
           return false;
         }
       };
+
+  @override
+  void init(BuildContext context, config) {
+    // TODO: implement init
+  }
 }

@@ -1,7 +1,8 @@
+import 'package:applithium_core/services/base.dart';
 import 'package:applithium_core/services/resources/model.dart';
 import 'package:flutter/cupertino.dart';
 
-class ResourceService {
+class ResourceService extends AplService<ResourceConfig> {
 
   static getResourcesForLocale(BuildContext context, ResourceConfig config) {
     final languageCode = Localizations.localeOf(context).languageCode;
@@ -12,11 +13,19 @@ class ResourceService {
     }
   }
 
-  final Map<String, String> _stringResources;
+  Map<String, String>? _stringResources;
 
-  ResourceService(BuildContext context, ResourceConfig config): _stringResources = getResourcesForLocale(context, config);
+  String? getString(String key) {
+    final res = _stringResources;
+    if(res == null) {
+      return null;
+    } else {
+      return res[key];
+    }
+  }
 
-  String getString(String key) {
-    return _stringResources[key] as String;
+  @override
+  void init(BuildContext context, ResourceConfig config) {
+    _stringResources = getResourcesForLocale(context, config);
   }
 }

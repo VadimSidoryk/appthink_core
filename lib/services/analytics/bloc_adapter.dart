@@ -5,7 +5,7 @@ import 'package:applithium_core/logs/extension.dart';
 
 class AnalyticsBlocAdapter extends BlocsListener {
 
-  final Analytics analytics;
+  final AnalyticsService analytics;
 
   AnalyticsBlocAdapter(this.analytics);
 

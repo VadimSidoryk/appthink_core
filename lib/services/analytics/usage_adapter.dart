@@ -11,7 +11,7 @@ const secondsInAppProperty = "seconds_in_app";
 
 class AnalyticsUsageAdapter extends UsageListener {
 
-  final Analytics analytics;
+  final AnalyticsService analytics;
   StreamSubscription? subscription;
 
   AnalyticsUsageAdapter(this.analytics);

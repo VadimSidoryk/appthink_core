@@ -2,17 +2,20 @@ import 'dart:async';
 
 import 'package:applithium_core/blocs/supervisor.dart';
 import 'package:applithium_core/services/analytics/bloc_adapter.dart';
+import 'package:applithium_core/services/analytics/config.dart';
 import 'package:applithium_core/services/analytics/usage_adapter.dart';
+import 'package:applithium_core/services/base.dart';
 import 'package:applithium_core/services/history/usage_listener.dart';
 import 'package:flutter/widgets.dart';
 
 import 'analyst.dart';
 import 'package:applithium_core/logs/extension.dart';
 
-class Analytics {
+class AnalyticsService extends AplService<AnalyticsConfig> {
+
   final Set<Analyst> impls;
 
-  Analytics({required this.impls});
+  AnalyticsService({required this.impls});
 
   List<NavigatorObserver> get navigatorObservers {
     return impls.map((impl) => impl.navigatorObserver).toList();
@@ -60,5 +63,10 @@ class Analytics {
       currentValue = provider.call(currentValue);
       return currentValue;
     }).listen((value) => setUserProperty(eventName, value));
+  }
+
+  @override
+  void init(BuildContext context, AnalyticsConfig config) {
+    // TODO: implement init
   }
 }

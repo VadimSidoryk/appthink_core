@@ -1,36 +1,38 @@
+import 'package:applithium_core/services/base.dart';
 import 'package:applithium_core/services/history/lifecycle_adapter.dart';
 import 'package:applithium_core/services/history/usage_listener.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UsageHistoryService {
+import 'config.dart';
+
+class UsageHistoryService extends AplService<UsageHistoryConfig> {
   String get _sessionCountKey =>
-      "$preferencesName.UsageHistoryService.sessionCount";
+      "$_preferencesName.UsageHistoryService.sessionCount";
 
   String get firstSessionDayKey =>
-      "$preferencesName.UsageHistoryService.firstSessionDay";
+      "$_preferencesName.UsageHistoryService.firstSessionDay";
 
   String get firstSessionMonthKey =>
-      "$preferencesName.UsageHistoryService.firstSessionMonth";
+      "$_preferencesName.UsageHistoryService.firstSessionMonth";
 
   String get firstSessionYearKey =>
-      "$preferencesName.UsageHistoryService.firstSessionYear";
+      "$_preferencesName.UsageHistoryService.firstSessionYear";
 
   String get lastSessionDayKey =>
-      "$preferencesName.UsageHistoryService.lastSessionDay";
+      "$_preferencesName.UsageHistoryService.lastSessionDay";
 
   String get lastSessionMonthKey =>
-      "$preferencesName.UsageHistoryService.lastSessionMonth";
+      "$_preferencesName.UsageHistoryService.lastSessionMonth";
 
   String get lastSessionYearKey =>
-      "$preferencesName.UsageHistoryService.lastSessionYear";
+      "$_preferencesName.UsageHistoryService.lastSessionYear";
 
   UsageHistoryService(
-      {required this.preferencesName,
-      required this.preferencesProvider,
+      {required this.preferencesProvider,
       this.listener});
 
-  final String preferencesName;
+  String? _preferencesName;
   final Future<SharedPreferences> preferencesProvider;
   final UsageListener? listener;
 
@@ -99,5 +101,10 @@ class UsageHistoryService {
     prefs.setInt(lastSessionYearKey, now.year);
     prefs.setInt(lastSessionMonthKey, now.month);
     prefs.setInt(lastSessionDayKey, now.day);
+  }
+
+  @override
+  void init(BuildContext context, UsageHistoryConfig config) {
+    _preferencesName = config.preferencesName;
   }
 }
