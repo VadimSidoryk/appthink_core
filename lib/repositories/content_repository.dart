@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 
 abstract class ContentRepository<T> extends BaseRepository<T> {
   @protected
-  State state = State.INITIAL;
+  ContentRepositoryState state = ContentRepositoryState.INITIAL;
 
   bool _isOutdated = true;
   StreamSubscription? _subscription;
@@ -31,7 +31,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
   Future<bool> updateData(bool isCalledByUser) async {
     final needToUpdate = await checkNeedToUpdate(isCalledByUser);
     if (needToUpdate) {
-      state = State.UPDATING;
+      state = ContentRepositoryState.UPDATING;
       if(_updateOperation != null) {
         _updateOperation?.cancel();
         _updateOperation = null;
@@ -48,7 +48,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
       }, onError: (ebj, exception) {
         logError(exception);
         //error flow we don't need to reset isOutdated field
-        state = State.UPDATED;
+        state = ContentRepositoryState.UPDATED;
         return false;
       });
     } else {
@@ -68,7 +68,7 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 
   @protected
   void markAsUpdated() {
-    state = State.UPDATED;
+    state = ContentRepositoryState.UPDATED;
 
     if(_subscription != null) {
       _subscription?.cancel();
@@ -105,8 +105,8 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return state != State.UPDATING && (isForced || _isOutdated);
+    return state != ContentRepositoryState.UPDATING && (isForced || _isOutdated);
   }
 }
 
-enum State { INITIAL, UPDATING, UPDATED }
+enum ContentRepositoryState { INITIAL, UPDATING, UPDATED }

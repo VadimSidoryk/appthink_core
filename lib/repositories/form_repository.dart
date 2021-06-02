@@ -10,7 +10,7 @@ abstract class FormRepository<T> extends ContentRepository<T> {
   Stream<T> get updatesStream => data.stream.first.asStream();
 
   Future<T?> applyForm() async {
-    state = State.UPDATING;
+    state = ContentRepositoryState.UPDATING;
     try {
       if(!data.hasValue) {
         throw Exception("Illegal State exception");

@@ -4,7 +4,7 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:async/async.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ListData<T extends Equatable> {
@@ -16,7 +16,7 @@ class ListData<T extends Equatable> {
 
 abstract class ListRepository<T extends Equatable>
     extends BaseRepository<ListData<T>> {
-  State _state = State.INITIAL;
+  ListRepositoryState _state = ListRepositoryState.INITIAL;
 
   CancelableOperation? _updateDataOperation;
   CancelableOperation? _loadMoreItemsOperation;
@@ -55,7 +55,7 @@ abstract class ListRepository<T extends Equatable>
 
 
     if (needToUpdate) {
-      _state = State.DATA_UPDATING;
+      _state = ListRepositoryState.DATA_UPDATING;
       _updateDataOperation?.cancel();
       _updateDataOperation = null;
 
@@ -71,7 +71,7 @@ abstract class ListRepository<T extends Equatable>
       }, onError: (obj, exception) {
         logError(Exception(exception));
         //error flow we don't need to reset isOutdated field
-        _state = State.DATA_UPDATED;
+        _state = ListRepositoryState.DATA_UPDATED;
         return false;
       });
     } else {
@@ -127,7 +127,7 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   void markAsUpdated() {
-    _state = State.DATA_UPDATED;
+    _state = ListRepositoryState.DATA_UPDATED;
 
     _subscription?.cancel();
     _subscription = null;
@@ -153,7 +153,7 @@ abstract class ListRepository<T extends Equatable>
       return false;
     }
 
-    _state = State.MORE_ITEMS_LOADING;
+    _state = ListRepositoryState.MORE_ITEMS_LOADING;
 
     final lastElement = (await data.first).last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
@@ -161,7 +161,7 @@ abstract class ListRepository<T extends Equatable>
         onCancel: () => {log("cancel loadMore operation")});
 
     return (_loadMoreItemsOperation as CancelableOperation).valueOrCancellation(false).then((value) {
-      _state = State.MORE_ITEMS_LOADED;
+      _state = ListRepositoryState.MORE_ITEMS_LOADED;
       _endReachedSubj.sink.add(value.length < defaultPageLength);
       return addItems(value);
     }, onError: (obj, exception) {
@@ -180,18 +180,18 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return _state != State.DATA_UPDATING && (isForced || _isOutdated);
+    return _state != ListRepositoryState.DATA_UPDATING && (isForced || _isOutdated);
   }
 
   @protected
   Future<bool> checkNeedLoadMoreValues() async {
-    return _state != State.MORE_ITEMS_LOADING &&
-        _state != State.DATA_UPDATING &&
+    return _state != ListRepositoryState.MORE_ITEMS_LOADING &&
+        _state != ListRepositoryState.DATA_UPDATING &&
         !await endReachedObs.first;
   }
 }
 
-enum State {
+enum ListRepositoryState {
   INITIAL,
   DATA_UPDATING,
   DATA_UPDATED,
