@@ -15,4 +15,8 @@ class Scope extends InheritedWidget {
   static T get<T>(BuildContext context) {
     return of(context).store.get<T>();
   }
+
+  static T? getOrNull<T>(BuildContext context) {
+    return of(context).store.getOrNull<T>();
+  }
 }

@@ -6,6 +6,8 @@ enum _StoreFactoryType { factory, single }
 
 abstract class InstanceProvider {
   T get<T>();
+
+  T? getOrNull<T>();
 }
 
 ///Simple instance store
@@ -13,12 +15,12 @@ class Store extends InstanceProvider {
   final _map = new Map<Type, _StoreFactory<dynamic>>();
 
   Store();
-  
+
   Store.extend(BuildContext parentsSource) {
     final parentScope = Scope.of(parentsSource);
     _map.addAll(parentScope.store._map);
   }
-  
+
   @override
   T get<T>() {
     _StoreFactory<T> sf = _map[T] as _StoreFactory<T>;
@@ -29,16 +31,27 @@ class Store extends InstanceProvider {
     return sf.instance;
   }
 
+  @override
+  T? getOrNull<T>() {
+    if(_map.containsKey(T)) {
+      return get<T>();
+    } else {
+      return null;
+    }
+  }
+
   call<T>() => get<T>();
 
   ///registers transient instances ( a new instance is provider per request )
   addFactory<T>(T Function(InstanceProvider) func) {
-    _map[T] = _StoreFactory<T>(_StoreFactoryType.factory, func: () => func.call(this));
+    _map[T] = _StoreFactory<T>(_StoreFactoryType.factory,
+        func: () => func.call(this));
   }
 
   ///registers lazy instances ( they get instantiated on first request )
   add<T>(T Function(InstanceProvider) func) {
-    _map[T] = _StoreFactory<T>(_StoreFactoryType.single, func: () => func.call(this));
+    _map[T] =
+        _StoreFactory<T>(_StoreFactoryType.single, func: () => func.call(this));
   }
 
   clear() {

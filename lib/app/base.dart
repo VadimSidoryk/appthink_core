@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 
 class BaseAppState<A extends StatefulWidget, C extends AplConfig>
     extends State<A> {
@@ -26,7 +27,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
-  final Set<Module>? modules;
+  final Set<AplModule>? modules;
 
   BaseAppState(
       {required this.title,
@@ -77,6 +78,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
     logMethod(methodName: "buildApp");
     return MaterialApp(
       title: title,
+      theme: context.getOrNull(),
       navigatorKey: _navigatorKey,
       initialRoute: _router.startRoute,
       routes: _router.routes,
@@ -116,7 +118,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
       ..add((provider) => ResourceService())
       ..add((provider) => _router);
 
-    modules?.forEach((module) => result.add(module.create));
+    modules?.forEach((module) => module.addTo(result));
 
     return result;
   }
