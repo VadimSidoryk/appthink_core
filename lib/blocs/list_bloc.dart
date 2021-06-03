@@ -30,7 +30,8 @@ class ListBloc<IM extends Equatable>
       final isUpdated = await _repository.updateData(true);
       log("isUpdated: $isUpdated");
       yield currentState.withLoading(false);
-    } else if (event is ScrolledToEnd) {
+    } else if (event is ScrolledToEnd && !currentState.isPageLoading) {
+      yield currentState.withPageLoading(true);
       _repository.loadMoreItems();
     } else if (event is DisplayData<List<IM>>) {
       yield currentState.withValue(event.data, event.isEndReached);
