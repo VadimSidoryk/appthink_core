@@ -9,7 +9,7 @@ abstract class AplRouter {
 
 abstract class MainRouter extends AplRouter {
 
-  String? startRoute;
+  abstract String startRoute;
   abstract final Map<String, Widget Function(BuildContext)> routes;
 
   final GlobalKey<NavigatorState> _navigationKey;

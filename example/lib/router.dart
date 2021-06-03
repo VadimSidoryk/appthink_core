@@ -12,7 +12,7 @@ class MyRouter extends MainRouter {
   static const String _ROUTE_MAIN = "/main";
 
   @override
-  final startRoute = _ROUTE_MAIN;
+  String startRoute = _ROUTE_MAIN;
 
   @override
   get routes => {
@@ -26,5 +26,6 @@ class MyRouter extends MainRouter {
         ..add((provider) => MyRepository(useCase: provider.get<MyUseCaseImpl>()))
         ..add((provider) => MyBloc(provider.get<MyRepository>()));
   }
+
 
 }

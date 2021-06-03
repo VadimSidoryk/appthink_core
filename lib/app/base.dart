@@ -26,7 +26,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
-  final Set<Module> modules;
+  final Set<Module>? modules;
 
   BaseAppState(
       {required this.title,
@@ -34,7 +34,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
       required MainRouter Function(GlobalKey<NavigatorState>) routerBuilder,
       required this.splashBuilder,
       required this.analysts,
-      required this.modules}) {
+      this.modules}) {
     _router = routerBuilder.call(_navigatorKey);
   }
 
@@ -104,7 +104,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
     globalStore!
         .get<ResourceService>()
         .init(context, ResourceConfig.fromMap(config.resources));
-    modules.forEach((module) => module.init(context, config));
+    modules?.forEach((module) => module.init(context, config));
   }
 
   Store createDependencyTree() {
@@ -116,7 +116,7 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
       ..add((provider) => ResourceService())
       ..add((provider) => _router);
 
-    modules.forEach((module) => result.add(module.create));
+    modules?.forEach((module) => result.add(module.create));
 
     return result;
   }
