@@ -6,6 +6,7 @@ import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
+import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/services/analytics/service.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/resources/model.dart';
@@ -16,26 +17,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 
-class BaseAppState<A extends StatefulWidget, C extends AplConfig>
-    extends State<A> {
+class BaseAppState<A extends StatefulWidget> extends State<A> {
   final String title;
   final _navigatorKey = GlobalKey<NavigatorState>();
   @protected
   Store? globalStore;
-  final ConfigProvider<C> configProvider;
+  final ConfigProvider? configProvider;
   final Set<Analyst> analysts;
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
 
+  final bool _appHasAsyncComponents;
+
   BaseAppState(
-      {required this.title,
-      required this.configProvider,
+      {String? title,
+      this.configProvider,
       required MainRouter Function(GlobalKey<NavigatorState>) routerBuilder,
       required this.splashBuilder,
-      required this.analysts,
-      this.modules}) {
+      Set<Analyst>? analysts,
+      this.modules})
+      : this.title = title ?? "Applithium Application",
+        this.analysts = analysts ?? {LogAnalyst()},
+        this._appHasAsyncComponents = configProvider != null {
     _router = routerBuilder.call(_navigatorKey);
   }
 
@@ -67,10 +72,12 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
 
   Future<void> _initAsyncComponents(BuildContext context) async {
     logMethod(methodName: "initAsyncComponents");
-    final C config = await configProvider.receiveConfig();
-    log("config received");
-    initServices(context, config);
-    log("services initialized");
+    final AplConfig? config = await configProvider?.call();
+    if (config != null) {
+      log("config received");
+      initServices(context, config);
+      log("services initialized");
+    }
   }
 
   @protected
@@ -92,17 +99,22 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
     BlocSupervisor.listener =
         globalStore!.get<AnalyticsService>().asBlocListener();
     globalStore!.get<UsageHistoryService>().openSession();
-    return _wrapWithGlobalScope(MaterialApp(
-      home: _SplashScreen(
-        builder: splashBuilder,
-        loader: (context) => _initAsyncComponents(context),
-        nextScreenBuilder: (context) => _wrapWithGlobalScope(buildApp(context)),
-      ),
-    ));
+    if (_appHasAsyncComponents) {
+      return _wrapWithGlobalScope(MaterialApp(
+        home: _SplashScreen(
+          builder: splashBuilder,
+          loader: (context) => _initAsyncComponents(context),
+          nextScreenBuilder: (context) =>
+              _wrapWithGlobalScope(buildApp(context)),
+        ),
+      ));
+    } else {
+      return _buildWithGlobalScope((context) => buildApp(context));
+    }
   }
 
   @protected
-  void initServices(BuildContext context, C config) {
+  void initServices(BuildContext context, AplConfig config) {
     globalStore!
         .get<ResourceService>()
         .init(context, ResourceConfig.fromMap(config.resources));
@@ -125,6 +137,10 @@ class BaseAppState<A extends StatefulWidget, C extends AplConfig>
 
   Widget _wrapWithGlobalScope(Widget wrapped) {
     return Scope(store: globalStore!, child: wrapped);
+  }
+
+  Widget _buildWithGlobalScope(Widget Function(BuildContext) builder) {
+    return Scope(store: globalStore!, builder: builder);
   }
 }
 

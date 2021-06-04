@@ -8,5 +8,9 @@ class MockUtils {
         delay, () => [for (var i = 0; i < count; i += 1) generator(i)]);
   }
 
+  static Future<T> mockWithDelay<T>(Duration delay, T value) {
+    return Future.delayed(delay, () => value);
+  }
+
 }
 

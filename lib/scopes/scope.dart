@@ -4,8 +4,14 @@ import 'store.dart';
 
 class Scope extends InheritedWidget {
   final Store store;
-  Scope({required this.store, required Widget child, Key? key})
-      : super(child: child, key: key);
+
+  Scope(
+      {required this.store,
+      Widget? child,
+      Widget Function(BuildContext)? builder,
+      Key? key})
+      : assert(child != null || builder != null),
+        super(child: child ?? _WidgetBuilder(builder: builder!), key: key);
 
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
@@ -18,5 +24,16 @@ class Scope extends InheritedWidget {
 
   static T? getOrNull<T>(BuildContext context) {
     return of(context).store.getOrNull<T>();
+  }
+}
+
+class _WidgetBuilder extends StatelessWidget {
+  final Widget Function(BuildContext) builder;
+
+  const _WidgetBuilder({Key? key, required this.builder}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return builder.call(context);
   }
 }
