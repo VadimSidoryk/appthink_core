@@ -26,7 +26,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
   final Set<Analyst> analysts;
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
-  final Widget Function(BuildContext) splashBuilder;
+  final Widget Function(BuildContext)? splashBuilder;
   final Set<AplModule>? modules;
 
   final bool _appHasAsyncComponents;
@@ -35,10 +35,11 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
       {String? title,
       this.configProvider,
       required MainRouter Function(GlobalKey<NavigatorState>) routerBuilder,
-      required this.splashBuilder,
+        this.splashBuilder,
       Set<Analyst>? analysts,
       this.modules})
-      : this.title = title ?? "Applithium Application",
+      : assert((configProvider == null) == (splashBuilder == null)),
+        this.title = title ?? "Applithium Application",
         this.analysts = analysts ?? {LogAnalyst()},
         this._appHasAsyncComponents = configProvider != null {
     _router = routerBuilder.call(_navigatorKey);
@@ -102,7 +103,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
     if (_appHasAsyncComponents) {
       return _wrapWithGlobalScope(MaterialApp(
         home: _SplashScreen(
-          builder: splashBuilder,
+          builder: splashBuilder!,
           loader: (context) => _initAsyncComponents(context),
           nextScreenBuilder: (context) =>
               _wrapWithGlobalScope(buildApp(context)),
