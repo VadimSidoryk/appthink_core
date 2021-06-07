@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "162446775805",
+    "firebase_url": "https://battler-65393-default-rtdb.firebaseio.com",
+    "project_id": "battler-65393",
+    "storage_bucket": "battler-65393.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162446775805:android:f2ad2d9c200e989720b594",
+        "android_client_info": {
+          "package_name": "com.applithium.applithium_core_example"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162446775805-p5ln7d1abc4f5f4vfaulen7tuaat8o0d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4r_p16QJDduaLOI12nChUSW_dO1gYDTI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162446775805-p5ln7d1abc4f5f4vfaulen7tuaat8o0d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
