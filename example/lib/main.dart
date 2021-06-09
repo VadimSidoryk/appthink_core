@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() {
     return BaseAppState<MyApp, MyRouter>(
       splashBuilder: (config) => Scaffold(body: Center(child: Text("Splash...")),),
-      title: "Flutter Demo",
+      title: "Applithium Core Demo",
         analysts: {LogAnalyst()},
         configProvider:() => MockUtils.mockWithDelay(Duration(seconds: 2), EmptyConfig()),
         routerBuilder: (key) => MyRouter(key));
