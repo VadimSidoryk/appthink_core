@@ -17,14 +17,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 
-class BaseAppState<A extends StatefulWidget> extends State<A> {
+typedef RouterBuilder<R extends MainRouter> = R Function(GlobalKey<NavigatorState>);
+
+class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State<A> {
   final String title;
   final _navigatorKey = GlobalKey<NavigatorState>();
   @protected
   Store? globalStore;
   final ConfigProvider? configProvider;
   final Set<Analyst> analysts;
-  late MainRouter _router;
+  late R _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext)? splashBuilder;
   final Set<AplModule>? modules;
@@ -34,8 +36,8 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
   BaseAppState(
       {String? title,
       this.configProvider,
-      required MainRouter Function(GlobalKey<NavigatorState>) routerBuilder,
-        this.splashBuilder,
+      required RouterBuilder<R> routerBuilder,
+      this.splashBuilder,
       Set<Analyst>? analysts,
       this.modules})
       : assert((configProvider == null) == (splashBuilder == null)),
@@ -124,9 +126,10 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
 
   Store createDependencyTree() {
     final result = Store()
+      ..add((provider) => SharedPreferences.getInstance())
       ..add((provider) => AnalyticsService(impls: analysts))
       ..add((provider) => UsageHistoryService(
-          preferencesProvider: SharedPreferences.getInstance(),
+          preferencesProvider: provider.get(),
           listener: provider.get<AnalyticsService>().asUsageListener()))
       ..add((provider) => ResourceService())
       ..add((provider) => _router);

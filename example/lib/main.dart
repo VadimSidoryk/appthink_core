@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return BaseAppState<MyApp>(
+    return BaseAppState<MyApp, MyRouter>(
       splashBuilder: (config) => Scaffold(body: Center(child: Text("Splash...")),),
       title: "Flutter Demo",
         analysts: {LogAnalyst()},
