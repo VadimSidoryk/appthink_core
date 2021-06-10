@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:applithium_core/blocs/supervisor.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/module/base.dart';
+import 'package:applithium_core/router/route.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
@@ -16,34 +19,35 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/scopes/extensions.dart';
+import 'package:uni_links/uni_links.dart';
 
-typedef RouterBuilder<R extends MainRouter> = R Function(GlobalKey<NavigatorState>);
+typedef RouterBuilder<R extends MainRouter> = R Function(
+    GlobalKey<NavigatorState>);
 
-class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State<A> {
+class BaseAppState<A extends StatefulWidget, R extends MainRouter>
+    extends State<A> {
   final String title;
   final _navigatorKey = GlobalKey<NavigatorState>();
   @protected
   Store? globalStore;
   final ConfigProvider? configProvider;
   final Set<Analyst> analysts;
-  late R _router;
+  late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
-  final Widget Function(BuildContext)? splashBuilder;
+  final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
 
-  final bool _appHasAsyncComponents;
+  StreamSubscription? _deepLinkSubscription;
 
   BaseAppState(
       {String? title,
       this.configProvider,
       required RouterBuilder<R> routerBuilder,
-      this.splashBuilder,
+      required this.splashBuilder,
       Set<Analyst>? analysts,
       this.modules})
-      : assert((configProvider == null) == (splashBuilder == null)),
-        this.title = title ?? "Applithium Application",
-        this.analysts = analysts ?? {LogAnalyst()},
-        this._appHasAsyncComponents = configProvider != null {
+      : this.title = title ?? "Applithium Based Application",
+        this.analysts = analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()} {
     _router = routerBuilder.call(_navigatorKey);
   }
 
@@ -52,6 +56,7 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State
     log("initState");
     super.initState();
     _initSyncComponents();
+    _handleIncomingLinks();
   }
 
   @override
@@ -59,6 +64,8 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State
     if (_widgetObserver != null) {
       WidgetsBinding.instance?.removeObserver(_widgetObserver!);
     }
+    _deepLinkSubscription?.cancel();
+    _deepLinkSubscription = null;
     super.dispose();
   }
 
@@ -73,7 +80,7 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State
     }
   }
 
-  Future<void> _initAsyncComponents(BuildContext context) async {
+  Future<String?> _initAsyncComponents(BuildContext context) async {
     logMethod(methodName: "initAsyncComponents");
     final AplConfig? config = await configProvider?.call();
     if (config != null) {
@@ -81,17 +88,35 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State
       initServices(context, config);
       log("services initialized");
     }
+    return getInitialLink();
+  }
+
+  void _handleIncomingLinks() {
+      // It will handle app links while the app is already started - be it in
+      // the foreground or in the background.
+      _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {
+        if (!mounted) return;
+        if(uri != null) {
+          _router.applyRoute(_DeepLinkRoute(uri.toString()));
+        } else {
+          logError("incoming uri is null");
+        }
+      }, onError: (Object err) {
+        if (!mounted) return;
+        logError(err);
+      });
   }
 
   @protected
-  Widget buildApp(BuildContext context) {
+  Widget buildApp(BuildContext context, String? initialLink) {
     logMethod(methodName: "buildApp");
+
     return MaterialApp(
       title: title,
       theme: context.getOrNull(),
       navigatorKey: _navigatorKey,
-      initialRoute: _router.startRoute,
-      routes: _router.routes,
+      initialRoute: initialLink,
+      onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers:
           globalStore!.get<AnalyticsService>().navigatorObservers,
     );
@@ -102,18 +127,15 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State
     BlocSupervisor.listener =
         globalStore!.get<AnalyticsService>().asBlocListener();
     globalStore!.get<UsageHistoryService>().openSession();
-    if (_appHasAsyncComponents) {
-      return _wrapWithGlobalScope(MaterialApp(
-        home: _SplashScreen(
-          builder: splashBuilder!,
-          loader: (context) => _initAsyncComponents(context),
-          nextScreenBuilder: (context) =>
-              _wrapWithGlobalScope(buildApp(context)),
-        ),
-      ));
-    } else {
-      return _buildWithGlobalScope((context) => buildApp(context));
-    }
+
+    return _wrapWithGlobalScope(MaterialApp(
+      home: _SplashScreen(
+        builder: splashBuilder!,
+        loader: (context) => _initAsyncComponents(context),
+        nextScreenBuilder: (context, initialLink) =>
+            _wrapWithGlobalScope(buildApp(context, initialLink)),
+      ),
+    ));
   }
 
   @protected
@@ -142,16 +164,12 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter> extends State
   Widget _wrapWithGlobalScope(Widget wrapped) {
     return Scope(store: globalStore!, child: wrapped);
   }
-
-  Widget _buildWithGlobalScope(Widget Function(BuildContext) builder) {
-    return Scope(store: globalStore!, builder: builder);
-  }
 }
 
 class _SplashScreen extends StatelessWidget {
   final Widget Function(BuildContext) builder;
-  final Widget Function(BuildContext) nextScreenBuilder;
-  final Future<void> Function(BuildContext) loader;
+  final Widget Function(BuildContext, String?) nextScreenBuilder;
+  final Future<String?> Function(BuildContext) loader;
 
   const _SplashScreen(
       {Key? key,
@@ -167,7 +185,14 @@ class _SplashScreen extends StatelessWidget {
   }
 
   Future<void> _setupInitFlow(BuildContext context) async {
-    await loader.call(context);
-    Navigator.push(context, MaterialPageRoute(builder: nextScreenBuilder));
+    final initialLink = await loader.call(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => nextScreenBuilder(context, initialLink)));
   }
+}
+
+class _DeepLinkRoute extends AplRoute {
+  _DeepLinkRoute(String url) : super(url);
 }

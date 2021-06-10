@@ -1,12 +1,7 @@
 abstract class AplRoute {
-  final String name;
+  final String url;
 
-  AplRoute(this.name);
-}
-
-abstract class PushScreen extends AplRoute {
-  final Object? arguments;
-   PushScreen(name, {this.arguments}): super(name);
+  AplRoute(this.url);
 }
 
 class OpenDialog<M> extends AplRoute {

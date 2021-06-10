@@ -17,11 +17,13 @@ class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return BaseAppState<MyApp, MyRouter>(
-      splashBuilder: (config) => Scaffold(body: Center(child: Text("Splash...")),),
-      title: "Applithium Core Example",
+        splashBuilder: (config) => Scaffold(
+              body: Center(child: Text("Splash...")),
+            ),
+        title: "Applithium Core Example",
         analysts: {LogAnalyst()},
-        configProvider:() => MockUtils.mockWithDelay(Duration(seconds: 2), EmptyConfig()),
+        configProvider: () =>
+            MockUtils.mockWithDelay(Duration(seconds: 2), EmptyConfig()),
         routerBuilder: (key) => MyRouter(key));
   }
 }
-
