@@ -18,11 +18,10 @@ class MyRouter extends MainRouter {
 
   @override
   get routes => [
-    RouteDescription(
-      matcher: Matcher.host("http://applithium.com"),
+    RouteDetails(
       builder: (context, result) => Scope(child: MyScreen(), store: _getMyDependencies(context)),
       subRoutes: [
-        RouteDescription(
+        RouteDetails(
           matcher: Matcher.path("details/{productId}"),
           builder: (context, result) {
             final id = result.parameters["productId"];
@@ -30,9 +29,6 @@ class MyRouter extends MainRouter {
           }
         )
       ]
-    ),
-    RouteDescription(
-      builder: (context, result) => throw StateError("invalid host")
     )
   ];
 

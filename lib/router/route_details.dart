@@ -5,12 +5,12 @@ import 'matchers.dart';
 
 typedef WidgetBuilderWithRouteResult = Widget Function(BuildContext, RouteResult);
 
-class RouteDescription {
+class RouteDetails {
   final Matcher matcher;
   final WidgetBuilderWithRouteResult? builder;
-  final List<RouteDescription> subRoutes;
+  final List<RouteDetails> subRoutes;
 
-  RouteDescription({this.matcher = const Matcher.any(), this.builder, this.subRoutes = const []});
+  RouteDetails({this.matcher = const Matcher.any(), this.builder, this.subRoutes = const []});
 
   RouteResult evaluate(RouteResult parentResult) {
     final evaluation = matcher.evaluate(parentResult.remainingUri!);

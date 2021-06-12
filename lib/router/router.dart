@@ -11,7 +11,7 @@ abstract class AplRouter {
 
 abstract class MainRouter extends AplRouter {
 
-  abstract final List<RouteDescription> routes;
+  abstract final List<RouteDetails> routes;
 
   final GlobalKey<NavigatorState> _navigationKey;
 

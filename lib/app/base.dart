@@ -133,7 +133,7 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter>
 
     return _wrapWithGlobalScope(MaterialApp(
       home: _SplashScreen(
-        builder: splashBuilder!,
+        builder: splashBuilder,
         loader: (context) => _initAsyncComponents(context),
         nextScreenBuilder: (context, initialLink) =>
             _wrapWithGlobalScope(buildApp(context, initialLink)),
