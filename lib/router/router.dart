@@ -1,7 +1,9 @@
 import 'package:applithium_core/blocs/base_bloc.dart';
-import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/router/route.dart';
+import 'package:applithium_core/router/route_result.dart';
 import 'package:flutter/widgets.dart';
+
+import 'route_details.dart';
 
 abstract class AplRouter {
   void applyRoute(AplRoute route);
@@ -9,30 +11,46 @@ abstract class AplRouter {
 
 abstract class MainRouter extends AplRouter {
 
-  abstract String startRoute;
-  abstract final Map<String, Widget Function(BuildContext)> routes;
+  abstract final List<RouteDetails> routes;
 
   final GlobalKey<NavigatorState> _navigationKey;
 
   MainRouter(this._navigationKey);
 
+  Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    final result = evaluate(settings);
+    if (!result.isMatch) {
+      return null;
+    }
+
+    return result.build();
+  }
+
   void _backWithResult(dynamic result) {
     _navigationKey.currentState?.pop(result);
-  }
-  
-  static T? getArgs<T>(BuildContext context) {
-    return ModalRoute.of(context)?.settings.arguments as T?;
   }
 
   @override
   void applyRoute(AplRoute route) {
     if(route is Back) {
       _backWithResult(route.result);
-    } else if(route is PushScreen){
-      _navigationKey.currentState?.pushNamed(route.name, arguments: route.arguments);
     } else {
-      logError("MainRoute can't handle this type of route");
+      _navigationKey.currentState?.pushNamed(route.url);
     }
+  }
+
+  @protected
+  RouteResult evaluate(RouteSettings settings) {
+    assert(settings.name != null);
+    final rootResult = RouteResult.root(settings);
+
+    for (final route in routes) {
+      final result = route.evaluate(rootResult);
+      if (result.isMatch) {
+        return result;
+      }
+    }
+    return rootResult.withNoNestedMatch();
   }
 
   RouterWithDialogs<M> withDialogs<M> (Future<dynamic> Function(M) dialogBuilder) {
@@ -60,5 +78,4 @@ class RouterWithDialogs<M> extends AplRouter {
       parentRouter.applyRoute(route);
     }
   }
-  
 }

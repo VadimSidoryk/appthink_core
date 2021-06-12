@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:applithium_core/use_case/base.dart';
 import 'package:async/async.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
@@ -16,6 +17,7 @@ class ListData<T extends Equatable> {
 
 abstract class ListRepository<T extends Equatable>
     extends BaseRepository<ListData<T>> {
+
   ListRepositoryState _state = ListRepositoryState.INITIAL;
 
   CancelableOperation? _updateDataOperation;
@@ -42,6 +44,8 @@ abstract class ListRepository<T extends Equatable>
       data.stream,
       _endReachedSubj.stream,
       (List<T> list, bool isEndReached) => ListData(list, isEndReached));
+
+  factory ListRepository.simple(UseCase<dynamic, List<T>> useCase) => _SimpleListRepository(useCase);
 
   ListRepository(this.defaultPageLength, {this.timeToLiveMillis = 60 * 1000});
 
@@ -197,4 +201,17 @@ enum ListRepositoryState {
   DATA_UPDATED,
   MORE_ITEMS_LOADING,
   MORE_ITEMS_LOADED
+}
+
+class _SimpleListRepository<T extends Equatable> extends ListRepository<T> {
+
+  final UseCase<dynamic, List<T>> useCase;
+
+  _SimpleListRepository(this.useCase): super(10000);
+
+  @override
+  Future<List<T>> loadItems(int startIndex, T? lastValue, int itemsToLoad) {
+    return useCase.loadData(null);
+  }
+
 }
