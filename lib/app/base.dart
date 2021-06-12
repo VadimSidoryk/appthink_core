@@ -88,7 +88,9 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter>
       initServices(context, config);
       log("services initialized");
     }
-    return getInitialLink();
+    final initialLink = await getInitialLink();
+    log("initial deepLink = $initialLink");
+    return initialLink;
   }
 
   void _handleIncomingLinks() {
@@ -97,6 +99,7 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter>
       _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {
         if (!mounted) return;
         if(uri != null) {
+          log("handling initial link = $uri");
           _router.applyRoute(_DeepLinkRoute(uri.toString()));
         } else {
           logError("incoming uri is null");

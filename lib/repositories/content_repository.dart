@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:applithium_core/use_case/base.dart';
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class ContentRepository<T> extends BaseRepository<T> {
+
   @protected
   ContentRepositoryState state = ContentRepositoryState.INITIAL;
 
@@ -22,6 +24,8 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 
   @override
   Stream<T> get updatesStream => data.stream;
+
+  factory ContentRepository.simple(UseCase<dynamic, T> useCase) => _SimpleContentRepository(useCase);
 
   ContentRepository({this.timeToLiveMillis = 60 * 1000});
 
@@ -110,3 +114,15 @@ abstract class ContentRepository<T> extends BaseRepository<T> {
 }
 
 enum ContentRepositoryState { INITIAL, UPDATING, UPDATED }
+
+class _SimpleContentRepository<T> extends ContentRepository<T> {
+
+  final UseCase<dynamic, T> useCase;
+
+  _SimpleContentRepository(this.useCase);
+
+  @override
+  Future<T> loadData() {
+    return useCase.loadData(null);
+  }
+}

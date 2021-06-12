@@ -2,15 +2,9 @@ import 'package:flutter/widgets.dart';
 
 abstract class Analyst {
 
-  void trackRevenue(String productName, {required double price, int quantity = 1});
+  void trackEvent({required String name, Map<String, Object>? params});
 
-  void trackEvent(String eventName);
-
-  void trackEventWithParams(String eventName, Map<String, Object> params);
-
-  void setUserProperty(String name, dynamic value);
-
-  void addUserProperty(String name, num value);
+  void setUserProperty(String name, Object? value);
 
   NavigatorObserver get navigatorObserver;
 

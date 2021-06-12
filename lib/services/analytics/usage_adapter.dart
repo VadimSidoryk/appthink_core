@@ -18,7 +18,7 @@ class AnalyticsUsageAdapter extends UsageListener {
 
   @override
   void onSessionStarted(int count, int daysFromFirstSession, int daysFromLastSession) {
-    analytics.trackEventWithParams(sessionStartedEvent, {
+    analytics.trackEvent(name: sessionStartedEvent, params: {
       sessionCountProperty: count,
       daysFromFirstSessionProperty: daysFromFirstSession,
       daysFromLastSessionProperty: daysFromLastSession

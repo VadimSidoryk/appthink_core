@@ -13,30 +13,15 @@ class PromoEventsAnalyticsAdapter extends Analyst {
   PromoEventsAnalyticsAdapter(this._initializedService);
 
   @override
-  void addUserProperty(String name, num value) { }
-
-  @override
   NavigatorObserver get navigatorObserver => _NavigatorEventsObserver(_initializedService);
 
   @override
   void setUserProperty(String name, value) { }
 
   @override
-  void trackEvent(String eventName) async {
+  void trackEvent({required String name, Map<String, Object>? params}) async {
     final service = await _initializedService;
-    service.checkEvent(eventName);
-  }
-
-  @override
-  void trackEventWithParams(String eventName, Map<String, Object> params) async {
-    final service = await _initializedService;
-    service.checkEvent(eventName);
-  }
-
-  @override
-  void trackRevenue(String productName, {required double price, int quantity = 1}) async {
-    final service = await _initializedService;
-    service.checkEvent(_getRevenueEvent(productName));
+    service.checkEvent(name);
   }
 }
 

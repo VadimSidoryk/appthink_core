@@ -18,7 +18,7 @@ class AnalyticsBlocAdapter extends BlocsListener {
   @override
   void onNewEvent(BaseBloc bloc, BaseEvents event) {
     logMethod(methodName: "onNewEvent", params: [bloc, event]);
-    analytics.trackEventWithParams(event.analyticTag, event.analyticParams);
+    analytics.trackEvent(name: event.analyticTag, params: event.analyticParams);
   }
 
   @override

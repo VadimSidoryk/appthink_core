@@ -12,7 +12,6 @@ import 'analyst.dart';
 import 'package:applithium_core/logs/extension.dart';
 
 class AnalyticsService extends AplService<AnalyticsConfig> {
-
   final Set<Analyst> impls;
 
   AnalyticsService({required this.impls});
@@ -34,26 +33,9 @@ class AnalyticsService extends AplService<AnalyticsConfig> {
     impls.forEach((impl) => impl.setUserProperty(name, value));
   }
 
-  void trackEvent(String eventName) {
-    log("trackEvent $eventName");
-    impls.forEach((impl) => impl.trackEvent(eventName));
-  }
-
-  void trackEventWithParams(String eventName, Map<String, Object> params) {
-    log("trackEventWithParams $eventName params: $params");
-    impls.forEach((impl) => impl.trackEventWithParams(eventName, params));
-  }
-
-  void trackRevenue(String productName,
-      {required double price, int quantity = 1}) {
-    log("trackRevenue $productName price=$price qunantity=$quantity");
-    impls.forEach((impl) =>
-        impl.trackRevenue(productName, price: price, quantity: quantity));
-  }
-
-  void addUserProperty(String name, num value) {
-    log("addUserProperty $name : $value");
-    impls.forEach((impl) => impl.addUserProperty(name, value));
+  void trackEvent({required String name, Map<String, Object>? params}) {
+    log("trackEventWithParams $name params: $params");
+    impls.forEach((impl) => impl.trackEvent(name: name, params: params));
   }
 
   StreamSubscription periodicUpdatedUserProperty<T>(
