@@ -21,10 +21,10 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:uni_links/uni_links.dart';
 
-typedef RouterBuilder<R extends MainRouter> = R Function(
+typedef RouterBuilder = MainRouter Function(
     GlobalKey<NavigatorState>);
 
-class BaseAppState<A extends StatefulWidget, R extends MainRouter>
+class BaseAppState<A extends StatefulWidget>
     extends State<A> {
   final String title;
   final _navigatorKey = GlobalKey<NavigatorState>();
@@ -42,7 +42,7 @@ class BaseAppState<A extends StatefulWidget, R extends MainRouter>
   BaseAppState(
       {String? title,
       this.configProvider,
-      required RouterBuilder<R> routerBuilder,
+      required RouterBuilder routerBuilder,
       required this.splashBuilder,
       Set<Analyst>? analysts,
       this.modules})

@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  flutter_local_notifications: ^6.0.0
+
   applithium_core:
     path: ../
 
