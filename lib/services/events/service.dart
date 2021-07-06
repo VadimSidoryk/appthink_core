@@ -38,7 +38,7 @@ class AppEventsService  extends AplService {
     list?.add(trigger);
   }
 
-  void checkEvent(String name) async {
+  void checkEvent({required String name, Map<String, Object>? params}) async {
     final key = "$name.count";
     final count = (_preferences.getInt(key) ?? 0) + 1;
     _preferences.setInt(key, count);
@@ -65,8 +65,6 @@ class AppEventsService  extends AplService {
           }
         }
       }
-
-
     }
   }
 

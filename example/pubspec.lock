@@ -4,11 +4,9 @@ packages:
   applithium_core:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: caade5031f8a4f14ac8984bf31abfb965c530def
-      url: "ssh://git@bitbucket.org/appthink/core.git"
-    source: git
+      path: ".."
+      relative: true
+    source: path
     version: "0.0.1"
   async:
     dependency: transitive
@@ -59,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  copy_with_extension:
+    dependency: transitive
+    description:
+      name: copy_with_extension
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:

@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return BaseAppState<MyApp, MyRouter>(
+    return BaseAppState<MyApp>(
         splashBuilder: (config) => Scaffold(
               body: Center(child: Text("Splash...")),
             ),
