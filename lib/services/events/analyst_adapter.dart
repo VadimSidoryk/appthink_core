@@ -4,9 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'service.dart';
 
 class PromoEventsAnalyticsAdapter extends Analyst {
-  static String _getRevenueEvent(String productName) =>
-      "${productName}_purchased";
-
   final Future<AppEventsService> _initializedService;
 
   PromoEventsAnalyticsAdapter(this._initializedService);
