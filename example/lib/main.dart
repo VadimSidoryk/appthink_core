@@ -1,9 +1,9 @@
+import 'package:applithium_core/app/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/mocks/utils.dart';
+import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/services/analytics/log_analyst.dart';
-import 'package:applithium_core/app/base.dart';
 
 import 'router.dart';
 

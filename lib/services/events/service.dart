@@ -14,18 +14,18 @@ typedef ActionHandler = Function(AplAction, Object?);
 
 class EventHandlerService  extends AplService {
 
-  final SharedPreferences _preferences;
+  final Future<SharedPreferences> _preferencesProvider;
   Map<String, Set<AplEventTrigger>> _triggers = {};
   final ActionHandler _routesHandler;
 
   final _interpolation = Interpolation();
 
-  EventHandlerService(this._preferences, this._routesHandler);
+  EventHandlerService(this._preferencesProvider, this._routesHandler);
 
   void handleEvent({required String name, Map<String, Object>? params}) async {
     final key = "$name.$_countKey";
-    final count = (_preferences.getInt(key) ?? 0) + 1;
-    _preferences.setInt(key, count);
+    final count = ((await _preferencesProvider).getInt(key) ?? 0) + 1;
+    (await _preferencesProvider).setInt(key, count);
 
     if (_triggers.containsKey(name)) {
 

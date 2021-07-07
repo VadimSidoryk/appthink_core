@@ -1,9 +1,9 @@
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/blocs/content_bloc.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core_example/page/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyScreen extends StatefulWidget {

@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:html';
 
 import 'package:applithium_core/blocs/base_bloc.dart';
+import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
-import 'package:applithium_core/events/action.dart';
 import 'package:flutter/material.dart';
 
 class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
