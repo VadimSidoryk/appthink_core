@@ -1,4 +1,4 @@
-import 'package:applithium_core/services/events/model.dart';
+import 'package:applithium_core/events/event_trigger.dart';
 
 class AdsConfig {
   static const String _adKeyWordsKey = "keywords";
@@ -21,11 +21,11 @@ class AdPlacement {
 
   final String placementId;
   final AdType type;
-  final EventTriggerModel trigger;
+  final AplEventTrigger trigger;
 
   factory AdPlacement.fromJson(Map<String, dynamic> json) {
     return AdPlacement(json[_adPlacementIdKey], _parseType(json[_adTypeKey]),
-        EventTriggerModel.fromMap(json[_adTriggerKey]));
+        AplEventTrigger.fromMap(json[_adTriggerKey]));
   }
 
   AdPlacement(this.placementId, this.type, this.trigger);

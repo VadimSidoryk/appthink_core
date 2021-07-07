@@ -3,7 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/src/widgets/navigator.dart';
 
-class FirebaseAnalyst extends Analyst {
+class FirebaseAnalyst extends EventsListener {
 
   final FirebaseAnalytics _analytics = FirebaseAnalytics();
 
@@ -16,7 +16,7 @@ class FirebaseAnalyst extends Analyst {
   }
 
   @override
-  void trackEvent({required String name, Map<String, Object>? params}) {
+  void onNewEvent({required String name, Map<String, Object>? params}) {
     _analytics.logEvent(name: name, parameters: params);
   }
 }

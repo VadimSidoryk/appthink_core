@@ -14,8 +14,8 @@ class ListBloc<IM extends Equatable>
 
   StreamSubscription? _subscription;
 
-  ListBloc(this._repository)
-      : super(ListState.initial()) {
+  ListBloc(this._repository, DialogBuilder dialogBuilder, ToastBuilder toastBuilder)
+      : super(ListState.initial(), dialogBuilder, toastBuilder) {
     _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });
@@ -48,12 +48,12 @@ class ListBloc<IM extends Equatable>
 
 abstract class BaseListEvents extends BaseEvents {
   @override
-  final String analyticTag;
+  final String name;
 
   @override
-  Map<String, Object> get analyticParams => {};
+  Map<String, Object> get params => {};
 
-  BaseListEvents(this.analyticTag): super(analyticTag);
+  BaseListEvents(this.name): super(name);
 }
 
 class UpdateRequested extends BaseListEvents {

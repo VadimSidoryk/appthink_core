@@ -34,7 +34,7 @@ class UsageHistoryService extends AplService<UsageHistoryConfig> {
 
   String? _preferencesName;
   final Future<SharedPreferences> preferencesProvider;
-  final UsageListener? listener;
+  final SessionListener? listener;
 
   WidgetsBindingObserver asWidgetObserver() {
     return UsageWidgetStateAdapter(this);

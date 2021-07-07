@@ -1,13 +1,15 @@
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/blocs/supervisor.dart';
-import 'package:applithium_core/services/analytics/service.dart';
+import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 
-class AnalyticsBlocAdapter extends BlocsListener {
+const receiverKey = "receiver";
 
-  final AnalyticsService analytics;
+class BlocEventsAdapter extends BlocsListener {
 
-  AnalyticsBlocAdapter(this.analytics);
+  final EventBus eventBus;
+
+  BlocEventsAdapter(this.eventBus);
 
   @override
   void onError(BaseBloc bloc, e) {
@@ -18,7 +20,7 @@ class AnalyticsBlocAdapter extends BlocsListener {
   @override
   void onNewEvent(BaseBloc bloc, BaseEvents event) {
     logMethod(methodName: "onNewEvent", params: [bloc, event]);
-    analytics.trackEvent(name: event.analyticTag, params: event.analyticParams);
+    eventBus.onNewEvent(name: event.name, params: event.params..[receiverKey] = bloc);
   }
 
   @override

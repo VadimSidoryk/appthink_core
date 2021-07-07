@@ -1,28 +1,28 @@
-import 'dart:async';
-
+import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/json/condition.dart';
 import 'package:applithium_core/json/interpolation.dart';
+import 'package:applithium_core/services/analytics/bloc_adapter.dart';
 import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'model.dart';
+import '../../events/event_trigger.dart';
 
 const _countKey = "count";
 
-typedef ActionHandler = Function(String);
+typedef ActionHandler = Function(AplAction, Object?);
 
-class AppEventsService  extends AplService {
+class EventHandlerService  extends AplService {
 
   final SharedPreferences _preferences;
-  final Map<String, Set<EventTriggerModel>> _triggers;
+  Map<String, Set<AplEventTrigger>> _triggers = {};
   final ActionHandler _routesHandler;
 
   final _interpolation = Interpolation();
 
-  AppEventsService._(this._preferences, this._triggers, this._routesHandler,);
+  EventHandlerService(this._preferences, this._routesHandler);
 
-  void checkEvent({required String name, Map<String, Object>? params}) async {
+  void handleEvent({required String name, Map<String, Object>? params}) async {
     final key = "$name.$_countKey";
     final count = (_preferences.getInt(key) ?? 0) + 1;
     _preferences.setInt(key, count);
@@ -41,7 +41,7 @@ class AppEventsService  extends AplService {
           }
 
           if (isHandled) {
-            _routesHandler.call(trigger.action);
+            _routesHandler.call(trigger.action, params?[receiverKey]);
             return;
           }
         }
@@ -51,6 +51,6 @@ class AppEventsService  extends AplService {
 
   @override
   void init(BuildContext context, config) {
-    // TODO: implement init
+    // add triggers from config
   }
 }

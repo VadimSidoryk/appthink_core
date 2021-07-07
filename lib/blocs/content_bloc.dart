@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/content_repository.dart';
-import 'package:applithium_core/router/route.dart';
+import 'package:applithium_core/events/action.dart';
 import 'package:flutter/material.dart';
 
 class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
@@ -12,7 +12,7 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
 
   StreamSubscription? _subscription;
 
-  ContentBloc(this._repository) : super(ContentState.initial()) {
+  ContentBloc(this._repository, DialogBuilder dialogBuilder, ToastBuilder toastBuilder) : super(ContentState.initial(), dialogBuilder , toastBuilder) {
    _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data));
     });
@@ -42,12 +42,12 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
 
 abstract class BaseContentEvents extends BaseEvents  {
   @override
-  final String analyticTag;
+  final String name;
 
   @override
-  Map<String, Object> get analyticParams => {};
+  Map<String, Object> get params => {};
 
-  BaseContentEvents(this.analyticTag): super(analyticTag);
+  BaseContentEvents(this.name): super(name);
 }
 
 class UpdateRequested extends BaseContentEvents {
@@ -72,7 +72,7 @@ class ContentState<T> extends BaseState {
     return ContentState(value, false, null);
   }
 
-  ContentState<T> withRoute(AplRoute route) {
+  ContentState<T> withRoute(AplAction route) {
     return ContentState(value, false, null);
   }
 

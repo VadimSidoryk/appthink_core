@@ -8,24 +8,24 @@ import 'package:applithium_core/services/base.dart';
 import 'package:applithium_core/services/history/usage_listener.dart';
 import 'package:flutter/widgets.dart';
 
-import 'analyst.dart';
+import '../services/analytics/analyst.dart';
 import 'package:applithium_core/logs/extension.dart';
 
-class AnalyticsService extends AplService<AnalyticsConfig> {
-  final Set<Analyst> impls;
+class EventBus {
+  final Set<EventsListener> impls;
 
-  AnalyticsService({required this.impls});
+  EventBus({required this.impls});
 
   List<NavigatorObserver> get navigatorObservers {
     return impls.map((impl) => impl.navigatorObserver).toList();
   }
 
-  UsageListener asUsageListener() {
-    return AnalyticsUsageAdapter(this);
+  SessionListener asUsageListener() {
+    return SessionEventsAdapter(this);
   }
 
   BlocsListener asBlocListener() {
-    return AnalyticsBlocAdapter(this);
+    return BlocEventsAdapter(this);
   }
 
   void setUserProperty(String name, dynamic value) {
@@ -33,9 +33,9 @@ class AnalyticsService extends AplService<AnalyticsConfig> {
     impls.forEach((impl) => impl.setUserProperty(name, value));
   }
 
-  void trackEvent({required String name, Map<String, Object>? params}) {
-    log("trackEventWithParams $name params: $params");
-    impls.forEach((impl) => impl.trackEvent(name: name, params: params));
+  void onNewEvent({required String name, Map<String, Object>? params}) {
+    log("onNewEvent $name params: $params");
+    impls.forEach((impl) => impl.onNewEvent(name: name, params: params));
   }
 
   StreamSubscription periodicUpdatedUserProperty<T>(
@@ -45,10 +45,5 @@ class AnalyticsService extends AplService<AnalyticsConfig> {
       currentValue = provider.call(currentValue);
       return currentValue;
     }).listen((value) => setUserProperty(eventName, value));
-  }
-
-  @override
-  void init(BuildContext context, AnalyticsConfig config) {
-    // TODO: implement init
   }
 }

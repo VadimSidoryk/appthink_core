@@ -1,16 +1,19 @@
 import 'dart:async';
 
+import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/blocs/supervisor.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/module/base.dart';
-import 'package:applithium_core/router/route.dart';
+import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
-import 'package:applithium_core/services/analytics/service.dart';
+import 'package:applithium_core/events/event_bus.dart';
+import 'package:applithium_core/services/events/analyst_adapter.dart';
+import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/resources/model.dart';
 import 'package:applithium_core/services/resources/service.dart';
@@ -21,17 +24,15 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:uni_links/uni_links.dart';
 
-typedef RouterBuilder = MainRouter Function(
-    GlobalKey<NavigatorState>);
+typedef RouterBuilder = MainRouter Function(GlobalKey<NavigatorState>);
 
-class BaseAppState<A extends StatefulWidget>
-    extends State<A> {
+class BaseAppState<A extends StatefulWidget> extends State<A> {
   final String title;
   final _navigatorKey = GlobalKey<NavigatorState>();
   @protected
   Store? globalStore;
   final ConfigProvider? configProvider;
-  final Set<Analyst> analysts;
+  final Set<EventsListener> analysts;
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
@@ -44,10 +45,11 @@ class BaseAppState<A extends StatefulWidget>
       this.configProvider,
       required RouterBuilder routerBuilder,
       required this.splashBuilder,
-      Set<Analyst>? analysts,
+      Set<EventsListener>? analysts,
       this.modules})
       : this.title = title ?? "Applithium Based Application",
-        this.analysts = analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()} {
+        this.analysts =
+            analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()} {
     _router = routerBuilder.call(_navigatorKey);
   }
 
@@ -94,20 +96,20 @@ class BaseAppState<A extends StatefulWidget>
   }
 
   void _handleIncomingLinks() {
-      // It will handle app links while the app is already started - be it in
-      // the foreground or in the background.
-      _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {
-        if (!mounted) return;
-        if(uri != null) {
-          log("handling initial link = $uri");
-          _router.applyRoute(_DeepLinkRoute(uri.toString()));
-        } else {
-          logError("incoming uri is null");
-        }
-      }, onError: (Object err) {
-        if (!mounted) return;
-        logError(err);
-      });
+    // It will handle app links while the app is already started - be it in
+    // the foreground or in the background.
+    _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {
+      if (!mounted) return;
+      if (uri != null) {
+        log("handling initial link = $uri");
+        _router.applyRoute(uri.toString());
+      } else {
+        logError("incoming uri is null");
+      }
+    }, onError: (Object err) {
+      if (!mounted) return;
+      logError(err);
+    });
   }
 
   @protected
@@ -121,14 +123,14 @@ class BaseAppState<A extends StatefulWidget>
       initialRoute: initialLink,
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers:
-          globalStore!.get<AnalyticsService>().navigatorObservers,
+          globalStore!.get<EventBus>().navigatorObservers,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     BlocSupervisor.listener =
-        globalStore!.get<AnalyticsService>().asBlocListener();
+        globalStore!.get<EventBus>().asBlocListener();
     globalStore!.get<UsageHistoryService>().openSession();
 
     return _wrapWithGlobalScope(MaterialApp(
@@ -152,16 +154,39 @@ class BaseAppState<A extends StatefulWidget>
   Store createDependencyTree() {
     final result = Store()
       ..add((provider) => SharedPreferences.getInstance())
-      ..add((provider) => AnalyticsService(impls: analysts))
+      ..add((provider) => EventHandlerService(provider.get(), processAction))
+      ..add((provider) => EventBus(
+          impls: analysts..add(EventsHandlerAdapter(provider.get()))))
       ..add((provider) => UsageHistoryService(
           preferencesProvider: provider.get(),
-          listener: provider.get<AnalyticsService>().asUsageListener()))
+          listener: provider.get<EventBus>().asUsageListener()))
       ..add((provider) => ResourceService())
       ..add((provider) => _router);
 
     modules?.forEach((module) => module.addTo(result));
 
     return result;
+  }
+
+  void processAction(AplAction action, Object? receiver) {
+    switch(action.type) {
+      case AplActionType.ROUTE:
+        _router.applyRoute(action.path);
+        break;
+      case AplActionType.SHOW_DIALOG:
+        if(receiver != null) {
+          final receiverBloc = receiver as BaseBloc;
+          receiverBloc.showDialog(action.path);
+        }
+        break;
+      case AplActionType.SHOW_TOAST:
+        if(receiver != null) {
+          final receiverBloc = receiver as BaseBloc;
+          receiverBloc.showToast(action.path);
+        }
+        break;
+
+    }
   }
 
   Widget _wrapWithGlobalScope(Widget wrapped) {
@@ -194,8 +219,4 @@ class _SplashScreen extends StatelessWidget {
         MaterialPageRoute(
             builder: (context) => nextScreenBuilder(context, initialLink)));
   }
-}
-
-class _DeepLinkRoute extends AplRoute {
-  _DeepLinkRoute(String url) : super(url);
 }

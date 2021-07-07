@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/services/analytics/service.dart';
+import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/services/history/usage_listener.dart';
 
 const sessionStartedEvent = "session_started";
@@ -9,22 +9,22 @@ const daysFromLastSessionProperty = "days_from_last_session";
 const daysFromFirstSessionProperty = "days_from_first_session";
 const secondsInAppProperty = "seconds_in_app";
 
-class AnalyticsUsageAdapter extends UsageListener {
+class SessionEventsAdapter extends SessionListener {
 
-  final AnalyticsService analytics;
+  final EventBus eventBus;
   StreamSubscription? subscription;
 
-  AnalyticsUsageAdapter(this.analytics);
+  SessionEventsAdapter(this.eventBus);
 
   @override
   void onSessionStarted(int count, int daysFromFirstSession, int daysFromLastSession) {
-    analytics.trackEvent(name: sessionStartedEvent, params: {
+    eventBus.onNewEvent(name: sessionStartedEvent, params: {
       sessionCountProperty: count,
       daysFromFirstSessionProperty: daysFromFirstSession,
       daysFromLastSessionProperty: daysFromLastSession
     });
-    analytics.setUserProperty(sessionCountProperty, count);
-    subscription = analytics.periodicUpdatedUserProperty<int>(secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
+    eventBus.setUserProperty(sessionCountProperty, count);
+    subscription = eventBus.periodicUpdatedUserProperty<int>(secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
   }
 
   @override
@@ -35,6 +35,6 @@ class AnalyticsUsageAdapter extends UsageListener {
 
   @override
   void onSessionResumed() {
-    subscription = analytics.periodicUpdatedUserProperty<int>(secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
+    subscription = eventBus.periodicUpdatedUserProperty<int>(secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
   }
 }

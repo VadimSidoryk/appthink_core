@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/events/model.dart';
+import 'package:applithium_core/events/event_trigger.dart';
 import 'package:flutter/widgets.dart';
 
 import 'ads.dart';
@@ -14,13 +14,13 @@ class AdsService {
 
   final _initializedSubject = Completer();
 
-  final Map<EventTriggerModel, _AdFuture> _ads = {};
+  final Map<AplEventTrigger, _AdFuture> _ads = {};
 
   bool? _isEnabled;
 
   AdsService(this._lazyAdsFactory);
 
-  Map<EventTriggerModel, Future<bool> Function(BuildContext)>
+  Map<AplEventTrigger, Future<bool> Function(BuildContext)>
       get triggerHandlers => {
             for (final entry in _ads.entries)
               entry.key: (context) async {
@@ -53,7 +53,7 @@ class AdsService {
     _loadAll();
   }
 
-  void _bindAd(EventTriggerModel trigger, Ad Function() builder) {
+  void _bindAd(AplEventTrigger trigger, Ad Function() builder) {
     log("bindAd trigger: $trigger, builder = $builder");
     final future = _AdFuture(builder);
     _ads[trigger] = future;

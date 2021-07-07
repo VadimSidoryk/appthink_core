@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
-abstract class Analyst {
+abstract class EventsListener {
 
-  void trackEvent({required String name, Map<String, Object>? params});
+  void onNewEvent({required String name, Map<String, Object>? params});
 
   void setUserProperty(String name, Object? value);
 

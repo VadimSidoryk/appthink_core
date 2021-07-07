@@ -2,7 +2,7 @@ import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
-class LogAnalyst extends Analyst {
+class LogAnalyst extends EventsListener {
   @override
   NavigatorObserver get navigatorObserver => _LogsNavigatorObserver(this);
 
@@ -12,7 +12,7 @@ class LogAnalyst extends Analyst {
   }
 
   @override
-  void trackEvent({required String name, Map<String, Object>? params}) {
+  void onNewEvent({required String name, Map<String, Object>? params}) {
     logMethod(methodName: "trackEventWithParams", params: [name, params]);
   }
 }
@@ -26,7 +26,7 @@ class _LogsNavigatorObserver extends NavigatorObserver {
   void didPop(Route newRoute, Route? previousRoute) async {
     if (previousRoute is PageRoute && newRoute is PageRoute) {
       final name = newRoute.settings.name;
-      impl.trackEvent(name: "${name}_opened");
+      impl.onNewEvent(name: "${name}_opened");
     }
   }
 
@@ -34,7 +34,7 @@ class _LogsNavigatorObserver extends NavigatorObserver {
   void didPush(Route route, Route? previousRoute) async {
     if (route is PageRoute) {
       final name = route.settings.name;
-      impl.trackEvent(name: "${name}_opened");
+      impl.onNewEvent(name: "${name}_opened");
     }
   }
 
@@ -42,7 +42,7 @@ class _LogsNavigatorObserver extends NavigatorObserver {
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) async {
     if (newRoute is PageRoute) {
       final name = newRoute.settings.name;
-      impl.trackEvent(name: "${name}_opened");
+      impl.onNewEvent(name: "${name}_opened");
     }
   }
 }

@@ -3,55 +3,50 @@ import 'package:flutter/cupertino.dart';
 
 import 'service.dart';
 
-class PromoEventsAnalyticsAdapter extends Analyst {
-  final Future<AppEventsService> _initializedService;
+class EventsHandlerAdapter extends EventsListener {
+  final EventHandlerService _service;
 
-  PromoEventsAnalyticsAdapter(this._initializedService);
+  EventsHandlerAdapter(this._service);
 
   @override
   NavigatorObserver get navigatorObserver =>
-      _NavigatorEventsObserver(_initializedService);
+      _NavigatorEventsObserver(_service);
 
   @override
   void setUserProperty(String name, value) {}
 
   @override
-  void trackEvent({required String name, Map<String, Object>? params}) async {
-    final service = await _initializedService;
-    service.checkEvent(name: name, params: params);
+  void onNewEvent({required String name, Map<String, Object>? params}) async {
+    _service.handleEvent(name: name, params: params);
   }
 }
 
 class _NavigatorEventsObserver extends NavigatorObserver {
   static String _getScreenEvent(String screenName) => "${screenName}_opened";
 
-  final Future<AppEventsService> _initializedService;
+  final EventHandlerService _service;
 
-  _NavigatorEventsObserver(this._initializedService);
+  _NavigatorEventsObserver(this._service);
 
   @override
-  void didPop(Route newRoute, Route? previousRoute) async {
+  void didPop(Route newRoute, Route? previousRoute) {
     if (previousRoute is PageRoute && newRoute is PageRoute) {
-      final service = await _initializedService;
-      service.checkEvent(
+      _service.handleEvent(
           name: _getScreenEvent(previousRoute.settings.name ?? "undefined"));
     }
   }
 
   @override
-  void didPush(Route route, Route? previousRoute) async {
+  void didPush(Route route, Route? previousRoute) {
     if (route is PageRoute) {
-      final service = await _initializedService;
-      service.checkEvent(name: _getScreenEvent(route.settings.name ?? "undefined"));
+      _service.handleEvent(name: _getScreenEvent(route.settings.name ?? "undefined"));
     }
   }
 
   @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) async {
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     if (newRoute is PageRoute) {
-      final service = await _initializedService;
-      service
-          .checkEvent(name: _getScreenEvent(newRoute.settings.name ?? "undefined"));
+      _service.handleEvent(name: _getScreenEvent(newRoute.settings.name ?? "undefined"));
     }
   }
 }
