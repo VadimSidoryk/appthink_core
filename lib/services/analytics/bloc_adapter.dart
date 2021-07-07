@@ -3,7 +3,7 @@ import 'package:applithium_core/blocs/supervisor.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 
-const receiverKey = "receiver";
+const senderKey = "sender";
 
 class BlocEventsAdapter extends BlocsListener {
 
@@ -20,7 +20,7 @@ class BlocEventsAdapter extends BlocsListener {
   @override
   void onNewEvent(BaseBloc bloc, BaseEvents event) {
     logMethod(methodName: "onNewEvent", params: [bloc, event]);
-    eventBus.onNewEvent(name: event.name, params: event.params..[receiverKey] = bloc);
+    eventBus.onNewEvent(name: event.name, params: event.params..[senderKey] = bloc);
   }
 
   @override

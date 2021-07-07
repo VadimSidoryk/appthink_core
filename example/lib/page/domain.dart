@@ -40,7 +40,7 @@ class MyBloc extends ContentBloc<int> {
 
   final MyRepository repository;
 
-  MyBloc(this.repository) : super(repository);
+  MyBloc(this.repository, Presenters presenters) : super(repository, presenters);
 
   @override
   Stream<ContentState<int>> mapEventToStateImpl(BaseEvents event) async* {

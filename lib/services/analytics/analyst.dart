@@ -1,11 +1,7 @@
-import 'package:flutter/widgets.dart';
+import 'package:applithium_core/events/events_listener.dart';
 
-abstract class EventsListener {
-
-  void onNewEvent({required String name, Map<String, Object>? params});
+abstract class Analyst extends EventsListener {
 
   void setUserProperty(String name, Object? value);
-
-  NavigatorObserver get navigatorObserver;
 
 }

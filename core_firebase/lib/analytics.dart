@@ -3,12 +3,12 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/src/widgets/navigator.dart';
 
-class FirebaseAnalyst extends EventsListener {
+class FirebaseAnalyst extends Analyst {
 
   final FirebaseAnalytics _analytics = FirebaseAnalytics();
 
   @override
-  NavigatorObserver get navigatorObserver => FirebaseAnalyticsObserver(analytics: _analytics);
+  List<NavigatorObserver> get navigatorObservers => [ FirebaseAnalyticsObserver(analytics: _analytics) ];
 
   @override
   void setUserProperty(String name, Object? value) {

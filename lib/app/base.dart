@@ -12,6 +12,8 @@ import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/events/event_bus.dart';
+import 'package:applithium_core/services/analytics/service.dart';
+import 'package:applithium_core/services/analytics/usage_adapter.dart';
 import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
@@ -32,7 +34,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
   @protected
   Store? globalStore;
   final ConfigProvider? configProvider;
-  final Set<EventsListener> analysts;
+  final Set<Analyst> analysts;
   late MainRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
@@ -45,7 +47,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
       this.configProvider,
       required RouterBuilder routerBuilder,
       required this.splashBuilder,
-      Set<EventsListener>? analysts,
+      Set<Analyst>? analysts,
       this.modules})
       : this.title = title ?? "Applithium Based Application",
         this.analysts =
@@ -122,15 +124,13 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
       navigatorKey: _navigatorKey,
       initialRoute: initialLink,
       onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers:
-          globalStore!.get<EventBus>().navigatorObservers,
+      navigatorObservers: globalStore!.get<EventBus>().navigatorObservers,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    BlocSupervisor.listener =
-        globalStore!.get<EventBus>().asBlocListener();
+    BlocSupervisor.listener = globalStore!.get<EventBus>().blocListener;
     globalStore!.get<UsageHistoryService>().openSession();
 
     return _wrapWithGlobalScope(MaterialApp(
@@ -155,11 +155,14 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
     final result = Store()
       ..add((provider) => SharedPreferences.getInstance())
       ..add((provider) => EventHandlerService(provider.get(), processAction))
-      ..add((provider) => EventBus(
-          impls: analysts..add(EventsHandlerAdapter(provider.get()))))
+      ..add((provider) => AnalyticsService(analysts: analysts))
+      ..add((provider) => EventBus(listeners: {
+            EventsHandlerAdapter(provider.get()),
+            provider.get<AnalyticsService>()
+          }))
       ..add((provider) => UsageHistoryService(
           preferencesProvider: provider.get(),
-          listener: provider.get<EventBus>().asUsageListener()))
+          listener: SessionEventsAdapter(provider.get(), provider.get())))
       ..add((provider) => ResourceService())
       ..add((provider) => _router);
 
@@ -168,24 +171,23 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
     return result;
   }
 
-  void processAction(AplAction action, Object? receiver) {
-    switch(action.type) {
+  void processAction(AplAction action, Object? sender) {
+    switch (action.type) {
       case AplActionType.ROUTE:
         _router.applyRoute(action.path);
         break;
       case AplActionType.SHOW_DIALOG:
-        if(receiver != null) {
-          final receiverBloc = receiver as BaseBloc;
-          receiverBloc.showDialog(action.path);
+        if (sender != null) {
+          final senderBloc = sender as BaseBloc;
+          senderBloc.showDialog(action.path);
         }
         break;
       case AplActionType.SHOW_TOAST:
-        if(receiver != null) {
-          final receiverBloc = receiver as BaseBloc;
-          receiverBloc.showToast(action.path);
+        if (sender != null) {
+          final senderBloc = sender as BaseBloc;
+          senderBloc.showToast(action.path);
         }
         break;
-
     }
   }
 

@@ -14,8 +14,8 @@ class ListBloc<IM extends Equatable>
 
   StreamSubscription? _subscription;
 
-  ListBloc(this._repository, DialogBuilder dialogBuilder, ToastBuilder toastBuilder)
-      : super(ListState.initial(), dialogBuilder, toastBuilder) {
+  ListBloc(this._repository, Presenters presenters)
+      : super(ListState.initial(), presenters) {
     _subscription = _repository.updatesStream.listen((data) {
       add(DisplayData(data.items, data.isEndReached));
     });

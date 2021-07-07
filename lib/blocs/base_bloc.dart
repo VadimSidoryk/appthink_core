@@ -3,8 +3,15 @@ import 'package:applithium_core/services/analytics/trackable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-typedef DialogBuilder = Future<dynamic> Function(String);
-typedef ToastBuilder = void Function(String);
+typedef DialogPresenter = Future<dynamic> Function(String);
+typedef ToastPresenter = void Function(String);
+
+class Presenters {
+  final DialogPresenter dialogPresenter;
+  final ToastPresenter toastPresenter;
+
+  Presenters({required this.dialogPresenter, required this.toastPresenter});
+}
 
 abstract class BaseEvents extends Trackable {
   @override
@@ -47,21 +54,20 @@ abstract class BaseState {
 abstract class BaseBloc<State extends BaseState>
     extends Bloc<BaseEvents, BaseState> {
 
-  final DialogBuilder _dialogBuilder;
-  final ToastBuilder _toastBuilder;
+  final Presenters _presenters;
 
   @protected
   State get currentState => state as State;
 
-  BaseBloc(State initialState, this._dialogBuilder, this._toastBuilder) : super(initialState);
+  BaseBloc(State initialState, this._presenters) : super(initialState);
 
   void showDialog(String path) async {
-    final result = await _dialogBuilder.call(path);
+    final result = await _presenters.dialogPresenter.call(path);
     add(BaseEvents.dialogClosed(path, result));
   }
 
   void showToast(String path) {
-    _toastBuilder.call(path);
+    _presenters.toastPresenter.call(path);
   }
 
   @override

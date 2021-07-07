@@ -1,10 +1,10 @@
-import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:flutter/widgets.dart';
 
-class LogAnalyst extends EventsListener {
+class LogAnalyst extends Analyst {
   @override
-  NavigatorObserver get navigatorObserver => _LogsNavigatorObserver(this);
+  List<NavigatorObserver> get navigatorObservers => [ _LogsNavigatorObserver(this) ];
 
   @override
   void setUserProperty(String name, value) {

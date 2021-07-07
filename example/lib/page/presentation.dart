@@ -25,9 +25,15 @@ class MyScreen extends StatefulWidget {
 class _MyScreenState extends State<MyScreen> {
   MyBloc? bloc;
 
+  Presenters get _presenters => Presenters(
+    dialogPresenter: (path) => showDialog(context: context, builder: (context) => Text("Dialog")),
+    toastPresenter: (path) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Sending Message")))
+  );
+
   @override
   Widget build(BuildContext context) {
-    bloc = MyBloc(context.get());
+    bloc = MyBloc(context.get(), _presenters);
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //

@@ -36,9 +36,6 @@ class MyRouter extends MainRouter {
 
   Store _getMyDependencies(BuildContext context) {
     return Store()..add((provider) => MyUseCaseImpl())
-        ..add((provider) => MyRepository(useCase: provider.get<MyUseCaseImpl>()))
-        ..add((provider) => MyBloc(provider.get<MyRepository>()));
+        ..add((provider) => MyRepository(useCase: provider.get<MyUseCaseImpl>()));
   }
-
-
 }

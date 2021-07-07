@@ -1,4 +1,4 @@
-import 'package:applithium_core/services/analytics/analyst.dart';
+import 'package:applithium_core/events/events_listener.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'service.dart';
@@ -9,11 +9,8 @@ class EventsHandlerAdapter extends EventsListener {
   EventsHandlerAdapter(this._service);
 
   @override
-  NavigatorObserver get navigatorObserver =>
-      _NavigatorEventsObserver(_service);
-
-  @override
-  void setUserProperty(String name, value) {}
+  List<NavigatorObserver> get navigatorObservers =>
+      [ _NavigatorEventsObserver(_service) ];
 
   @override
   void onNewEvent({required String name, Map<String, Object>? params}) async {
