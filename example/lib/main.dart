@@ -1,4 +1,5 @@
 import 'package:applithium_core/app/base.dart';
+import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/mocks/utils.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
@@ -22,8 +23,15 @@ class MyApp extends StatefulWidget {
             ),
         title: "Applithium Core Example",
         analysts: {LogAnalyst()},
-        configProvider: () =>
-            MockUtils.mockWithDelay(Duration(seconds: 2), EmptyConfig()),
+        configProvider: MockedConfigProvider(),
         routerBuilder: (key) => MyRouter(key));
+  }
+}
+
+class MockedConfigProvider extends ConfigProvider {
+  @override
+  Future<AplConfig> getApplicationConfig() {
+    return MockUtils.mockWithDelay(
+        Duration(seconds: 2), AplConfig(resources: {}, eventHandlers: {}));
   }
 }

@@ -86,7 +86,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
 
   Future<String?> _initAsyncComponents(BuildContext context) async {
     logMethod(methodName: "initAsyncComponents");
-    final AplConfig? config = await configProvider?.call();
+    final AplConfig? config = await configProvider?.getApplicationConfig();
     if (config != null) {
       log("config received");
       initServices(context, config);

@@ -1,10 +1,7 @@
-abstract class AplConfig {
-  Map<String, Map<String, String>> get resources;
-}
+class AplConfig {
+  final Map<String, Map<String, String>>  resources;
+  final Map<String, Map<String, dynamic>> eventHandlers;
 
-class EmptyConfig extends AplConfig {
-  @override
-  Map<String, Map<String, String>> get resources => {
-    "": {}
-  };
+  AplConfig({required this.resources, required this.eventHandlers});
+
 }

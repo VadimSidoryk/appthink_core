@@ -41,7 +41,7 @@ class EventHandlerService  extends AplService {
           }
 
           if (isHandled) {
-            _routesHandler.call(trigger.action, params?[senderKey]);
+            _routesHandler.call(trigger.action, params?[KEY_SENDER]);
             return;
           }
         }
