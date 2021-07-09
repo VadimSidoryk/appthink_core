@@ -1,4 +1,5 @@
 import 'package:applithium_core/blocs/supervisor.dart';
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/services/analytics/trackable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,36 +14,6 @@ class Presenters {
   Presenters({required this.dialogPresenter, required this.toastPresenter});
 }
 
-abstract class BaseEvents extends Trackable {
-  @override
-  final String name;
-
-  BaseEvents(this.name);
-
-  @override
-  Map<String, Object> get params => {};
-
-  factory BaseEvents.screenShown() => Shown._();
-
-  factory BaseEvents.dialogClosed(source, result) =>
-      DialogClosed._(source, result);
-}
-
-class Shown extends BaseEvents {
-  Shown._() : super("screen_shown");
-}
-
-class DialogClosed<VM, R> extends BaseEvents {
-  final VM source;
-  final R result;
-
-  DialogClosed._(this.source, this.result)
-      : super(result != null ? "dialog_accepted" : "dialog_dismissed");
-
-  @override
-  Map<String, Object> get params => {"source": source.toString()};
-}
-
 abstract class BaseState {
   final dynamic error;
 
@@ -52,7 +23,7 @@ abstract class BaseState {
 }
 
 abstract class BaseBloc<State extends BaseState>
-    extends Bloc<BaseEvents, BaseState> {
+    extends Bloc<AplEvent, BaseState> {
 
   final Presenters _presenters;
 
@@ -63,7 +34,7 @@ abstract class BaseBloc<State extends BaseState>
 
   void showDialog(String path) async {
     final result = await _presenters.dialogPresenter.call(path);
-    add(BaseEvents.dialogClosed(path, result));
+    add(AplEvent.dialogClosed(path, result));
   }
 
   void showToast(String path) {
@@ -71,7 +42,7 @@ abstract class BaseBloc<State extends BaseState>
   }
 
   @override
-  Stream<BaseState> mapEventToState(BaseEvents event) async* {
+  Stream<BaseState> mapEventToState(AplEvent event) async* {
     try {
       BlocSupervisor.listener?.onNewEvent(this, event);
 
@@ -87,5 +58,5 @@ abstract class BaseBloc<State extends BaseState>
     }
   }
 
-  Stream<State> mapEventToStateImpl(BaseEvents event);
+  Stream<State> mapEventToStateImpl(AplEvent event);
 }

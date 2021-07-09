@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/logs/extension.dart';
@@ -14,21 +15,25 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
   ContentBloc(this._repository, Presenters presenters)
       : super(ContentState.initial(), presenters) {
     _subscription = _repository.updatesStream.listen((data) {
-      add(DisplayData(data));
+      add(AplEvent.displayData(data));
     });
   }
 
   @override
-  Stream<ContentState<VM>> mapEventToStateImpl(BaseEvents event) async* {
-    if (event is Shown) {
-      _repository.updateData(false);
-    } else if (event is UpdateRequested) {
-      yield currentState.withLoading(true);
-      final isUpdated = await _repository.updateData(true);
-      log("isUpdated: $isUpdated");
-      yield currentState.withLoading(false);
-    } else if (event is DisplayData<VM>) {
-      yield currentState.withValue(event.data);
+  Stream<ContentState<VM>> mapEventToStateImpl(AplEvent event) async* {
+    switch(event.name) {
+      case EVENT_SHOWN_NAME:
+        _repository.updateData(false);
+        break;
+      case EVENT_UPDATE_REQUESTED_NAME:
+        yield currentState.withLoading(true);
+        final isUpdated = await _repository.updateData(true);
+        log("isUpdated: $isUpdated");
+        yield currentState.withLoading(false);
+        break;
+      case EVENT_DATA_UPDATED_NAME:
+        yield currentState.withValue(event.params[EVENT_DATA_UPDATED_ARG_DATA] as VM);
+        break;
     }
   }
 
@@ -38,26 +43,6 @@ class ContentBloc<VM> extends BaseBloc<ContentState<VM>> {
     await super.close();
     return _subscription?.cancel();
   }
-}
-
-abstract class BaseContentEvents extends BaseEvents {
-  @override
-  final String name;
-
-  @override
-  Map<String, Object> get params => {};
-
-  BaseContentEvents(this.name) : super(name);
-}
-
-class UpdateRequested extends BaseContentEvents {
-  UpdateRequested() : super("screen_update");
-}
-
-class DisplayData<T> extends BaseContentEvents {
-  final T data;
-
-  DisplayData(this.data) : super("data_updated");
 }
 
 class ContentState<T> extends BaseState {

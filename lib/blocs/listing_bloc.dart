@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -7,34 +8,40 @@ import 'package:flutter/cupertino.dart';
 
 import 'base_bloc.dart';
 
-class ListBloc<IM extends Equatable>
-    extends BaseBloc<ListState<IM>> {
-
+class ListingBloc<IM extends Equatable> extends BaseBloc<ListState<IM>> {
   final ListRepository<IM> _repository;
 
   StreamSubscription? _subscription;
 
-  ListBloc(this._repository, Presenters presenters)
+  ListingBloc(this._repository, Presenters presenters)
       : super(ListState.initial(), presenters) {
     _subscription = _repository.updatesStream.listen((data) {
-      add(DisplayData(data.items, data.isEndReached));
+      add(AplEvent.displayListData(data.items, data.isEndReached));
     });
   }
 
   @override
-  Stream<ListState<IM>> mapEventToStateImpl(BaseEvents event) async* {
-    if (event is Shown) {
-      _repository.updateData(false);
-    } else if (event is UpdateRequested) {
-      yield currentState.withLoading(true);
-      final isUpdated = await _repository.updateData(true);
-      log("isUpdated: $isUpdated");
-      yield currentState.withLoading(false);
-    } else if (event is ScrolledToEnd && !currentState.isPageLoading) {
-      yield currentState.withPageLoading(true);
-      _repository.loadMoreItems();
-    } else if (event is DisplayData<List<IM>>) {
-      yield currentState.withValue(event.data, event.isEndReached);
+  Stream<ListState<IM>> mapEventToStateImpl(AplEvent event) async* {
+    switch (event.name) {
+      case EVENT_SHOWN_NAME:
+        _repository.updateData(false);
+        break;
+      case EVENT_UPDATE_REQUESTED_NAME:
+        yield currentState.withLoading(true);
+        final isUpdated = await _repository.updateData(true);
+        log("isUpdated: $isUpdated");
+        yield currentState.withLoading(false);
+        break;
+      case EVENT_SCROLLED_TO_END:
+        if (!currentState.isPageLoading) {
+          yield currentState.withPageLoading(true);
+          _repository.loadMoreItems();
+        }
+        break;
+      case EVENT_DATA_UPDATED_NAME:
+        yield currentState.withValue(
+            event.params[EVENT_DATA_UPDATED_ARG_DATA] as List<IM>,
+            event.params[EVENT_DATA_UPDATED_ARG_IS_END_REACHED] as bool);
     }
   }
 
@@ -44,31 +51,6 @@ class ListBloc<IM extends Equatable>
     await super.close();
     return _subscription?.cancel();
   }
-}
-
-abstract class BaseListEvents extends BaseEvents {
-  @override
-  final String name;
-
-  @override
-  Map<String, Object> get params => {};
-
-  BaseListEvents(this.name): super(name);
-}
-
-class UpdateRequested extends BaseListEvents {
-  UpdateRequested() : super("screen_update");
-}
-
-class DisplayData<T> extends BaseListEvents {
-  final T data;
-  final isEndReached;
-
-  DisplayData(this.data, this.isEndReached) : super("data_updated");
-}
-
-class ScrolledToEnd extends BaseListEvents {
-  ScrolledToEnd() : super("scrolled_to_end");
 }
 
 class ListState<T> extends BaseState {
@@ -83,7 +65,8 @@ class ListState<T> extends BaseState {
       error,
       dialogModel,
       required this.isPageLoading,
-      required this.isEndReached}): super(error);
+      required this.isEndReached})
+      : super(error);
 
   factory ListState.initial() => ListState(
       value: null,
