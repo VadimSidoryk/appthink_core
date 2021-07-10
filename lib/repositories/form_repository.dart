@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/repositories/content_repository.dart';
+import 'package:applithium_core/repositories/value_repository.dart';
 import 'package:flutter/foundation.dart';
 
-abstract class FormRepository<T> extends ContentRepository<T> {
+enum FormRepositoryState { INITIAL, UPDATING, UPDATED, FORM_APPLYING, FORM_APPLIED }
 
-  @override
-  Stream<T> get updatesStream => data.stream.first.asStream();
+class FormRepository extends ContentRepository {
+  FormRepository() : super();
+
 
   Future<T?> applyForm() async {
     state = ContentRepositoryState.UPDATING;

@@ -5,6 +5,9 @@ import 'package:applithium_core/blocs/types.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/config.dart';
+import 'package:applithium_core/repositories/value_repository.dart';
+import 'package:applithium_core/repositories/form_repository.dart';
+import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core/services/resources/model.dart';
 import 'package:flutter/widgets.dart';
 import 'package:applithium_core/scopes/extensions.dart';
@@ -26,11 +29,14 @@ class AplPresentation extends StatefulWidget {
   BaseBloc _buildBloc(BlocTypes type) {
     switch(type) {
       case BlocTypes.CONTENT:
-        return ContentBloc();
+        final repository = ContentRepository(config.domain[EVENT_UPDATE_REQUESTED_NAME], );
+        return ContentBloc(repository, _buildPresenters());
       case BlocTypes.FORM:
-        return ContentBloc();
+        final repository = FormRepository();
+        return ContentBloc(repository, _buildPresenters());
       case BlocTypes.LISTING:
-        return ListingBloc();
+        final repository = ListingRepository();
+        return ListingBloc(repository, _buildPresenters());
     }
   }
 

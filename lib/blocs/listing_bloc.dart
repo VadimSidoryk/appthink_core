@@ -9,13 +9,13 @@ import 'package:flutter/cupertino.dart';
 import 'base_bloc.dart';
 
 class ListingBloc<IM extends Equatable> extends BaseBloc<ListState<IM>> {
-  final ListRepository<IM> _repository;
+  final ListingRepository<IM> repository;
 
   StreamSubscription? _subscription;
 
-  ListingBloc(this._repository, Presenters presenters)
+  ListingBloc(this.repository, Presenters presenters)
       : super(ListState.initial(), presenters) {
-    _subscription = _repository.updatesStream.listen((data) {
+    _subscription = repository.updatesStream.listen((data) {
       add(AplEvent.displayListData(data.items, data.isEndReached));
     });
   }
@@ -24,18 +24,18 @@ class ListingBloc<IM extends Equatable> extends BaseBloc<ListState<IM>> {
   Stream<ListState<IM>> mapEventToStateImpl(AplEvent event) async* {
     switch (event.name) {
       case EVENT_SHOWN_NAME:
-        _repository.updateData(false);
+        repository.updateData(false);
         break;
       case EVENT_UPDATE_REQUESTED_NAME:
         yield currentState.withLoading(true);
-        final isUpdated = await _repository.updateData(true);
+        final isUpdated = await repository.updateData(true);
         log("isUpdated: $isUpdated");
         yield currentState.withLoading(false);
         break;
       case EVENT_SCROLLED_TO_END:
         if (!currentState.isPageLoading) {
           yield currentState.withPageLoading(true);
-          _repository.loadMoreItems();
+          repository.loadMoreItems();
         }
         break;
       case EVENT_DATA_UPDATED_NAME:

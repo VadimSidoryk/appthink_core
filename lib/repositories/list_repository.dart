@@ -15,18 +15,23 @@ class ListData<T extends Equatable> {
   ListData(this.items, this.isEndReached);
 }
 
-abstract class ListRepository<T extends Equatable>
+enum ListingRepositoryState {
+  INITIAL,
+  DATA_UPDATING,
+  DATA_UPDATED,
+  MORE_ITEMS_LOADING,
+  MORE_ITEMS_LOADED
+}
+
+abstract class ListingRepository<T extends Equatable>
     extends BaseRepository<ListData<T>> {
 
-  ListRepositoryState _state = ListRepositoryState.INITIAL;
+  ListingRepositoryState _state = ListingRepositoryState.INITIAL;
 
   CancelableOperation? _updateDataOperation;
   CancelableOperation? _loadMoreItemsOperation;
 
   int _currentValueLength = 0;
-
-  @protected
-  final data = BehaviorSubject<List<T>>();
 
   final _endReachedSubj = BehaviorSubject.seeded(false);
 
@@ -45,9 +50,9 @@ abstract class ListRepository<T extends Equatable>
       _endReachedSubj.stream,
       (List<T> list, bool isEndReached) => ListData(list, isEndReached));
 
-  factory ListRepository.simple(UseCase<dynamic, List<T>> useCase) => _SimpleListRepository(useCase);
+  factory ListingRepository.simple(UseCase<dynamic, List<T>> useCase) => _SimpleListRepository(useCase);
 
-  ListRepository(this.defaultPageLength, {this.timeToLiveMillis = 60 * 1000});
+  ListingRepository(this.defaultPageLength, {this.timeToLiveMillis = 60 * 1000});
 
   Future<List<T>> loadItems(int startIndex, T? lastValue, int itemsToLoad);
 
@@ -59,7 +64,7 @@ abstract class ListRepository<T extends Equatable>
 
 
     if (needToUpdate) {
-      _state = ListRepositoryState.DATA_UPDATING;
+      _state = ListingRepositoryState.DATA_UPDATING;
       _updateDataOperation?.cancel();
       _updateDataOperation = null;
 
@@ -75,48 +80,11 @@ abstract class ListRepository<T extends Equatable>
       }, onError: (obj, exception) {
         logError(Exception(exception));
         //error flow we don't need to reset isOutdated field
-        _state = ListRepositoryState.DATA_UPDATED;
+        _state = ListingRepositoryState.DATA_UPDATED;
         return false;
       });
     } else {
       return false;
-    }
-  }
-
-  @protected
-  Future<bool> updateItem(T item) async {
-    if (await data.isEmpty) {
-      return false;
-    } else {
-      final List<T> newValue = List.of(data.value);
-      final int itemIndex = newValue.indexOf(item);
-      if (itemIndex != -1) {
-        newValue[itemIndex] = item;
-      }
-      data.sink.add(newValue);
-      return itemIndex != -1;
-    }
-  }
-
-  @protected
-  Future<bool> removeItem(T itemToRemove) async {
-    if (await data.isEmpty) {
-      return false;
-    } else {
-      final newValue = List.of(data.value);
-      final isRemoved = newValue.remove(itemToRemove);
-      onNewList(newValue);
-      return isRemoved;
-    }
-  }
-
-  @protected
-  Future<bool> addItems(List<T> items) async {
-    if (await data.isEmpty) {
-      return false;
-    } else {
-      onNewList(data.value + items);
-      return true;
     }
   }
 
@@ -131,7 +99,7 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   void markAsUpdated() {
-    _state = ListRepositoryState.DATA_UPDATED;
+    _state = ListingRepositoryState.DATA_UPDATED;
 
     _subscription?.cancel();
     _subscription = null;
@@ -157,7 +125,7 @@ abstract class ListRepository<T extends Equatable>
       return false;
     }
 
-    _state = ListRepositoryState.MORE_ITEMS_LOADING;
+    _state = ListingRepositoryState.MORE_ITEMS_LOADING;
 
     final lastElement = (await data.first).last;
     _loadMoreItemsOperation = CancelableOperation.fromFuture(
@@ -165,7 +133,7 @@ abstract class ListRepository<T extends Equatable>
         onCancel: () => {log("cancel loadMore operation")});
 
     return (_loadMoreItemsOperation as CancelableOperation).valueOrCancellation(false).then((value) {
-      _state = ListRepositoryState.MORE_ITEMS_LOADED;
+      _state = ListingRepositoryState.MORE_ITEMS_LOADED;
       _endReachedSubj.sink.add(value.length < defaultPageLength);
       return addItems(value);
     }, onError: (obj, exception) {
@@ -184,34 +152,13 @@ abstract class ListRepository<T extends Equatable>
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return _state != ListRepositoryState.DATA_UPDATING && (isForced || _isOutdated);
+    return _state != ListingRepositoryState.DATA_UPDATING && (isForced || _isOutdated);
   }
 
   @protected
   Future<bool> checkNeedLoadMoreValues() async {
-    return _state != ListRepositoryState.MORE_ITEMS_LOADING &&
-        _state != ListRepositoryState.DATA_UPDATING &&
+    return _state != ListingRepositoryState.MORE_ITEMS_LOADING &&
+        _state != ListingRepositoryState.DATA_UPDATING &&
         !await endReachedObs.first;
   }
-}
-
-enum ListRepositoryState {
-  INITIAL,
-  DATA_UPDATING,
-  DATA_UPDATED,
-  MORE_ITEMS_LOADING,
-  MORE_ITEMS_LOADED
-}
-
-class _SimpleListRepository<T extends Equatable> extends ListRepository<T> {
-
-  final UseCase<dynamic, List<T>> useCase;
-
-  _SimpleListRepository(this.useCase): super(10000);
-
-  @override
-  Future<List<T>> loadItems(int startIndex, T? lastValue, int itemsToLoad) {
-    return useCase.loadData(null);
-  }
-
 }

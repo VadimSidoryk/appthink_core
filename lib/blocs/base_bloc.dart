@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:applithium_core/blocs/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
-import 'package:applithium_core/services/analytics/trackable.dart';
+import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,23 +25,35 @@ abstract class BaseState {
   BaseState withError(dynamic error);
 }
 
-abstract class BaseBloc<State extends BaseState>
+class BaseBloc<S extends BaseState, R extends BaseRepository>
     extends Bloc<AplEvent, BaseState> {
+  final R repository;
+  final Map<String, UseCase> domain;
+  final Presenters presenters;
 
-  final Presenters _presenters;
+  StreamSubscription? _subscription;
 
   @protected
-  State get currentState => state as State;
+  S get currentState => state as S;
 
-  BaseBloc(State initialState, this._presenters) : super(initialState);
+  BaseBloc(
+      {required S initialState,
+      required this.presenters,
+      required this.repository,
+      required this.domain})
+      : super(initialState) {
+    _subscription = repository.updatesStream.listen((data) {
+      add(AplEvent.displayData(data));
+    });
+  }
 
   void showDialog(String path) async {
-    final result = await _presenters.dialogPresenter.call(path);
+    final result = await presenters.dialogPresenter.call(path);
     add(AplEvent.dialogClosed(path, result));
   }
 
   void showToast(String path) {
-    _presenters.toastPresenter.call(path);
+    presenters.toastPresenter.call(path);
   }
 
   @override
@@ -58,5 +73,17 @@ abstract class BaseBloc<State extends BaseState>
     }
   }
 
-  Stream<State> mapEventToStateImpl(AplEvent event);
+  Stream<S> mapEventToStateImpl(AplEvent event) async* {
+    if (domain.containsKey(event.name)) {
+      final useCase = domain[event.name] as UseCase;
+      repository.apply(useCase.withParams(event.params));
+    }
+  }
+
+  @override
+  @mustCallSuper
+  Future<void> close() async {
+    await super.close();
+    return _subscription?.cancel();
+  }
 }
