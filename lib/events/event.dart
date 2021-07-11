@@ -15,6 +15,8 @@ const EVENT_DATA_UPDATED_ARG_IS_END_REACHED = "is_end_reached";
 
 const EVENT_SCROLLED_TO_END = "scrolled_to_end";
 
+const EVENT_SEND_FORM_NAME = "send_form";
+
 class AplEvent extends Trackable {
   @override
   final String name;
@@ -50,6 +52,11 @@ class AplEvent extends Trackable {
 
   factory AplEvent.scrollToEnd() => AplEvent(
     name: EVENT_SCROLLED_TO_END,
+    params: {}
+  );
+
+  factory AplEvent.sendForm() => AplEvent(
+    name: EVENT_SEND_FORM_NAME,
     params: {}
   );
 }

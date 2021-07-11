@@ -7,13 +7,13 @@ class QueueUseCase<D> extends UseCase<D> {
   QueueUseCase(this.useCases);
 
   @override
-  Stream<D> invokeImpl({D? state}) {
-    Stream<D> result = useCases[0].invokeImpl(state: state);
+  Stream<D> invokeImpl(D? state, Map<String, dynamic> params) {
+    Stream<D> result = useCases[0].invokeImpl(state, params);
     if (useCases.length == 1) {
       return result;
     }
     for (int i = 1; i < useCases.length; i++) {
-      result = result.flatMap((event) => useCases[i].invokeImpl(state: event));
+      result = result.flatMap((event) => useCases[i].invokeImpl(state, params));
     }
 
     return result;

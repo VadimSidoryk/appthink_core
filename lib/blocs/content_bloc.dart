@@ -4,20 +4,22 @@ import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/value_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:applithium_core/usecases/base.dart';
 
-class ContentBloc extends BaseBloc<ContentState, ContentRepository> {
-
-  ContentBloc(this._repository, Presenters presenters)
-      : super(ContentState.initial(), presenters) {
-    _subscription = _repository.updatesStream.listen((data) {
-      add(AplEvent.displayData(data));
-    });
-  }
+class ContentBloc<T> extends BaseBloc<ContentState, ContentRepository> {
+  ContentBloc(
+      {required Presenters presenters,
+      required ContentRepository repository,
+      required Map<String, UseCase<T>> domain})
+      : super(
+            initialState: ContentState.initial(),
+            presenters: presenters,
+            repository: repository,
+            domain: domain);
 
   @override
   Stream<ContentState> mapEventToStateImpl(AplEvent event) async* {
-    switch(event.name) {
+    switch (event.name) {
       case EVENT_SHOWN_NAME:
         repository.loadData(false);
         break;
@@ -28,18 +30,12 @@ class ContentBloc extends BaseBloc<ContentState, ContentRepository> {
         yield currentState.withLoading(false);
         break;
       case EVENT_DATA_UPDATED_NAME:
-        yield currentState.withValue(event.params[EVENT_DATA_UPDATED_ARG_DATA] as Map<String, dynamic>);
+        yield currentState.withValue(
+            event.params[EVENT_DATA_UPDATED_ARG_DATA] as Map<String, dynamic>);
         break;
       default:
         yield* super.mapEventToStateImpl(event);
     }
-  }
-
-  @override
-  @mustCallSuper
-  Future<void> close() async {
-    await super.close();
-    return _subscription?.cancel();
   }
 }
 

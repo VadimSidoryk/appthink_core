@@ -5,53 +5,78 @@ import 'scope.dart';
 enum _StoreFactoryType { factory, single }
 
 abstract class InstanceProvider {
-  T get<T>();
+  T get<T>({String? key});
 
-  T? getOrNull<T>();
+  T? getOrNull<T>({String? key});
 }
 
 ///Simple instance store
 class Store extends InstanceProvider {
-  final _map = new Map<Type, _StoreFactory<dynamic>>();
+  Map<Type, Map<String, _StoreFactory<dynamic>>> _map = const {};
 
   Store();
 
   Store.extend(BuildContext parentsSource) {
     final parentScope = Scope.of(parentsSource);
-    _map.addAll(parentScope.store._map);
+    final Map<Type, Map<String, _StoreFactory<dynamic>>> resultMap = Map.from(parentScope.store._map);
+    _map.keys.forEach((key) {
+      if(resultMap.containsKey(key)) {
+        resultMap[key]!.addAll(_map[key]!);
+      } else {
+        resultMap[key] = _map[key]!;
+      }
+    });
+    _map = resultMap;
   }
 
   @override
-  T get<T>() {
-    _StoreFactory<T> sf = _map[T] as _StoreFactory<T>;
+  T get<T>({String? key}) {
+    final keysMap = _map[T];
     // ignore: unnecessary_null_comparison
-    if (sf == null) {
+    if (keysMap == null) {
       throw new Exception("${T.toString()} is not mapped in store.");
     }
-    return sf.instance;
+    final storeFactory = keysMap[key ?? ""];
+    if(storeFactory == null) {
+      throw new Exception("${T.toString()} with key $key is not mapped in store.");
+    }
+
+    return storeFactory.instance;
   }
 
   @override
-  T? getOrNull<T>() {
-    if(_map.containsKey(T)) {
-      return get<T>();
+  T? getOrNull<T>({String? key}) {
+    if (_map.containsKey(T)) {
+      return get<T>(key: key);
     } else {
       return null;
     }
   }
 
-  call<T>() => get<T>();
+  call<T>({String? key}) => get<T>(key: key);
 
   ///registers transient instances ( a new instance is provider per request )
-  addFactory<T>(T Function(InstanceProvider) func) {
-    _map[T] = _StoreFactory<T>(_StoreFactoryType.factory,
-        func: () => func.call(this));
+  addFactory<T>(T Function(InstanceProvider) func, {String? key}) {
+    _addStoreFactory(_StoreFactoryType.factory, func , key ?? "");
   }
 
   ///registers lazy instances ( they get instantiated on first request )
-  add<T>(T Function(InstanceProvider) func) {
-    _map[T] =
-        _StoreFactory<T>(_StoreFactoryType.single, func: () => func.call(this));
+  add<T>(T Function(InstanceProvider) func, {String? key}) {
+    _addStoreFactory(_StoreFactoryType.single, func , key ?? "");
+  }
+
+  _addStoreFactory<T>(_StoreFactoryType type, T Function(InstanceProvider) func, String key) {
+    final map = _map[T];
+    if (map == null) {
+      _map[T] = {
+        key : _StoreFactory<T>(_StoreFactoryType.factory,
+            func: () => func.call(this))
+      };
+    } else {
+      _map[T] = map
+        ..[key] = _StoreFactory<T>(_StoreFactoryType.factory,
+            func: () => func.call(this));
+    }
   }
 
   clear() {

@@ -7,12 +7,10 @@ class HttpPostUseCase<T> extends UseCase<T> {
   final Uri uri;
   final Map<String, String> headers;
 
-  HttpPostUseCase(this.uri, { this.headers = const {}}) {
-    this.headers..['content-type'] = 'application/json';
-  }
+  HttpPostUseCase(this.uri, { this.headers = const {}});
 
   @override
-  Stream<T> invokeImpl({T? state}) async* {
+  Stream<T> invokeImpl(T? state, Map<String, dynamic> params) async* {
     state as T;
     final response;
     try {
@@ -26,5 +24,4 @@ class HttpPostUseCase<T> extends UseCase<T> {
     }
     yield state;
   }
-
 }

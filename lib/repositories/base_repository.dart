@@ -12,6 +12,12 @@ abstract class BaseRepository<T> {
   Stream<T> get updatesStream => data.stream;
 
   StreamSubscription? _operationSubscription;
+  @protected
+  final int timeToLiveMillis;
+  @protected
+  bool isOutdated = true;
+
+  BaseRepository(this.timeToLiveMillis);
 
   Future<bool> apply(UseCase<T> useCase) async {
     final completer = Completer<bool>();
@@ -19,7 +25,7 @@ abstract class BaseRepository<T> {
     final dataValue = data.hasValue ? data.value : null;
 
     _operationSubscription = useCase
-        .invoke(state: dataValue)
+        .invoke(dataValue)
         .listen((data) => onNewData(data), onError: (error) {
       logError(error);
       _operationSubscription = null;
@@ -45,6 +51,26 @@ abstract class BaseRepository<T> {
   @protected
   void onNewData(T value) {
     data.sink.add(value);
+  }
+
+  @protected
+  void markAsOutdated() {
+    cancelCurrentOperation();
+    isOutdated = true;
+  }
+
+  @protected
+  void markAsUpdated() {
+    cancelCurrentOperation();
+    isOutdated = false;
+
+    _operationSubscription =
+        Future.delayed(Duration(milliseconds: timeToLiveMillis), () {
+      return true;
+    }).asStream().listen((value) {
+      isOutdated = value;
+      _operationSubscription = null;
+    });
   }
 
   void close() {

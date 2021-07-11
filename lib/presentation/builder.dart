@@ -3,6 +3,6 @@ import 'package:flutter/widgets.dart';
 
 typedef EventHandler = Function({required String name, Map<String, Object>? params});
 
-abstract class UIBuilder {
+abstract class PresentationBuilder {
   Widget buildUI(String uiConfig, EventHandler handler);
 }

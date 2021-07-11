@@ -1,5 +1,6 @@
 import 'package:applithium_core/blocs/base_bloc.dart';
 import 'package:applithium_core/blocs/content_bloc.dart';
+import 'package:applithium_core/blocs/form_bloc.dart';
 import 'package:applithium_core/blocs/listing_bloc.dart';
 import 'package:applithium_core/blocs/types.dart';
 import 'package:applithium_core/events/event.dart';
@@ -14,9 +15,10 @@ import 'package:applithium_core/scopes/extensions.dart';
 
 class AplPresentation extends StatefulWidget {
 
+  final String path;
   final PresentationConfig config;
 
-  const AplPresentation({Key? key, required this.config}) : super(key: key);
+  const AplPresentation({Key? key, required this.path, required this.config}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,11 +31,28 @@ class AplPresentation extends StatefulWidget {
   BaseBloc _buildBloc(BlocTypes type) {
     switch(type) {
       case BlocTypes.CONTENT:
-        final repository = ContentRepository(config.domain[EVENT_UPDATE_REQUESTED_NAME], );
-        return ContentBloc(repository, _buildPresenters());
+        final loadUseCase = config.domain[EVENT_UPDATE_REQUESTED_NAME]!;
+        final repository = ContentRepository(
+            load: loadUseCase,
+            ttl: config.ttl);
+        return ContentBloc(
+          presenters: _buildPresenters(),
+          repository: repository,
+          domain: config.domain
+        );
       case BlocTypes.FORM:
-        final repository = FormRepository();
-        return ContentBloc(repository, _buildPresenters());
+        final loadUseCase = config.domain[EVENT_UPDATE_REQUESTED_NAME];
+        final sendFormUseCase = config.domain[EVENT_SEND_FORM_NAME]!;
+        final repository = FormRepository(
+          load: loadUseCase,
+          send: sendFormUseCase,
+          ttl: config.ttl
+        );
+        return FormBloc(
+            presenters: _buildPresenters(),
+            repository: repository,
+            domain: config.domain
+        );
       case BlocTypes.LISTING:
         final repository = ListingRepository();
         return ListingBloc(repository, _buildPresenters());
@@ -58,7 +77,7 @@ class _AplPresentationState extends State<AplPresentation> {
 
   @override
   Widget build(BuildContext context) {
-    return context.get<UIBuilder>().buildUI(uiConfig, _processEvent);
+    return context.get<PresentationBuilder>().buildUI(uiConfig, _processEvent);
   }
 
   void _processEvent({required String name, Map<String, Object>? params}) {

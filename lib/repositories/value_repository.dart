@@ -6,23 +6,20 @@ import 'package:flutter/foundation.dart';
 
 enum ContentRepositoryState { INITIAL, UPDATING, UPDATED }
 
-class ContentRepository extends BaseRepository<Map<String, dynamic>> {
-
+class ContentRepository<T> extends BaseRepository<T> {
   @protected
   ContentRepositoryState state = ContentRepositoryState.INITIAL;
 
-  bool _isOutdated = true;
-  StreamSubscription? _subscription;
-  final int timeToLiveMillis;
-  final UseCase<Map<String, dynamic>> load;
+  final UseCase<T> load;
 
-  ContentRepository({required this.load, this.timeToLiveMillis = 60 * 1000});
+  ContentRepository({required this.load, int ttl = 10 * 1000})
+      : super(ttl);
 
   Future<bool> loadData(bool isCalledByUser) async {
     final needToUpdate = await checkNeedToUpdate(isCalledByUser);
     if (needToUpdate) {
       final result = await apply(load);
-      if(result) {
+      if (result) {
         markAsUpdated();
       }
       return result;
@@ -31,38 +28,14 @@ class ContentRepository extends BaseRepository<Map<String, dynamic>> {
     }
   }
 
-  @protected
-  void markAsOutdated() {
-    if(_subscription != null) {
-      _subscription?.cancel();
-      _subscription = null;
-    }
-    
-    _isOutdated = true;
-  }
-
-  @protected
+  @override
   void markAsUpdated() {
     state = ContentRepositoryState.UPDATED;
-
-    if(_subscription != null) {
-      _subscription?.cancel();
-      _subscription = null;
-    }
-
-    _isOutdated = false;
-    
-   _subscription = Future.delayed(Duration(milliseconds: timeToLiveMillis), () { return true; })
-        .asStream()
-        .listen((value) {
-          _isOutdated = value;
-          _subscription = null;
-    });
+    super.markAsUpdated();
   }
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return state != ContentRepositoryState.UPDATING && (isForced || _isOutdated);
+    return state != ContentRepositoryState.UPDATING && (isForced || isOutdated);
   }
 }
-

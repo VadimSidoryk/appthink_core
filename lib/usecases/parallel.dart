@@ -6,9 +6,9 @@ class ParallelUseCase<D> extends UseCase<D> {
   ParallelUseCase(this.useCases);
 
   @override
-  Stream<D> invokeImpl({D? state}) async* {
+  Stream<D> invokeImpl(D? state, Map<String, dynamic> params) async* {
     for(UseCase<D> useCase in useCases) {
-      yield* useCase.invokeImpl(state: state);
+      yield* useCase.invokeImpl(state, params);
     }
   }
 }
