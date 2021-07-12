@@ -1,10 +1,12 @@
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/presentation/config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
-const KEY_RESOURCES = "resources";
-const KEY_EVENT_HANDLERS = "event_handlers";
+const FIREBASE_CONFIG_RESOURCES_KEY = "resources";
+const FIREBASE_CONFIG_EVENTS_KEY = "event_handlers";
+const FIREBASE_CONFIG_PRESENTATION_KEY = "presentation";
 
 
 class FirebaseConfigProvider extends ConfigProvider {
@@ -15,7 +17,7 @@ class FirebaseConfigProvider extends ConfigProvider {
   FirebaseConfigProvider({required this.fetchTimeoutSec, this.defaults = const {}});
 
   @override
-  Future<AplConfig> getApplicationConfig() async {
+  Future<ApplicationConfig> getApplicationConfig() async {
     await Firebase.initializeApp();
     final RemoteConfig remoteConfig = RemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
@@ -25,9 +27,10 @@ class FirebaseConfigProvider extends ConfigProvider {
     await remoteConfig.setDefaults(defaults);
     RemoteConfigValue(null, ValueSource.valueStatic);
 
-    return AplConfig(
-      resources: remoteConfig.getValue(KEY_RESOURCES) as Map<String, Map<String, String>>,
-      eventHandlers: remoteConfig.getValue(KEY_EVENT_HANDLERS) as Map<String, Map<String, dynamic>>
+    return ApplicationConfig(
+      resources: remoteConfig.getValue(FIREBASE_CONFIG_RESOURCES_KEY) as Map<String, Map<String, String>>,
+      eventHandlers: remoteConfig.getValue(FIREBASE_CONFIG_EVENTS_KEY) as Map<String, Map<String, dynamic>>,
+      presentations: PresentationConfig.fromMap(remoteConfig.getValue(FIREBASE_CONFIG_PRESENTATION_KEY) as Map<String, dynamic>)
     );
   }
 

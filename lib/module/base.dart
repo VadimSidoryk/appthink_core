@@ -6,5 +6,5 @@ abstract class AplModule<T> {
 
   T addTo(Store store);
 
-  void init(BuildContext context, AplConfig config);
+  void init(BuildContext context, ApplicationConfig config);
 }

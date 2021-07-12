@@ -39,16 +39,18 @@ class ContentBloc<T> extends BaseBloc<ContentState, ContentRepository> {
   }
 }
 
+const STATE_CONTENT_LOADING = "loading";
+
 class ContentState extends BaseState {
   final Map<String, dynamic>? value;
   final bool isLoading;
 
-  ContentState(this.value, this.isLoading, error) : super(error);
+  ContentState(String tag, this.value, this.isLoading, error) : super(tag, error);
 
-  factory ContentState.initial() => ContentState(null, true, null);
+  factory ContentState.initial() => ContentState(STATE_BASE_INITIAL_TAG, null, true, null);
 
   ContentState withValue(Map<String, dynamic> value) {
-    return ContentState(value, false, null);
+    return ContentState(STATE_BASE_DATA_TAG, value, false, null);
   }
 
   ContentState withLoading(bool isLoading) {
@@ -56,6 +58,6 @@ class ContentState extends BaseState {
   }
 
   ContentState withError(dynamic error) {
-    return ContentState(value, false, error);
+    return ContentState(STATE_BASE_ERROR_TAG, value, false, error);
   }
 }

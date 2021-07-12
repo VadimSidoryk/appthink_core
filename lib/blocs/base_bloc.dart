@@ -17,10 +17,15 @@ class Presenters {
   Presenters({required this.dialogPresenter, required this.toastPresenter});
 }
 
+const STATE_BASE_INITIAL_TAG = "initial";
+const STATE_BASE_ERROR_TAG = "error";
+const STATE_BASE_DATA_TAG = "data";
+
 abstract class BaseState {
+  final String tag;
   final dynamic error;
 
-  BaseState(this.error);
+  BaseState(this.tag, this.error);
 
   BaseState withError(dynamic error);
 }

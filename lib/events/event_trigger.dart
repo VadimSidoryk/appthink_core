@@ -1,7 +1,6 @@
 import 'package:applithium_core/events/action.dart';
-import 'package:equatable/equatable.dart';
 
-class AplEventTrigger extends Equatable {
+class AplEventTrigger  {
   static const String _conditionKey = "condition";
   static const String _actionKey = "action";
 
@@ -13,8 +12,5 @@ class AplEventTrigger extends Equatable {
   }
 
   AplEventTrigger(this.condition, this.action);
-
-  @override
-  List<Object> get props => [condition, action];
 }
 

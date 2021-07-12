@@ -1,12 +1,19 @@
-class AplConfig {
-  final Map<String, Map<String, String>> resources;
-  final Map<String, Map<String, dynamic>> eventHandlers;
-  final Map<String, Map<String, dynamic>> uiComponents;
+import 'package:applithium_core/presentation/config.dart';
+import 'package:applithium_core/services/resources/model.dart';
 
-  AplConfig({
+class ApplicationConfig {
+  final ResourceConfig resources;
+  final Map<String, Map<String, dynamic>> eventHandlers;
+  final Map<String, PresentationConfig> presentations;
+
+  ApplicationConfig({
     required this.resources,
     required this.eventHandlers,
-    required this.uiComponents
+    required this.presentations
   });
+
+  PresentationConfig getFor(String path) {
+    return presentations[path]!;
+  }
 
 }

@@ -4,11 +4,10 @@ import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/list_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
-import 'package:equatable/equatable.dart';
 
 import 'base_bloc.dart';
 
-class ListingBloc<IM extends Equatable>
+class ListingBloc<IM>
     extends BaseBloc<ListingState<IM>, ListingRepository> {
   ListingBloc(
       {required Presenters presenters,

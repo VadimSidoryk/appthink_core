@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  fluttertoast: ^8.0.7
   copy_with_extension: ^2.0.0
-  equatable: ^2.0.0
   flutter_bloc: ^7.0.0
   rxdart: ^0.27.0
   async: ^2.4.2

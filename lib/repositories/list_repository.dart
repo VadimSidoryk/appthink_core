@@ -1,16 +1,14 @@
 import 'dart:async';
 
-import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/repositories/base_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
-import 'package:async/async.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 
-const LOADER_PAGE_SIZE_PARAM = "page_size";
+const LISTING_LOADER_PAGE_SIZE_PARAM = "page_size";
+const LISTING_LOADER_PAGE_COUNT_PARAM = "page_count";
 
-class ListData<T extends Equatable> {
+class ListData<T> {
   final List<T> items;
   final bool isEndReached;
 
@@ -19,47 +17,55 @@ class ListData<T extends Equatable> {
 
 enum ListingRepositoryState {
   INITIAL,
-  INITIAL_DATA_LOADING,
-  INITIAL_DATA_LOADED,
+  FIRST_PAGE_LOADING,
+  FIRST_PAGE_LOADED,
   MORE_ITEMS_LOADING,
   MORE_ITEMS_LOADED
 }
 
-abstract class ListingRepository<T extends Equatable>
+class ListingRepository<T>
     extends BaseRepository<List<T>> {
   ListingRepositoryState _state = ListingRepositoryState.INITIAL;
 
-  int _currentValueLength = 0;
+  final int pageSize;
+  int _currentPage = 0;
 
   final _endReachedSubj = BehaviorSubject.seeded(false);
 
   final UseCase<List<T>> load;
-  UseCase<List<T>>? currentLoadOperation;
 
   Stream<bool> get endReachedObs => _endReachedSubj.stream;
 
-  ListingRepository(this.load, {int timeToLiveMillis = 60 * 1000})
-      : super(timeToLiveMillis);
-
-  Future<List<T>> loadItems(int startIndex, T? lastValue, int itemsToLoad);
+  ListingRepository(this.load,
+      {int ttl = 60 * 1000, this.pageSize = 20})
+      : super(ttl);
 
   Future<bool> updateData(bool isCalledByUser) async {
     final needToUpdate = await checkNeedToUpdate(isCalledByUser);
 
     if (needToUpdate) {
-      _state = ListingRepositoryState.INITIAL_DATA_LOADING;
+      _state = ListingRepositoryState.FIRST_PAGE_LOADING;
       cancelCurrentOperation();
 
-      currentLoadOperation = load.withParams({LOADER_PAGE_COUNT_PARAM: 0});
-      return apply(currentLoadOperation as UseCase<List<T>>);
+      _currentPage = 0;
+      final result = await apply(load.withParams(createLoadParams()));
+      _endReachedSubj.sink.add(result);
+      if (result) {
+        _currentPage += 1;
+      }
+
+      return result;
     } else {
       return false;
     }
   }
 
+  Map<String, dynamic> createLoadParams() =>
+      {LISTING_LOADER_PAGE_SIZE_PARAM: pageSize, LISTING_LOADER_PAGE_COUNT_PARAM: _currentPage};
+
   @protected
   void markAsUpdated() {
-    _state = ListingRepositoryState.INITIAL_DATA_LOADED;
+    _state = ListingRepositoryState.FIRST_PAGE_LOADED;
     super.markAsUpdated();
   }
 
@@ -75,34 +81,26 @@ abstract class ListingRepository<T extends Equatable>
     }
 
     _state = ListingRepositoryState.MORE_ITEMS_LOADING;
+    final result = await apply(load.withParams(createLoadParams()));
+    _state = ListingRepositoryState.MORE_ITEMS_LOADED;
+    _endReachedSubj.sink.add(result);
+    if (result) {
+      _currentPage += 1;
+    }
 
-    final result = apply(currentLoadOperation.withParams(params);
-    _loadMoreItemsOperation = CancelableOperation.fromFuture(
-        loadItems(_currentValueLength, lastElement, defaultPageLength),
-        onCancel: () => {log("cancel loadMore operation")});
-
-    return (_loadMoreItemsOperation as CancelableOperation)
-        .valueOrCancellation(false)
-        .then((value) {
-      _state = ListingRepositoryState.MORE_ITEMS_LOADED;
-      _endReachedSubj.sink.add(value.length < defaultPageLength);
-      return addItems(value);
-    }, onError: (obj, exception) {
-      logError(exception);
-      return false;
-    });
+    return result;
   }
 
   @protected
   Future<bool> checkNeedToUpdate(bool isForced) async {
-    return _state != ListingRepositoryState.INITIAL_DATA_LOADING &&
+    return _state != ListingRepositoryState.FIRST_PAGE_LOADING &&
         (isForced || isOutdated);
   }
 
   @protected
   Future<bool> checkNeedLoadMoreValues() async {
     return _state != ListingRepositoryState.MORE_ITEMS_LOADING &&
-        _state != ListingRepositoryState.INITIAL_DATA_LOADING &&
+        _state != ListingRepositoryState.FIRST_PAGE_LOADING &&
         !await endReachedObs.first;
   }
 }

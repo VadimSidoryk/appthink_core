@@ -6,8 +6,6 @@ import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'router.dart';
-
 void main() {
   runApp(MyApp());
 }
@@ -17,7 +15,7 @@ class MyApp extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return BaseAppState<MyApp>(
+    return ApplithiumAppState<MyApp>(
         splashBuilder: (config) => Scaffold(
               body: Center(child: Text("Splash...")),
             ),
@@ -30,8 +28,8 @@ class MyApp extends StatefulWidget {
 
 class MockedConfigProvider extends ConfigProvider {
   @override
-  Future<AplConfig> getApplicationConfig() {
+  Future<ApplicationConfig> getApplicationConfig() {
     return MockUtils.mockWithDelay(
-        Duration(seconds: 2), AplConfig(resources: {}, eventHandlers: {}));
+        Duration(seconds: 2), ApplicationConfig(resources: {}, eventHandlers: {}));
   }
 }

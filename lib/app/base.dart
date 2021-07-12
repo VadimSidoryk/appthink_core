@@ -28,7 +28,7 @@ import 'package:uni_links/uni_links.dart';
 
 typedef RouterBuilder = MainRouter Function(GlobalKey<NavigatorState>);
 
-class BaseAppState<A extends StatefulWidget> extends State<A> {
+class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   final String title;
   final _navigatorKey = GlobalKey<NavigatorState>();
   @protected
@@ -42,7 +42,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
 
   StreamSubscription? _deepLinkSubscription;
 
-  BaseAppState(
+  ApplithiumAppState(
       {String? title,
       this.configProvider,
       required RouterBuilder routerBuilder,
@@ -86,7 +86,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
 
   Future<String?> _initAsyncComponents(BuildContext context) async {
     logMethod(methodName: "initAsyncComponents");
-    final AplConfig? config = await configProvider?.getApplicationConfig();
+    final ApplicationConfig? config = await configProvider?.getApplicationConfig();
     if (config != null) {
       log("config received");
       initServices(context, config);
@@ -144,7 +144,7 @@ class BaseAppState<A extends StatefulWidget> extends State<A> {
   }
 
   @protected
-  void initServices(BuildContext context, AplConfig config) {
+  void initServices(BuildContext context, ApplicationConfig config) {
     globalStore!
         .get<ResourceService>()
         .init(context, ResourceConfig.fromMap(config.resources));
