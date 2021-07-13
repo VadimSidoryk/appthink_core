@@ -45,6 +45,7 @@ class _AplPresentationState<T> extends State<AplPresentation> {
   @override
   Widget build(BuildContext context) {
     bloc = blocFactory(context, _buildPresenters(context));
+    bloc..add(AplEvent.screenCreated());
     return BlocBuilder<BaseBloc, BaseState>(
         bloc: bloc,
         builder: (context, state) {

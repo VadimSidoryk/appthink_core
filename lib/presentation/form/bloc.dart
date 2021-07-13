@@ -8,25 +8,24 @@ const STATE_FORM_PRESET_LOADING_TAG = "preset_loading";
 const STATE_FORM_PRESET_LOADED_TAG = "preset_loading";
 const STATE_FORM_SENDING_FORM_TAG = "sending_form";
 
-class FormState extends BaseState {
-  final Map<String, dynamic>? value;
+class FormState<T> extends BaseState<T> {
   final bool isPresetLoading;
   final bool sendingForm;
 
   FormState(
-      String tag, this.value, this.isPresetLoading, this.sendingForm, error)
-      : super(tag, error);
+      String tag, T? value, this.isPresetLoading, this.sendingForm, error)
+      : super(tag: tag, error: error, value: value);
 
   factory FormState.initial() =>
       FormState(STATE_BASE_INITIAL_TAG, null, true, false, null);
 
-  FormState withDataPreset(Map<String, dynamic> value) {
+  FormState withPresetData(T value) {
     return FormState(STATE_FORM_PRESET_LOADED_TAG, value, false, false, null);
   }
 
-  FormState withPresetLoading(bool isLoading) {
+  FormState withPresetLoading() {
     return FormState(
-        STATE_FORM_PRESET_LOADING_TAG, value, isLoading, false, null);
+        STATE_FORM_PRESET_LOADING_TAG, value, true, false, null);
   }
 
   FormState withSendingForm(bool isFormSending) {
@@ -34,6 +33,7 @@ class FormState extends BaseState {
         STATE_FORM_SENDING_FORM_TAG, value, false, isFormSending, null);
   }
 
+  @override
   FormState withError(dynamic error) {
     return FormState(STATE_BASE_ERROR_TAG, value, false, false, error);
   }
@@ -53,18 +53,20 @@ class FormBloc<T> extends BaseBloc<FormState, FormRepository> {
   @override
   Stream<FormState> mapEventToStateImpl(AplEvent event) async* {
     switch (event.name) {
-      case EVENT_SHOWN_NAME:
-        repository.loadData(false);
+      case EVENT_CREATED_NAME:
+        yield currentState.withPresetLoading();
+        repository.loadData(isForced: true);
+        break;
+      case EVENT_SCREEN_OPENED_NAME:
+        repository.loadData(isForced: false);
         break;
       case EVENT_UPDATE_REQUESTED_NAME:
-        yield currentState.withPresetLoading(true);
-        final isUpdated = await repository.loadData(true);
+        yield currentState.withPresetLoading();
+        final isUpdated = await repository.loadData(isForced: true);
         log("isUpdated: $isUpdated");
-        yield currentState.withPresetLoading(false);
         break;
       case EVENT_DATA_UPDATED_NAME:
-        yield currentState.withDataPreset(
-            event.params[EVENT_DATA_UPDATED_ARG_DATA] as Map<String, dynamic>);
+        yield currentState.withPresetData(event.params[EVENT_DATA_UPDATED_ARG_DATA]);
         break;
       case EVENT_SEND_FORM_NAME:
         yield currentState.withSendingForm(true);

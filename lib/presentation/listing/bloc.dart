@@ -7,20 +7,19 @@ import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
 
-class ListingState<T> extends BaseState {
-  final List<T>? value;
+class ListingState<T> extends BaseState<List<T>> {
   final bool isLoading;
   final bool isPageLoading;
   final bool isEndReached;
 
   ListingState(
-      {this.value,
+      {List<T>? value,
       required this.isLoading,
       error,
       dialogModel,
       required this.isPageLoading,
       required this.isEndReached})
-      : super(STATE_BASE_ERROR_TAG, error);
+      : super(tag: STATE_BASE_ERROR_TAG, error: error, value: value);
 
   factory ListingState.initial() => ListingState(
       value: null,
@@ -29,16 +28,16 @@ class ListingState<T> extends BaseState {
       isPageLoading: false,
       isEndReached: false);
 
-  ListingState<T> withList(List<T> value, bool endReached) {
+  ListingState<T> withListData(List<T> value, bool endReached) {
     return ListingState(
         value: value,
         isLoading: false,
         error: null,
-        isPageLoading: this.isPageLoading,
+        isPageLoading: false,
         isEndReached: endReached);
   }
 
-  ListingState<T> withListLoading(bool isLoading) {
+  ListingState<T> withLoading() {
     return ListingState(
         value: value,
         isLoading: true,
@@ -47,6 +46,7 @@ class ListingState<T> extends BaseState {
         isEndReached: false);
   }
 
+  @override
   ListingState<T> withError(dynamic error) {
     return ListingState(
         value: value,
@@ -56,12 +56,12 @@ class ListingState<T> extends BaseState {
         isEndReached: isEndReached);
   }
 
-  ListingState<T> withPageLoading(bool isPageLoading) {
+  ListingState<T> withPageLoading() {
     return ListingState(
         value: value,
         isLoading: false,
         error: error,
-        isPageLoading: isPageLoading,
+        isPageLoading: true,
         isEndReached: isEndReached);
   }
 
@@ -75,11 +75,11 @@ class ListingState<T> extends BaseState {
   }
 }
 
-class ListingBloc<IM> extends BaseBloc<ListingState<IM>, ListingRepository> {
+class ListingBloc<T> extends BaseBloc<ListingState<T>, ListingRepository> {
   ListingBloc(
       {required ListingRepository repository,
       required Presenters presenters,
-      required Map<String, UseCase<List<IM>>> domain})
+      required Map<String, UseCase<List<T>>> domain})
       : super(
             initialState: ListingState.initial(),
             presenters: presenters,
@@ -87,27 +87,29 @@ class ListingBloc<IM> extends BaseBloc<ListingState<IM>, ListingRepository> {
             domain: domain);
 
   @override
-  Stream<ListingState<IM>> mapEventToStateImpl(AplEvent event) async* {
+  Stream<ListingState<T>> mapEventToStateImpl(AplEvent event) async* {
     switch (event.name) {
-      case EVENT_SHOWN_NAME:
-        repository.updateData(false);
+      case EVENT_CREATED_NAME:
+        yield currentState.withLoading();
+        repository.updateData(isForced: true);
+        break;
+      case EVENT_SCREEN_OPENED_NAME:
+        repository.updateData(isForced: false);
         break;
       case EVENT_UPDATE_REQUESTED_NAME:
-        yield currentState.withListLoading(true);
-        final isUpdated = await repository.updateData(true);
+        yield currentState.withLoading();
+        final isUpdated = await repository.updateData(isForced: true);
         log("isUpdated: $isUpdated");
-        yield currentState.withListLoading(false);
         break;
       case EVENT_SCROLLED_TO_END:
         if (!currentState.isPageLoading) {
-          yield currentState.withPageLoading(true);
+          yield currentState.withPageLoading();
           repository.loadMoreItems();
-          yield currentState.withPageLoading(false);
         }
         break;
       case EVENT_DATA_UPDATED_NAME:
-        yield currentState.withList(
-            event.params[EVENT_DATA_UPDATED_ARG_DATA] as List<IM>,
+        yield currentState.withListData(
+            event.params[EVENT_DATA_UPDATED_ARG_DATA] as List<T>,
             event.params[EVENT_DATA_UPDATED_ARG_IS_END_REACHED] as bool);
     }
   }

@@ -15,8 +15,8 @@ class ContentRepository<T> extends BaseRepository<T> {
   ContentRepository({required this.load, int ttl = 10 * 1000})
       : super(ttl);
 
-  Future<bool> loadData(bool isCalledByUser) async {
-    final needToUpdate = await checkNeedToUpdate(isCalledByUser);
+  Future<bool> loadData({required bool isForced}) async {
+    final needToUpdate = await checkNeedToUpdate(isForced);
     if (needToUpdate) {
       final result = await apply(load);
       if (result) {

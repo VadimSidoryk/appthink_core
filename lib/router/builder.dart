@@ -14,7 +14,7 @@ class RoutesBuilder {
       final path = entry.key;
       final builder = typeToBuilders[entry.value.type]!;
       return RouteDetails(
-          matcher: Matcher.host(path),
+          matcher: getMatcherDependsOnPath(path),
           builder: (context, details) {
             return AplPresentation(
               stateToUI: entry.value.stateToUI,
@@ -24,6 +24,15 @@ class RoutesBuilder {
             );
           });
     }).toList();
+  }
+
+  static Matcher getMatcherDependsOnPath(String path) {
+    switch (path) {
+      case "/":
+        return Matcher.any();
+      default:
+        return Matcher.host(path);
+    }
   }
 
   RoutesBuilder._();

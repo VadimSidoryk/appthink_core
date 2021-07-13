@@ -40,8 +40,8 @@ class ListingRepository<T>
       {int ttl = 60 * 1000, this.pageSize = 20})
       : super(ttl);
 
-  Future<bool> updateData(bool isCalledByUser) async {
-    final needToUpdate = await checkNeedToUpdate(isCalledByUser);
+  Future<bool> updateData({required bool isForced}) async {
+    final needToUpdate = await checkNeedToUpdate(isForced);
 
     if (needToUpdate) {
       _state = ListingRepositoryState.FIRST_PAGE_LOADING;

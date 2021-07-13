@@ -1,14 +1,17 @@
 import 'package:applithium_core/app/base.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/mocks/utils.dart';
 import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/config.dart';
+import 'package:applithium_core/presentation/content/bloc.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/services/resources/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:applithium_core/presentation/base_bloc.dart';
+import 'package:applithium_core/usecases/mocks/value.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,7 +29,7 @@ class MyApp extends StatefulWidget {
         title: "Applithium Core Example",
         analysts: {LogAnalyst()},
         configProvider: MockedConfigProvider(),
-    layoutBuilder: MockedLayoutBuilder());
+        layoutBuilder: MockedLayoutBuilder());
   }
 }
 
@@ -39,14 +42,33 @@ class MockedConfigProvider extends ConfigProvider {
             resources: ResourceConfig({"": {}}),
             eventHandlers: {},
             presentations: {
-              "/": PresentationConfig("content", {}, {}, 20)
+              "/" : PresentationConfig(
+                  "content",
+                  {
+                    STATE_BASE_INITIAL_TAG: "initial",
+                    STATE_BASE_ERROR_KEY: "error",
+                    STATE_CONTENT_LOADING: "loading",
+                    STATE_BASE_DATA_TAG: "data"
+                  },
+                  {
+                    EVENT_UPDATE_REQUESTED_NAME:
+                        MockValueUseCase(TestState("title", "subtitle"), delayMillis: 5000)
+                  },
+                  20)
             }));
   }
 }
 
-class MockedLayoutBuilder extends AplLayoutBuilder {
+class MockedLayoutBuilder extends AplLayoutBuilder<String> {
   @override
-  Widget buildLayout(uiConfig, BaseState event, EventHandler handler) {
-    return Center(child: Text("Mocked layout builder"));
+  Widget buildLayout(String uiConfig, BaseState state, EventHandler handler) {
+    return Center(child: Text("Layout for $uiConfig with data ${state.value}"));
   }
+}
+
+class TestState {
+  final String title;
+  final String description;
+
+  TestState(this.title, this.description);
 }

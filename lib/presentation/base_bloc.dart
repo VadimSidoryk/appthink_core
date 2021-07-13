@@ -24,11 +24,12 @@ const STATE_BASE_DATA_TAG = "data";
 
 const STATE_BASE_ERROR_KEY = "error";
 
-abstract class BaseState extends InterpolationArgs {
+abstract class BaseState<T> extends CanUseAsArgs {
   final String tag;
   final dynamic error;
+  final T? value;
 
-  BaseState(this.tag, this.error);
+  BaseState({required this.tag, required this.error, required this.value});
 
   BaseState withError(dynamic error);
 

@@ -23,9 +23,9 @@ class FormRepository<T> extends BaseRepository<T> {
       {this.load, required this.send, int ttl = 60 * 1000})
       : super(ttl);
 
-  Future<bool> loadData(bool isCalledByUser) async {
+  Future<bool> loadData({required bool isForced}) async {
     final needToUpdate = state != FormRepositoryState.PRESET_LOADING &&
-        (isCalledByUser || isOutdated);
+        (isForced || isOutdated);
 
     if (needToUpdate && load != null) {
       final result = await apply(load!);

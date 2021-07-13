@@ -4,8 +4,7 @@ import '../json/interpolation_args.dart';
 
 const EVENT_ARG_NAME = "name";
 
-const EVENT_SHOWN_NAME = "screen_shown";
-const EVENT_SHOWN_ARG_ROUTE = "route";
+const EVENT_CREATED_NAME = "screen_created";
 
 const EVENT_DIALOG_CLOSED_NAME = "dialog_closed";
 const EVENT_DIALOG_CLOSED_ARG_SOURCE = "source";
@@ -31,16 +30,16 @@ const EVENT_SESSION_STARTED_ARG_DAYS_FROM_FIRST_SESSION =
 const EVENT_SCREEN_OPENED_NAME = "screen_opened";
 const EVENT_SCREEN_OPENED_ARG_SCREEN_NAME = "screen_name";
 
-class AplEvent extends Trackable implements InterpolationArgs {
+class AplEvent extends Trackable implements CanUseAsArgs {
   @override
   final String name;
   @override
   final Map<String, Object> params;
 
-  AplEvent({required this.name, this.params = const {}});
+  AplEvent({required this.name, Map<String, Object>? params})
+      : params = params ?? Map();
 
-  factory AplEvent.screenShown(String route) =>
-      AplEvent(name: EVENT_SHOWN_NAME, params: {EVENT_SHOWN_ARG_ROUTE: route});
+  factory AplEvent.screenCreated() => AplEvent(name: EVENT_CREATED_NAME);
 
   factory AplEvent.dialogClosed(dynamic source, dynamic result) =>
       AplEvent(name: EVENT_DIALOG_CLOSED_NAME, params: {
