@@ -10,17 +10,20 @@ typedef EventHandler = Function({required String name, Map<String, Object>? para
 typedef BlocFactory = BaseBloc Function(BuildContext, Presenters);
 
 abstract class AplPresentationBuilder<D, R extends BaseRepository<D>> {
-  BlocFactory buildPresentation(BuildContext context, String path, PresentationConfig config) {
+
+  BlocFactory buildPresentation(BuildContext context, PresentationConfig config) {
     final domain = config.domain as Map<String, UseCase<D>>;
     final repository = createRepository(domain, config.repositoryTtl);
     return createBlocFactory(repository, domain);
   }
 
+  @protected
   R createRepository(Map<String, UseCase<D>> domain, int ttl);
 
+  @protected
   BlocFactory createBlocFactory(R repository, Map<String, UseCase<D>> domain);
 }
 
-abstract class AplLayoutBuilder {
-  Widget buildLayout(String uiConfig, EventHandler handler);
+abstract class AplLayoutBuilder<T> {
+  Widget buildLayout(T uiConfig, Map<String, dynamic> args, EventHandler handler);
 }

@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart';
 
 import 'route_details.dart';
 
-abstract class MainRouter {
-  abstract final List<RouteDetails> routes;
+class MainRouter {
+  List<RouteDetails> routes = [];
 
   final GlobalKey<NavigatorState> _navigationKey;
 

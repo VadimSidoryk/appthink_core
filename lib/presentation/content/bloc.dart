@@ -34,10 +34,12 @@ class ContentState extends BaseState {
 class ContentBloc<T> extends BaseBloc<ContentState, ContentRepository> {
   ContentBloc(
       {required ContentRepository repository,
+        required Presenters presenters,
       required Map<String, UseCase<T>> domain})
       : super(
             initialState: ContentState.initial(),
             repository: repository,
+            presenters: presenters,
             domain: domain);
 
   @override

@@ -78,9 +78,11 @@ class ListingState<T> extends BaseState {
 class ListingBloc<IM> extends BaseBloc<ListingState<IM>, ListingRepository> {
   ListingBloc(
       {required ListingRepository repository,
+      required Presenters presenters,
       required Map<String, UseCase<List<IM>>> domain})
       : super(
             initialState: ListingState.initial(),
+            presenters: presenters,
             repository: repository,
             domain: domain);
 

@@ -8,13 +8,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc.dart';
 import 'repository.dart';
 
+const PRESENTATION_LISTING_TYPE = "listing";
+
 class ListingPresentationBuilder<T> extends AplPresentationBuilder<List<T>, ListingRepository<T>> {
   @override
   BlocFactory createBlocFactory(
       ListingRepository<T> repository,
       Map<String, UseCase<List<T>>> domain) {
-    return (context) => ListingBloc(
+    return (context, presenters) => ListingBloc(
         repository: repository,
+        presenters: presenters,
         domain: domain);
   }
 

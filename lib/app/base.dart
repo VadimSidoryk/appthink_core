@@ -1,6 +1,10 @@
 import 'dart:async';
 
 import 'package:applithium_core/presentation/base_bloc.dart';
+import 'package:applithium_core/presentation/base_builder.dart';
+import 'package:applithium_core/presentation/content/builder.dart';
+import 'package:applithium_core/presentation/form/builder.dart';
+import 'package:applithium_core/presentation/listing/builder.dart';
 import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
@@ -8,6 +12,7 @@ import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
+import 'package:applithium_core/router/builder.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/scope.dart';
@@ -19,14 +24,11 @@ import 'package:applithium_core/services/analytics/usage_adapter.dart';
 import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
-import 'package:applithium_core/services/resources/model.dart';
 import 'package:applithium_core/services/resources/service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
-
-typedef RouterBuilder = MainRouter Function(GlobalKey<NavigatorState>);
 
 class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   final String title;
@@ -39,20 +41,21 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
+  final AplLayoutBuilder layoutBuilder;
 
   StreamSubscription? _deepLinkSubscription;
 
   ApplithiumAppState(
       {String? title,
       this.configProvider,
-      required RouterBuilder routerBuilder,
       required this.splashBuilder,
+      required this.layoutBuilder,
       Set<Analyst>? analysts,
       this.modules})
       : this.title = title ?? "Applithium Based Application",
         this.analysts =
             analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()} {
-    _router = routerBuilder.call(_navigatorKey);
+    _router = MainRouter(_navigatorKey);
   }
 
   @override
@@ -86,9 +89,13 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
 
   Future<String?> _initAsyncComponents(BuildContext context) async {
     logMethod(methodName: "initAsyncComponents");
-    final ApplicationConfig? config = await configProvider?.getApplicationConfig();
+    final ApplicationConfig? config =
+        await configProvider?.getApplicationConfig();
     if (config != null) {
       log("config received");
+      globalStore?.add((provider) => config);
+      _router.routes = RoutesBuilder.fromPresentationsMap(
+          context.get(), layoutBuilder, config.presentations);
       initServices(context, config);
       log("services initialized");
     }
@@ -145,9 +152,7 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
 
   @protected
   void initServices(BuildContext context, ApplicationConfig config) {
-    globalStore!
-        .get<ResourceService>()
-        .init(context, ResourceConfig.fromMap(config.resources));
+    globalStore!.get<ResourceService>().init(context, config.resources);
     modules?.forEach((module) => module.init(context, config));
   }
 
@@ -164,11 +169,20 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
           preferencesProvider: provider.get(),
           listener: SessionEventsAdapter(provider.get(), provider.get())))
       ..add((provider) => ResourceService())
+      ..add((provider) => _provideDefaultPresentationBuilders())
       ..add((provider) => _router);
 
     modules?.forEach((module) => module.addTo(result));
 
     return result;
+  }
+
+  Map<String, AplPresentationBuilder> _provideDefaultPresentationBuilders() {
+    return {
+      PRESENTATION_CONTENT_TYPE: ContentPresenterBuilder(),
+      PRESENTATION_FORM_TYPE: FormPresentationBuilder(),
+      PRESENTATION_LISTING_TYPE: ListingPresentationBuilder()
+    };
   }
 
   void processAction(AplAction action, Object? sender) {

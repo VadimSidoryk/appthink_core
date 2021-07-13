@@ -2,7 +2,7 @@ import 'package:applithium_core/usecases/base.dart';
 
 class PresentationConfig {
   final String type;
-  final Map<String, String> stateToUI;
+  final Map<String, dynamic> stateToUI;
   final Map<String, UseCase> domain;
   final int repositoryTtl;
 

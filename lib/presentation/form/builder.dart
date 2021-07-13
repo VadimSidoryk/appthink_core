@@ -1,18 +1,19 @@
 import 'package:applithium_core/events/event.dart';
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/presentation/base_builder.dart';
 import 'package:applithium_core/presentation/form/repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 
 import 'bloc.dart';
 
+const PRESENTATION_FORM_TYPE = "form";
+
 class FormPresentationBuilder<T>
     extends AplPresentationBuilder<T, FormRepository<T>> {
   @override
   BlocFactory createBlocFactory(
       FormRepository<T> repository, Map<String, UseCase<T>> domain) {
-    return (context) => FormBloc(repository: repository, domain: domain);
+    return (context, presenters) => FormBloc(
+        repository: repository, domain: domain, presenters: presenters);
   }
 
   @override

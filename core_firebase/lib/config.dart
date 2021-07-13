@@ -28,7 +28,7 @@ class FirebaseConfigProvider extends ConfigProvider {
     RemoteConfigValue(null, ValueSource.valueStatic);
 
     return ApplicationConfig(
-      resources: remoteConfig.getValue(FIREBASE_CONFIG_RESOURCES_KEY) as Map<String, Map<String, String>>,
+      resources:  as ,
       eventHandlers: remoteConfig.getValue(FIREBASE_CONFIG_EVENTS_KEY) as Map<String, Map<String, dynamic>>,
       presentations: PresentationConfig.fromMap(remoteConfig.getValue(FIREBASE_CONFIG_PRESENTATION_KEY) as Map<String, dynamic>)
     );

@@ -42,10 +42,12 @@ class FormState extends BaseState {
 class FormBloc<T> extends BaseBloc<FormState, FormRepository> {
   FormBloc(
       {required FormRepository repository,
+      required Presenters presenters,
       required Map<String, UseCase<T>> domain})
       : super(
             initialState: FormState.initial(),
             repository: repository,
+            presenters: presenters,
             domain: domain);
 
   @override

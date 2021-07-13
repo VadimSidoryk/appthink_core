@@ -12,7 +12,7 @@ abstract class InstanceProvider {
 
 ///Simple instance store
 class Store extends InstanceProvider {
-  Map<Type, Map<String, _StoreFactory<dynamic>>> _map = const {};
+  var _map = new Map<Type, Map<String, _StoreFactory<dynamic>>>();
 
   Store();
 
@@ -36,7 +36,7 @@ class Store extends InstanceProvider {
     if (keysMap == null) {
       throw new Exception("${T.toString()} is not mapped in store.");
     }
-    final storeFactory = keysMap[key ?? ""];
+    final storeFactory = keysMap[key];
     if(storeFactory == null) {
       throw new Exception("${T.toString()} with key $key is not mapped in store.");
     }
@@ -68,10 +68,10 @@ class Store extends InstanceProvider {
   _addStoreFactory<T>(_StoreFactoryType type, T Function(InstanceProvider) func, String key) {
     final map = _map[T];
     if (map == null) {
-      _map[T] = {
+      _map[T] = Map.from({
         key : _StoreFactory<T>(_StoreFactoryType.factory,
             func: () => func.call(this))
-      };
+      });
     } else {
       _map[T] = map
         ..[key] = _StoreFactory<T>(_StoreFactoryType.factory,

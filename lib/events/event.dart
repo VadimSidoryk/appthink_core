@@ -81,6 +81,6 @@ class AplEvent extends Trackable implements InterpolationArgs {
 
   @override
   Map<String, dynamic> asArgs() {
-    return (params ?? {})..[EVENT_ARG_NAME] = name;
+    return params..[EVENT_ARG_NAME] = name;
   }
 }

@@ -5,12 +5,14 @@ import 'package:applithium_core/usecases/base.dart';
 
 import 'bloc.dart';
 
+const PRESENTATION_CONTENT_TYPE = "content";
+
 class ContentPresenterBuilder<T>
     extends AplPresentationBuilder<T, ContentRepository<T>> {
   @override
   BlocFactory createBlocFactory(
       ContentRepository<T> repository, Map<String, UseCase<T>> domain) {
-    return (context) => ContentBloc(repository: repository, domain: domain);
+    return (context, presenters) => ContentBloc(repository: repository, domain: domain, presenters: presenters);
   }
 
   @override

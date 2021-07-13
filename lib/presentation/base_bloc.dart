@@ -35,8 +35,7 @@ abstract class BaseState extends InterpolationArgs {
   @override
   Map<String, dynamic> asArgs() {
     return {
-      STATE_BASE_ERROR_KEY : error,
-
+      STATE_BASE_ERROR_KEY: error,
     };
   }
 }
@@ -45,7 +44,7 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
     extends Bloc<AplEvent, BaseState> {
   final R repository;
   final Map<String, UseCase> domain;
-  Presenters? _presenters;
+  final Presenters presenters;
 
   StreamSubscription? _subscription;
 
@@ -55,24 +54,21 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
   BaseBloc(
       {required S initialState,
       required this.repository,
-      required this.domain})
+      required this.domain,
+      required this.presenters})
       : super(initialState) {
     _subscription = repository.updatesStream.listen((data) {
       add(AplEvent.displayData(data));
     });
   }
 
-  void setPresenters(Presenters presenters) {
-    this._presenters = presenters;
-  }
-
   void showDialog(String path) async {
-    final result = await _presenters?.dialogPresenter.call(path);
+    final result = await presenters.dialogPresenter.call(path);
     add(AplEvent.dialogClosed(path, result));
   }
 
   void showToast(String path) {
-    _presenters?.toastPresenter.call(path);
+    presenters.toastPresenter.call(path);
   }
 
   @override

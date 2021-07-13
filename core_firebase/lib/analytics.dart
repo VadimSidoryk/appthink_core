@@ -1,3 +1,4 @@
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -16,7 +17,8 @@ class FirebaseAnalyst extends Analyst {
   }
 
   @override
-  void onNewEvent({required String name, Map<String, Object>? params}) {
-    _analytics.logEvent(name: name, parameters: params);
+  void onNewEvent(AplEvent event) {
+    final nullableParams = event.params.isNotEmpty ? event.params : null;
+    _analytics.logEvent(name: event.name, parameters: nullableParams);
   }
 }

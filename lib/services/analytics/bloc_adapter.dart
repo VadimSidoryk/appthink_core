@@ -21,7 +21,7 @@ class BlocEventsAdapter extends BlocsListener {
   @override
   void onNewEvent(BaseBloc bloc, AplEvent event) {
     logMethod(methodName: "onNewEvent", params: [bloc, event]);
-    eventBus.onNewEvent(event..params?[KEY_SENDER] = bloc);
+    eventBus.onNewEvent(event..params[KEY_SENDER] = bloc);
   }
 
   @override

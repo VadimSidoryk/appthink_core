@@ -10,33 +10,37 @@ import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AplPresentation extends StatefulWidget {
-  final String path;
-  final PresentationConfig config;
+class AplPresentation<T> extends StatefulWidget {
+  final Map<String, T> stateToUI;
   final BlocFactory currentBlocFactory;
+  final AplLayoutBuilder<T> layoutBuilder;
 
   AplPresentation(
       {Key? key,
-      required this.path,
-      required this.config,
-      required this.currentBlocFactory});
+      required this.stateToUI,
+      required this.currentBlocFactory,
+      required this.layoutBuilder});
 
   @override
   State<StatefulWidget> createState() {
     return _AplPresentationState(
-        blocFactory: currentBlocFactory, stateToUI: config.stateToUI);
+        blocFactory: currentBlocFactory,
+        stateToUI: stateToUI,
+        layoutBuilder: layoutBuilder);
   }
 }
 
-class _AplPresentationState extends State<AplPresentation> {
+class _AplPresentationState<T> extends State<AplPresentation> {
   final BlocFactory blocFactory;
-  final Map<String, String> stateToUI;
-
-  final _interpolation = Interpolation();
+  final Map<String, T> stateToUI;
+  final AplLayoutBuilder<T> layoutBuilder;
 
   late final BaseBloc bloc;
 
-  _AplPresentationState({required this.blocFactory, required this.stateToUI});
+  _AplPresentationState(
+      {required this.blocFactory,
+      required this.stateToUI,
+      required this.layoutBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +48,9 @@ class _AplPresentationState extends State<AplPresentation> {
     return BlocBuilder<BaseBloc, BaseState>(
         bloc: bloc,
         builder: (context, state) {
-          final uiBuilder = context.get<AplLayoutBuilder>();
           final uiConfig =
               stateToUI[state.tag] ?? stateToUI[STATE_BASE_ERROR_TAG]!;
-          final interpolatedUIConfig =
-              _interpolation.eval(uiConfig, state.asArgs());
-          return uiBuilder.buildLayout(interpolatedUIConfig, _processEvent);
+          return layoutBuilder.buildLayout(uiConfig, state.asArgs(), _processEvent);
         });
   }
 
@@ -70,10 +71,10 @@ class _AplPresentationState extends State<AplPresentation> {
               context.get<Map<String, AplPresentationBuilder>>();
           final presentationBuilder = typeToBlocFactoryProvider[config.type]!;
           return AplPresentation(
-              path: dialogPath,
-              config: config,
+              stateToUI: config.stateToUI,
+              layoutBuilder: layoutBuilder,
               currentBlocFactory:
-                  presentationBuilder.buildPresentation(dialogPath, config));
+                  presentationBuilder.buildPresentation(context, config));
         });
   }
 
