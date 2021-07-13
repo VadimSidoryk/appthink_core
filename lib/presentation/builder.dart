@@ -25,5 +25,5 @@ abstract class AplPresentationBuilder<D, R extends BaseRepository<D>> {
 }
 
 abstract class AplLayoutBuilder<T> {
-  Widget buildLayout(T uiConfig, Map<String, dynamic> args, EventHandler handler);
+  Widget buildLayout(T uiConfig, BaseState state, EventHandler handler);
 }

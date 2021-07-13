@@ -1,5 +1,5 @@
 import 'package:applithium_core/presentation/base.dart';
-import 'package:applithium_core/presentation/base_builder.dart';
+import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/config.dart';
 import 'package:applithium_core/router/matchers.dart';
 import 'package:applithium_core/router/route_details.dart';

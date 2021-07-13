@@ -2,7 +2,7 @@ import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/json/interpolation.dart';
-import 'package:applithium_core/presentation/base_builder.dart';
+import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -50,7 +50,7 @@ class _AplPresentationState<T> extends State<AplPresentation> {
         builder: (context, state) {
           final uiConfig =
               stateToUI[state.tag] ?? stateToUI[STATE_BASE_ERROR_TAG]!;
-          return layoutBuilder.buildLayout(uiConfig, state.asArgs(), _processEvent);
+          return layoutBuilder.buildLayout(uiConfig, state, _processEvent);
         });
   }
 

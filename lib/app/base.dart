@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/base_builder.dart';
+import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/content/builder.dart';
 import 'package:applithium_core/presentation/form/builder.dart';
 import 'package:applithium_core/presentation/listing/builder.dart';

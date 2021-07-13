@@ -2,12 +2,13 @@ import 'package:applithium_core/app/base.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/mocks/utils.dart';
+import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/config.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/services/resources/model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/presentation/base_builder.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 
 void main() {
   runApp(MyApp());
@@ -45,8 +46,7 @@ class MockedConfigProvider extends ConfigProvider {
 
 class MockedLayoutBuilder extends AplLayoutBuilder {
   @override
-  Widget buildLayout(uiConfig, Map<String, dynamic> args, EventHandler handler) {
+  Widget buildLayout(uiConfig, BaseState event, EventHandler handler) {
     return Center(child: Text("Mocked layout builder"));
   }
-
 }
