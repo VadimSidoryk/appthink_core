@@ -1,5 +1,5 @@
-import 'package:applithium_core/blocs/base_bloc.dart';
-import 'package:applithium_core/blocs/supervisor.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
@@ -21,7 +21,7 @@ class BlocEventsAdapter extends BlocsListener {
   @override
   void onNewEvent(BaseBloc bloc, AplEvent event) {
     logMethod(methodName: "onNewEvent", params: [bloc, event]);
-    eventBus.onNewEvent(name: event.name, params: event.params..[KEY_SENDER] = bloc);
+    eventBus.onNewEvent(event..params?[KEY_SENDER] = bloc);
   }
 
   @override

@@ -1,19 +1,42 @@
 import 'dart:async';
 
 import 'package:applithium_core/events/event.dart';
-import 'package:applithium_core/blocs/base_bloc.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/repositories/value_repository.dart';
+import 'package:applithium_core/presentation/content/repository.dart';
 import 'package:applithium_core/usecases/base.dart';
+
+const STATE_CONTENT_LOADING = "loading";
+
+class ContentState extends BaseState {
+  final Map<String, dynamic>? value;
+  final bool isLoading;
+
+  ContentState(String tag, this.value, this.isLoading, error)
+      : super(tag, error);
+
+  factory ContentState.initial() =>
+      ContentState(STATE_BASE_INITIAL_TAG, null, true, null);
+
+  ContentState withValue(Map<String, dynamic> value) {
+    return ContentState(STATE_BASE_DATA_TAG, value, false, null);
+  }
+
+  ContentState withLoading(bool isLoading) {
+    return ContentState(STATE_CONTENT_LOADING, value, isLoading, null);
+  }
+
+  ContentState withError(dynamic error) {
+    return ContentState(STATE_BASE_ERROR_TAG, value, false, error);
+  }
+}
 
 class ContentBloc<T> extends BaseBloc<ContentState, ContentRepository> {
   ContentBloc(
-      {required Presenters presenters,
-      required ContentRepository repository,
+      {required ContentRepository repository,
       required Map<String, UseCase<T>> domain})
       : super(
             initialState: ContentState.initial(),
-            presenters: presenters,
             repository: repository,
             domain: domain);
 
@@ -36,28 +59,5 @@ class ContentBloc<T> extends BaseBloc<ContentState, ContentRepository> {
       default:
         yield* super.mapEventToStateImpl(event);
     }
-  }
-}
-
-const STATE_CONTENT_LOADING = "loading";
-
-class ContentState extends BaseState {
-  final Map<String, dynamic>? value;
-  final bool isLoading;
-
-  ContentState(String tag, this.value, this.isLoading, error) : super(tag, error);
-
-  factory ContentState.initial() => ContentState(STATE_BASE_INITIAL_TAG, null, true, null);
-
-  ContentState withValue(Map<String, dynamic> value) {
-    return ContentState(STATE_BASE_DATA_TAG, value, false, null);
-  }
-
-  ContentState withLoading(bool isLoading) {
-    return ContentState(value, isLoading, null);
-  }
-
-  ContentState withError(dynamic error) {
-    return ContentState(STATE_BASE_ERROR_TAG, value, false, error);
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:applithium_core/logs/extension.dart';
 
 abstract class UseCase<D> {
-  UseCase<D> withParams(Map<String, dynamic> params) {
+  UseCase<D> withEventParams(Map<String, dynamic> params) {
     return _UseCaseDelegate(this, params);
   }
 

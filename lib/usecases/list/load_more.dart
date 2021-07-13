@@ -10,7 +10,7 @@ class ListLoadItemsUseCase<T> extends UseCase<List<T>> {
   @override
   Stream<List<T>> invokeImpl(List<T>? state, Map<String, dynamic> params) async* {
     final list = state ?? [];
-    final newItems = await loadingSource.withParams(params).invoke(state).first;
+    final newItems = await loadingSource.withEventParams(params).invoke(state).first;
     if(newItems.isEmpty) {
       throw "End has been reached";
     }

@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:applithium_core/blocs/supervisor.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
-import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:applithium_core/json/interpolation_args.dart';
+import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,20 +22,30 @@ const STATE_BASE_INITIAL_TAG = "initial";
 const STATE_BASE_ERROR_TAG = "error";
 const STATE_BASE_DATA_TAG = "data";
 
-abstract class BaseState {
+const STATE_BASE_ERROR_KEY = "error";
+
+abstract class BaseState extends InterpolationArgs {
   final String tag;
   final dynamic error;
 
   BaseState(this.tag, this.error);
 
   BaseState withError(dynamic error);
+
+  @override
+  Map<String, dynamic> asArgs() {
+    return {
+      STATE_BASE_ERROR_KEY : error,
+
+    };
+  }
 }
 
 class BaseBloc<S extends BaseState, R extends BaseRepository>
     extends Bloc<AplEvent, BaseState> {
   final R repository;
   final Map<String, UseCase> domain;
-  final Presenters presenters;
+  Presenters? _presenters;
 
   StreamSubscription? _subscription;
 
@@ -43,7 +54,6 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
 
   BaseBloc(
       {required S initialState,
-      required this.presenters,
       required this.repository,
       required this.domain})
       : super(initialState) {
@@ -52,13 +62,17 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
     });
   }
 
+  void setPresenters(Presenters presenters) {
+    this._presenters = presenters;
+  }
+
   void showDialog(String path) async {
-    final result = await presenters.dialogPresenter.call(path);
+    final result = await _presenters?.dialogPresenter.call(path);
     add(AplEvent.dialogClosed(path, result));
   }
 
   void showToast(String path) {
-    presenters.toastPresenter.call(path);
+    _presenters?.toastPresenter.call(path);
   }
 
   @override
@@ -81,7 +95,7 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
   Stream<S> mapEventToStateImpl(AplEvent event) async* {
     if (domain.containsKey(event.name)) {
       final useCase = domain[event.name] as UseCase;
-      repository.apply(useCase.withParams(event.params));
+      repository.apply(useCase.withEventParams(event.asArgs()));
     }
   }
 

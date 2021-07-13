@@ -1,4 +1,5 @@
-import 'package:applithium_core/blocs/supervisor.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/analytics/bloc_adapter.dart';
 import 'package:flutter/widgets.dart';
@@ -21,8 +22,8 @@ class EventBus {
     return BlocEventsAdapter(this);
   }
 
-  void onNewEvent({required String name, Map<String, Object>? params}) {
-    log("onNewEvent $name params: $params");
-    listeners.forEach((impl) => impl.onNewEvent(name: name, params: params));
+  void onNewEvent(AplEvent event) {
+    log("onNewEvent ${event.name} params: ${event.params}");
+    listeners.forEach((impl) => impl.onNewEvent(event));
   }
 }

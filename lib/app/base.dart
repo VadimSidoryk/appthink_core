@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:applithium_core/blocs/base_bloc.dart';
-import 'package:applithium_core/blocs/supervisor.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/action.dart';

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 

@@ -1,4 +1,5 @@
 import 'package:applithium_core/events/action.dart';
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/json/condition.dart';
 import 'package:applithium_core/json/interpolation.dart';
 import 'package:applithium_core/services/analytics/bloc_adapter.dart';
@@ -22,26 +23,26 @@ class EventHandlerService  extends AplService {
 
   EventHandlerService(this._preferencesProvider, this._routesHandler);
 
-  void handleEvent({required String name, Map<String, Object>? params}) async {
-    final key = "$name.$_countKey";
+  void handleEvent(AplEvent event) async {
+    final key = "${event.name}.$_countKey";
     final count = ((await _preferencesProvider).getInt(key) ?? 0) + 1;
     (await _preferencesProvider).setInt(key, count);
 
-    if (_triggers.containsKey(name)) {
+    if (_triggers.containsKey(event.name)) {
 
-      final triggers = _triggers[name];
+      final triggers = _triggers[event.name];
       if(triggers != null) {
         for (final trigger in triggers) {
           bool isHandled;
           try {
-            final interpolatedCondition = _interpolation.eval(trigger.condition, (params ?? {})..[_countKey] = count);
+            final interpolatedCondition = _interpolation.eval(trigger.condition, event.asArgs()..[_countKey] = count);
             isHandled = Condition.fromString(interpolatedCondition).evaluate() == true;
           } catch (exception) {
             isHandled = false;
           }
 
           if (isHandled) {
-            _routesHandler.call(trigger.action, params?[KEY_SENDER]);
+            _routesHandler.call(trigger.action, event.params[KEY_SENDER]);
             return;
           }
         }

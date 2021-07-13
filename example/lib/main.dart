@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
             ),
         title: "Applithium Core Example",
         analysts: {LogAnalyst()},
-        configProvider: MockedConfigProvider(),
+        configProvider: MockedCon2figProvider(),
         routerBuilder: (key) => MyRouter(key));
   }
 }

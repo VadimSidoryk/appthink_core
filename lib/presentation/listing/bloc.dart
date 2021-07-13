@@ -2,49 +2,10 @@ import 'dart:async';
 
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/repositories/list_repository.dart';
+import 'package:applithium_core/presentation/listing/repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 
-import 'base_bloc.dart';
-
-class ListingBloc<IM>
-    extends BaseBloc<ListingState<IM>, ListingRepository> {
-  ListingBloc(
-      {required Presenters presenters,
-      required ListingRepository repository,
-      required Map<String, UseCase<List<IM>>> domain})
-      : super(
-            initialState: ListingState.initial(),
-            presenters: presenters,
-            repository: repository,
-            domain: domain);
-
-  @override
-  Stream<ListingState<IM>> mapEventToStateImpl(AplEvent event) async* {
-    switch (event.name) {
-      case EVENT_SHOWN_NAME:
-        repository.updateData(false);
-        break;
-      case EVENT_UPDATE_REQUESTED_NAME:
-        yield currentState.withListLoading(true);
-        final isUpdated = await repository.updateData(true);
-        log("isUpdated: $isUpdated");
-        yield currentState.withListLoading(false);
-        break;
-      case EVENT_SCROLLED_TO_END:
-        if (!currentState.isPageLoading) {
-          yield currentState.withPageLoading(true);
-          repository.loadMoreItems();
-          yield currentState.withPageLoading(false);
-        }
-        break;
-      case EVENT_DATA_UPDATED_NAME:
-        yield currentState.withList(
-            event.params[EVENT_DATA_UPDATED_ARG_DATA] as List<IM>,
-            event.params[EVENT_DATA_UPDATED_ARG_IS_END_REACHED] as bool);
-    }
-  }
-}
+import '../base_bloc.dart';
 
 class ListingState<T> extends BaseState {
   final List<T>? value;
@@ -59,7 +20,7 @@ class ListingState<T> extends BaseState {
       dialogModel,
       required this.isPageLoading,
       required this.isEndReached})
-      : super(error);
+      : super(STATE_BASE_ERROR_TAG, error);
 
   factory ListingState.initial() => ListingState(
       value: null,
@@ -111,5 +72,41 @@ class ListingState<T> extends BaseState {
         error: error,
         isPageLoading: false,
         isEndReached: true);
+  }
+}
+
+class ListingBloc<IM> extends BaseBloc<ListingState<IM>, ListingRepository> {
+  ListingBloc(
+      {required ListingRepository repository,
+      required Map<String, UseCase<List<IM>>> domain})
+      : super(
+            initialState: ListingState.initial(),
+            repository: repository,
+            domain: domain);
+
+  @override
+  Stream<ListingState<IM>> mapEventToStateImpl(AplEvent event) async* {
+    switch (event.name) {
+      case EVENT_SHOWN_NAME:
+        repository.updateData(false);
+        break;
+      case EVENT_UPDATE_REQUESTED_NAME:
+        yield currentState.withListLoading(true);
+        final isUpdated = await repository.updateData(true);
+        log("isUpdated: $isUpdated");
+        yield currentState.withListLoading(false);
+        break;
+      case EVENT_SCROLLED_TO_END:
+        if (!currentState.isPageLoading) {
+          yield currentState.withPageLoading(true);
+          repository.loadMoreItems();
+          yield currentState.withPageLoading(false);
+        }
+        break;
+      case EVENT_DATA_UPDATED_NAME:
+        yield currentState.withList(
+            event.params[EVENT_DATA_UPDATED_ARG_DATA] as List<IM>,
+            event.params[EVENT_DATA_UPDATED_ARG_IS_END_REACHED] as bool);
+    }
   }
 }

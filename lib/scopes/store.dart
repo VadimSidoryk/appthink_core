@@ -5,9 +5,9 @@ import 'scope.dart';
 enum _StoreFactoryType { factory, single }
 
 abstract class InstanceProvider {
-  T get<T>({String? key});
+  T get<T>({String key = ""});
 
-  T? getOrNull<T>({String? key});
+  T? getOrNull<T>({String key = ""});
 }
 
 ///Simple instance store
@@ -30,7 +30,7 @@ class Store extends InstanceProvider {
   }
 
   @override
-  T get<T>({String? key}) {
+  T get<T>({String key = ""}) {
     final keysMap = _map[T];
     // ignore: unnecessary_null_comparison
     if (keysMap == null) {
@@ -45,7 +45,7 @@ class Store extends InstanceProvider {
   }
 
   @override
-  T? getOrNull<T>({String? key}) {
+  T? getOrNull<T>({String key = ""}) {
     if (_map.containsKey(T)) {
       return get<T>(key: key);
     } else {
@@ -53,7 +53,7 @@ class Store extends InstanceProvider {
     }
   }
 
-  call<T>({String? key}) => get<T>(key: key);
+  call<T>(String key) => get<T>(key: key);
 
   ///registers transient instances ( a new instance is provider per request )
   addFactory<T>(T Function(InstanceProvider) func, {String? key}) {

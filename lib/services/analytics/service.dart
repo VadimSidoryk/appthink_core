@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
@@ -20,9 +21,9 @@ class AnalyticsService extends AplService<AnalyticsConfig>
   }
 
   @override
-  void onNewEvent({required String name, Map<String, Object>? params}) {
-    log("trackEventWithParams $name params: $params");
-    analysts.forEach((impl) => impl.onNewEvent(name: name, params: params));
+  void onNewEvent(AplEvent event) {
+    log("trackEventWithParams ${event.name} params: ${event.params}");
+    analysts.forEach((impl) => impl.onNewEvent(event));
   }
 
   StreamSubscription periodicUpdatedUserProperty<T>(

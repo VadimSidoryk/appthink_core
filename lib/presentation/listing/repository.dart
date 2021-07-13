@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/repositories/base_repository.dart';
+import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
@@ -48,7 +48,7 @@ class ListingRepository<T>
       cancelCurrentOperation();
 
       _currentPage = 0;
-      final result = await apply(load.withParams(createLoadParams()));
+      final result = await apply(load.withEventParams(createLoadParams()));
       _endReachedSubj.sink.add(result);
       if (result) {
         _currentPage += 1;
@@ -81,7 +81,7 @@ class ListingRepository<T>
     }
 
     _state = ListingRepositoryState.MORE_ITEMS_LOADING;
-    final result = await apply(load.withParams(createLoadParams()));
+    final result = await apply(load.withEventParams(createLoadParams()));
     _state = ListingRepositoryState.MORE_ITEMS_LOADED;
     _endReachedSubj.sink.add(result);
     if (result) {

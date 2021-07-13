@@ -18,12 +18,12 @@ class Scope extends InheritedWidget {
   static Scope of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<Scope>() as Scope;
 
-  static T get<T>(BuildContext context, {String? key}) {
-    return of(context).store.get<T>();
+  static T get<T>(BuildContext context, String key) {
+    return of(context).store.get<T>(key: key);
   }
 
-  static T? getOrNull<T>(BuildContext context, {String? key}) {
-    return of(context).store.getOrNull<T>();
+  static T? getOrNull<T>(BuildContext context, String key) {
+    return of(context).store.getOrNull<T>(key: key);
   }
 }
 

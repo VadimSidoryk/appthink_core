@@ -1,3 +1,4 @@
+import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -10,17 +11,15 @@ class EventsHandlerAdapter extends EventsListener {
 
   @override
   List<NavigatorObserver> get navigatorObservers =>
-      [ _NavigatorEventsObserver(_service) ];
+      [_NavigatorEventsObserver(_service)];
 
   @override
-  void onNewEvent({required String name, Map<String, Object>? params}) async {
-    _service.handleEvent(name: name, params: params);
+  void onNewEvent(AplEvent event) async {
+    _service.handleEvent(event);
   }
 }
 
 class _NavigatorEventsObserver extends NavigatorObserver {
-  static String _getScreenEvent(String screenName) => "${screenName}_opened";
-
   final EventHandlerService _service;
 
   _NavigatorEventsObserver(this._service);
@@ -28,22 +27,24 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   @override
   void didPop(Route newRoute, Route? previousRoute) {
     if (previousRoute is PageRoute && newRoute is PageRoute) {
-      _service.handleEvent(
-          name: _getScreenEvent(previousRoute.settings.name ?? "undefined"));
+      final name = newRoute.settings.name ?? "undefined";
+      _service.handleEvent(AplEvent.screenOpened(name));
     }
   }
 
   @override
   void didPush(Route route, Route? previousRoute) {
     if (route is PageRoute) {
-      _service.handleEvent(name: _getScreenEvent(route.settings.name ?? "undefined"));
+      final name = route.settings.name ?? "undefined";
+      _service.handleEvent(AplEvent.screenOpened(name));
     }
   }
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     if (newRoute is PageRoute) {
-      _service.handleEvent(name: _getScreenEvent(newRoute.settings.name ?? "undefined"));
+      final name = newRoute.settings.name ?? "undefined";
+      _service.handleEvent(AplEvent.screenOpened(name));
     }
   }
 }
