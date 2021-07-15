@@ -9,13 +9,10 @@ void main() {
   test("add valid to end", () async {
     final addValidToEnd = addToEnd.withEventParams(createValidTestMap());
 
-    final listWithOneItem = await addValidToEnd.invoke([]).first;
-    assert(listWithOneItem.length == 1);
-    final listWithTwoItems = await addValidToEnd.invoke([TestModel("first_title", "first_subtitle")]).first;
-    assert(listWithTwoItems.length == 2);
-    assert(listWithTwoItems[0].title == "first_title");
-    assert(listWithTwoItems[1].title == "test_title");
+    expect(addValidToEnd.invoke([]), emits(hasLength(1)));
 
+    final firstElement = TestModel("first_title", "first_subtitle");
+    expect(addValidToEnd.invoke([firstElement]), emits(hasLength(2)));
   });
 
   test("add valid to top", () async {

@@ -51,7 +51,8 @@ class _AplPresentationState<T> extends State<AplPresentation> {
         builder: (context, state) {
           final uiConfig =
               stateToUI[state.tag] ?? stateToUI[STATE_BASE_ERROR_TAG]!;
-          return layoutBuilder.buildLayout(uiConfig, state, _processEvent);
+          return layoutBuilder.buildLayout(
+              context, uiConfig, state, _processEvent);
         });
   }
 

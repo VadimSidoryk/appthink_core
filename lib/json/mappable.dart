@@ -1,3 +1,3 @@
-abstract class CanUseAsArgs {
+abstract class Mappable {
   Map<String, dynamic> asArgs();
 }

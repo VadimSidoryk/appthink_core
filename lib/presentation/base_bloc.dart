@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
-import 'package:applithium_core/json/interpolation_args.dart';
+import 'package:applithium_core/json/mappable.dart';
 import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
@@ -23,8 +23,10 @@ const STATE_BASE_ERROR_TAG = "error";
 const STATE_BASE_DATA_TAG = "data";
 
 const STATE_BASE_ERROR_KEY = "error";
+const STATE_BASE_VALUE_KEY = "value";
+const STATE_BASE_TAG_KEY = "tag";
 
-abstract class BaseState<T> extends CanUseAsArgs {
+abstract class BaseState<T> extends Mappable {
   final String tag;
   final dynamic error;
   final T? value;
@@ -36,7 +38,9 @@ abstract class BaseState<T> extends CanUseAsArgs {
   @override
   Map<String, dynamic> asArgs() {
     return {
+      STATE_BASE_TAG_KEY: tag,
       STATE_BASE_ERROR_KEY: error,
+      STATE_BASE_VALUE_KEY: value
     };
   }
 }

@@ -1,6 +1,6 @@
 import 'package:applithium_core/services/analytics/trackable.dart';
 
-import '../json/interpolation_args.dart';
+import '../json/mappable.dart';
 
 const EVENT_ARG_NAME = "name";
 
@@ -30,7 +30,7 @@ const EVENT_SESSION_STARTED_ARG_DAYS_FROM_FIRST_SESSION =
 const EVENT_SCREEN_OPENED_NAME = "screen_opened";
 const EVENT_SCREEN_OPENED_ARG_SCREEN_NAME = "screen_name";
 
-class AplEvent extends Trackable implements CanUseAsArgs {
+class AplEvent extends Trackable implements Mappable {
   @override
   final String name;
   @override

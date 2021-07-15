@@ -13,6 +13,8 @@ import 'package:flutter/widgets.dart';
 import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 
+typedef ScreenBuilder = Widget Function(BaseState state);
+
 void main() {
   runApp(MyApp());
 }
@@ -29,7 +31,7 @@ class MyApp extends StatefulWidget {
         title: "Applithium Core Example",
         analysts: {LogAnalyst()},
         configProvider: MockedConfigProvider(),
-        layoutBuilder: MockedLayoutBuilder());
+        layoutBuilder: MockedLayoutBuilder((e) => Text(e)));
   }
 }
 
@@ -45,10 +47,10 @@ class MockedConfigProvider extends ConfigProvider {
               "/" : PresentationConfig(
                   "content",
                   {
-                    STATE_BASE_INITIAL_TAG: "initial",
-                    STATE_BASE_ERROR_KEY: "error",
-                    STATE_CONTENT_LOADING: "loading",
-                    STATE_BASE_DATA_TAG: "data"
+                    STATE_BASE_INITIAL_TAG: (BaseState state) => "{type: \"Text\"}",
+                    STATE_BASE_ERROR_KEY: (BaseState state) => Text("Error"),
+                    STATE_CONTENT_LOADING: (BaseState state) => Text("loading"),
+                    STATE_BASE_DATA_TAG: (BaseState state) => Text("data")
                   },
                   {
                     EVENT_UPDATE_REQUESTED_NAME:
@@ -59,10 +61,13 @@ class MockedConfigProvider extends ConfigProvider {
   }
 }
 
-class MockedLayoutBuilder extends AplLayoutBuilder<String> {
+class MockedLayoutBuilder extends AplLayoutBuilder<ScreenBuilder> {
+
+  MockedLayoutBuilder(ErrorPageBuilder errorPageBuilder) : super(errorPageBuilder);
+
   @override
-  Widget buildLayout(String uiConfig, BaseState state, EventHandler handler) {
-    return Center(child: Text("Layout for $uiConfig with data ${state.value}"));
+  Widget buildLayoutImpl(BuildContext context, ScreenBuilder uiConfig, BaseState state, EventHandler handler) {
+    return Center(child: uiConfig.call(state));
   }
 }
 

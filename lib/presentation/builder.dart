@@ -1,17 +1,19 @@
-
 import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/presentation/config.dart';
 import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/widgets.dart';
 
-typedef EventHandler = Function({required String name, Map<String, Object>? params});
+typedef EventHandler = Function(
+    {required String name, Map<String, Object>? params});
 
 typedef BlocFactory = BaseBloc Function(BuildContext, Presenters);
 
-abstract class AplPresentationBuilder<D, R extends BaseRepository<D>> {
+typedef ErrorPageBuilder = Widget Function(dynamic);
 
-  BlocFactory buildPresentation(BuildContext context, PresentationConfig config) {
+abstract class AplPresentationBuilder<D, R extends BaseRepository<D>> {
+  BlocFactory buildPresentation(
+      BuildContext context, PresentationConfig config) {
     final domain = config.domain as Map<String, UseCase<D>>;
     final repository = createRepository(domain, config.repositoryTtl);
     return createBlocFactory(repository, domain);
@@ -25,5 +27,20 @@ abstract class AplPresentationBuilder<D, R extends BaseRepository<D>> {
 }
 
 abstract class AplLayoutBuilder<T> {
-  Widget buildLayout(T uiConfig, BaseState state, EventHandler handler);
+  final ErrorPageBuilder errorPageBuilder;
+
+  AplLayoutBuilder(this.errorPageBuilder);
+
+  @protected
+  Widget buildLayoutImpl(
+      BuildContext context, T uiConfig, BaseState state, EventHandler handler);
+
+  Widget buildLayout(
+      BuildContext context, T uiConfig, BaseState state, EventHandler handler) {
+    try {
+      return buildLayoutImpl(context, uiConfig, state, handler);
+    } catch (e) {
+      return errorPageBuilder(e);
+    }
+  }
 }
