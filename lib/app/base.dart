@@ -159,10 +159,10 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   Store createDependencyTree() {
     final result = Store()
       ..add((provider) => SharedPreferences.getInstance())
-      ..add((provider) => EventHandlerService(provider.get(), processAction))
+      ..add((provider) => EventTriggeredHandlerService(provider.get(), processAction))
       ..add((provider) => AnalyticsService(analysts: analysts))
       ..add((provider) => EventBus(listeners: {
-            EventsHandlerAdapter(provider.get()),
+            TriggeredEventsHandlerAdapter(provider.get()),
             provider.get<AnalyticsService>()
           }))
       ..add((provider) => UsageHistoryService(
