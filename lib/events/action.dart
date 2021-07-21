@@ -12,7 +12,7 @@ enum AplActionType {
   SHOW_DIALOG,
   SHOW_TOAST,
   REQUEST_GET,
-  CUSTOM_ACTION,
+  DOMAIN_LEVEL_EVENT,
   BACK
 }
 
@@ -31,8 +31,8 @@ extension RouteTypeFactory on String {
         return AplActionType.SHOW_TOAST;
       case "get":
         return AplActionType.REQUEST_GET;
-      case "custom":
-        return AplActionType.CUSTOM_ACTION;
+      case "domain":
+        return AplActionType.DOMAIN_LEVEL_EVENT;
       default:
         return AplActionType.BACK;
     }

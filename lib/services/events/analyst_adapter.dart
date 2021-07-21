@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 
 import 'service.dart';
 
-class EventsHandlerAdapter extends EventsListener {
-  final EventHandlerService _service;
+class TriggeredEventsHandlerAdapter extends EventsListener {
+  final EventTriggeredHandlerService _service;
 
-  EventsHandlerAdapter(this._service);
+  TriggeredEventsHandlerAdapter(this._service);
 
   @override
   List<NavigatorObserver> get navigatorObservers =>
@@ -20,7 +20,7 @@ class EventsHandlerAdapter extends EventsListener {
 }
 
 class _NavigatorEventsObserver extends NavigatorObserver {
-  final EventHandlerService _service;
+  final EventTriggeredHandlerService _service;
 
   _NavigatorEventsObserver(this._service);
 

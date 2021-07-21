@@ -7,21 +7,21 @@ import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../events/event_trigger.dart';
+import 'event_trigger.dart';
 
 const _countKey = "count";
 
-typedef ActionHandler = Function(AplAction, Object?);
+typedef ActionHandler = Function(AplAction action, Object? sender);
 
-class EventHandlerService  extends AplService {
+class EventTriggeredHandlerService  extends AplService {
 
   final Future<SharedPreferences> _preferencesProvider;
   Map<String, Set<AplEventTrigger>> _triggers = {};
-  final ActionHandler _routesHandler;
+  final ActionHandler _actionsHandler;
 
   final _interpolation = Interpolation();
 
-  EventHandlerService(this._preferencesProvider, this._routesHandler);
+  EventTriggeredHandlerService(this._preferencesProvider, this._actionsHandler);
 
   void handleEvent(AplEvent event) async {
     final key = "${event.name}.$_countKey";
@@ -42,7 +42,7 @@ class EventHandlerService  extends AplService {
           }
 
           if (isHandled) {
-            _routesHandler.call(trigger.action, event.params[KEY_SENDER]);
+            _actionsHandler.call(trigger.action, event.params[KEY_SENDER]);
             return;
           }
         }
