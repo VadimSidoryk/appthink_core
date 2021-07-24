@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:applithium_core/logs/extension.dart';
 
 abstract class BaseRepository<T> {
   @protected

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/json/mappable.dart';
 import 'package:applithium_core/presentation/base_repository.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

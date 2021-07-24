@@ -1,17 +1,17 @@
 import 'dart:async';
 
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/builder.dart';
-import 'package:applithium_core/presentation/content/builder.dart';
-import 'package:applithium_core/presentation/form/builder.dart';
-import 'package:applithium_core/presentation/listing/builder.dart';
-import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
+import 'package:applithium_core/presentation/builder.dart';
+import 'package:applithium_core/presentation/content/builder.dart';
+import 'package:applithium_core/presentation/form/builder.dart';
+import 'package:applithium_core/presentation/listing/builder.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/router/builder.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';

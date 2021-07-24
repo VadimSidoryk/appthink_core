@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class UseCase<D> {
   UseCase<D> withEventParams(Map<String, dynamic> params) {

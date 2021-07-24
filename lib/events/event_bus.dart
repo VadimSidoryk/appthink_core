@@ -1,6 +1,6 @@
-import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/services/analytics/bloc_adapter.dart';
 import 'package:flutter/widgets.dart';
 

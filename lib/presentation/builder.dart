@@ -1,6 +1,6 @@
 import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/config.dart';
 import 'package:applithium_core/presentation/base_repository.dart';
+import 'package:applithium_core/presentation/config.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/widgets.dart';
 

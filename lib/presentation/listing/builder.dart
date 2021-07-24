@@ -1,9 +1,6 @@
 import 'package:applithium_core/events/event.dart';
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/base_repository.dart';
 import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/usecases/base.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc.dart';
 import 'repository.dart';

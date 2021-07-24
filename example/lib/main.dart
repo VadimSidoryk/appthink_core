@@ -3,15 +3,15 @@ import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/mocks/utils.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/presentation/config.dart';
 import 'package:applithium_core/presentation/content/bloc.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/services/resources/model.dart';
+import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/usecases/mocks/value.dart';
 
 typedef ScreenBuilder = Widget Function(BaseState state);
 

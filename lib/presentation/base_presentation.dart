@@ -1,10 +1,10 @@
-import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/presentation/builder.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
