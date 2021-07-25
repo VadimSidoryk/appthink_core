@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/json/mappable.dart';
 import 'package:applithium_core/presentation/base_repository.dart';
+import 'package:applithium_core/presentation/content/bloc.dart';
 import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
@@ -16,6 +17,34 @@ class Presenters {
   final ToastPresenter toastPresenter;
 
   Presenters({required this.dialogPresenter, required this.toastPresenter});
+}
+
+abstract class BaseEvent extends AplEvent {
+
+  BaseEvent(String name): super(name);
+
+  @override
+  Map<String, Object> get params => {};
+
+  factory BaseEvent.screenShown() => Shown._();
+
+  factory BaseEvent.dialogClosed(source, result) =>
+      DialogClosed._(source, result);
+}
+
+class Shown extends BaseEvent {
+  Shown._() : super("screen_shown");
+}
+
+class DialogClosed<VM, R> extends BaseEvent {
+  final VM source;
+  final R result;
+
+  DialogClosed._(this.source, this.result)
+      : super(result != null ? "dialog_accepted" : "dialog_dismissed");
+
+  @override
+  Map<String, Object> get params => {"source": source.toString()};
 }
 
 const STATE_BASE_INITIAL_TAG = "initial";
@@ -63,13 +92,13 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
       required this.presenters})
       : super(initialState) {
     _subscription = repository.updatesStream.listen((data) {
-      add(AplEvent.displayData(data));
+      add(DisplayData(data));
     });
   }
 
   void showDialog(String path) async {
     final result = await presenters.dialogPresenter.call(path);
-    add(AplEvent.dialogClosed(path, result));
+    add(DialogClosed._(path, result));
   }
 
   void showToast(String path) {

@@ -55,7 +55,7 @@ class _AplPresentationState<T> extends State<AplPresentation> {
   }
 
   void _processEvent({required String name, Map<String, Object>? params}) {
-    bloc.add(AplEvent(name: name, params: params ?? {}));
+    bloc.add(AplEvent.createCustom(name: name, params: params));
   }
 
   Presenters _buildPresenters(BuildContext context) {

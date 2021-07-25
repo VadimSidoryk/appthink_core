@@ -166,8 +166,8 @@
         <entry key="copy_with_extension">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.2/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.2/lib" />
             </list>
           </value>
         </entry>
@@ -231,9 +231,9 @@
         <entry key="file">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.0.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.1/lib" />
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.0/lib" />
             </list>
           </value>
         </entry>
@@ -742,8 +742,8 @@
         <entry key="test_api">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.3.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.3.0/lib" />
             </list>
           </value>
         </entry>

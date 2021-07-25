@@ -7,6 +7,33 @@ import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
 
+abstract class BaseListEvent extends BaseEvent {
+
+  @override
+  Map<String, Object> get analyticParams => {};
+
+  BaseListEvent(String name): super(name);
+}
+
+class Shown extends BaseListEvent {
+  Shown() : super("screen_shown");
+}
+
+class UpdateRequested extends BaseListEvent {
+  UpdateRequested() : super("screen_update");
+}
+
+class DisplayData<T> extends BaseListEvent {
+  final T data;
+  final isEndReached;
+
+  DisplayData(this.data, this.isEndReached) : super("data_updated");
+}
+
+class ScrolledToEnd extends BaseListEvent {
+  ScrolledToEnd() : super("scrolled_to_end");
+}
+
 class ListingState<T> extends BaseState<List<T>> {
   final bool isLoading;
   final bool isPageLoading;

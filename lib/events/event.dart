@@ -30,37 +30,15 @@ const EVENT_SESSION_STARTED_ARG_DAYS_FROM_FIRST_SESSION =
 const EVENT_SCREEN_OPENED_NAME = "screen_opened";
 const EVENT_SCREEN_OPENED_ARG_SCREEN_NAME = "screen_name";
 
-class AplEvent extends Trackable implements Mappable {
+abstract class AplEvent extends Trackable implements Mappable {
   @override
   final String name;
   @override
-  final Map<String, Object> params;
+  Map<String, Object> get params;
 
-  AplEvent({required this.name, Map<String, Object>? params})
-      : params = params ?? Map();
+  AplEvent(this.name);
 
-  factory AplEvent.screenCreated() => AplEvent(name: EVENT_CREATED_NAME);
-
-  factory AplEvent.dialogClosed(dynamic source, dynamic result) =>
-      AplEvent(name: EVENT_DIALOG_CLOSED_NAME, params: {
-        EVENT_DIALOG_CLOSED_ARG_SOURCE: source.toString(),
-        EVENT_DIALOG_CLOSED_ARG_RESULT: result.toString()
-      });
-
-  factory AplEvent.updateRequested() =>
-      AplEvent(name: EVENT_UPDATE_REQUESTED_NAME);
-
-  factory AplEvent.displayData(dynamic data) => AplEvent(
-      name: EVENT_DATA_UPDATED_NAME,
-      params: {EVENT_DATA_UPDATED_ARG_DATA: data});
-
-  factory AplEvent.displayListData(List<dynamic> data, bool isEndReached) =>
-      AplEvent(name: EVENT_DATA_UPDATED_NAME, params: {
-        EVENT_DATA_UPDATED_ARG_DATA: data,
-        EVENT_DATA_UPDATED_ARG_IS_END_REACHED: isEndReached
-      });
-
-  factory AplEvent.scrollToEnd() => AplEvent(name: EVENT_SCROLLED_TO_END);
+  factory AplEvent.createCustom({ required String name, Map<String, Object>? params}) => CustomAplEvent._(name, params ?? {});
 
   factory AplEvent.sendForm() => AplEvent(name: EVENT_SEND_FORM_NAME);
 
@@ -74,12 +52,16 @@ class AplEvent extends Trackable implements Mappable {
         EVENT_SESSION_STARTED_ARG_DAYS_FROM_LAST_SESSION: daysFromLastSession
       });
 
-  factory AplEvent.screenOpened(String name) => AplEvent(
-      name: EVENT_SCREEN_OPENED_NAME,
-      params: {EVENT_SCREEN_OPENED_ARG_SCREEN_NAME: name});
-
   @override
   Map<String, dynamic> asArgs() {
     return params..[EVENT_ARG_NAME] = name;
   }
+}
+
+class CustomAplEvent extends AplEvent {
+  @override
+  final Map<String, Object> params;
+
+  CustomAplEvent._(String name, this.params): super(name);
+
 }
