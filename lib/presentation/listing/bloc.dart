@@ -7,7 +7,7 @@ import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
 
-abstract class BaseListEvent extends BaseEvent {
+abstract class BaseListEvent extends BaseEvents {
 
   @override
   Map<String, Object> get analyticParams => {};

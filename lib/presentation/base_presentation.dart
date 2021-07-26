@@ -43,7 +43,7 @@ class _AplPresentationState<T> extends State<AplPresentation> {
   @override
   Widget build(BuildContext context) {
     bloc = blocFactory(context, _buildPresenters(context));
-    bloc..add(AplEvent.screenCreated());
+    bloc..add(BaseEvents.screenCreated());
     return BlocBuilder<BaseBloc, BaseState>(
         bloc: bloc,
         builder: (context, state) {
@@ -55,7 +55,7 @@ class _AplPresentationState<T> extends State<AplPresentation> {
   }
 
   void _processEvent({required String name, Map<String, Object>? params}) {
-    bloc.add(AplEvent.createCustom(name: name, params: params));
+    // bloc.add(AplEvent.createCustom(name: name, params: params));
   }
 
   Presenters _buildPresenters(BuildContext context) {

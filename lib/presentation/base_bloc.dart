@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/json/mappable.dart';
 import 'package:applithium_core/presentation/base_repository.dart';
-import 'package:applithium_core/presentation/content/bloc.dart';
 import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
@@ -19,24 +18,34 @@ class Presenters {
   Presenters({required this.dialogPresenter, required this.toastPresenter});
 }
 
-abstract class BaseEvent extends AplEvent {
-
-  BaseEvent(String name): super(name);
+abstract class BaseEvents extends AplEvent {
+  BaseEvents(String name) : super(name);
 
   @override
   Map<String, Object> get params => {};
 
-  factory BaseEvent.screenShown() => Shown._();
+  factory BaseEvents.screenShown(String name) => Shown._(name);
 
-  factory BaseEvent.dialogClosed(source, result) =>
+  factory BaseEvents.dialogClosed(source, result) =>
       DialogClosed._(source, result);
+
+  factory BaseEvents.dataUpdated(dynamic data) => DataUpdated._(data);
+
+  factory BaseEvents.screenCreated() => ScreenCreated._("undefined");
+
 }
 
-class Shown extends BaseEvent {
-  Shown._() : super("screen_shown");
+class Shown extends BaseEvents {
+
+  final String screenName;
+
+  Shown._(this.screenName) : super("screen_shown");
+
+  @override
+  Map<String, Object> get params => {"screen_name" : screenName};
 }
 
-class DialogClosed<VM, R> extends BaseEvent {
+class DialogClosed<VM, R> extends BaseEvents {
   final VM source;
   final R result;
 
@@ -45,6 +54,21 @@ class DialogClosed<VM, R> extends BaseEvent {
 
   @override
   Map<String, Object> get params => {"source": source.toString()};
+}
+
+class DataUpdated<VM> extends BaseEvents {
+  final VM data;
+
+  DataUpdated._(this.data) : super("data_updated");
+}
+
+class ScreenCreated extends BaseEvents {
+  final String screenName;
+
+  @override
+  Map<String, Object> get params => {"screen_name": screenName};
+
+  ScreenCreated._(this.screenName) : super(EVENT_CREATED_NAME);
 }
 
 const STATE_BASE_INITIAL_TAG = "initial";
@@ -74,8 +98,9 @@ abstract class BaseState<T> extends Mappable {
   }
 }
 
-class BaseBloc<S extends BaseState, R extends BaseRepository>
-    extends Bloc<AplEvent, BaseState> {
+abstract class BaseBloc<S extends BaseState, R extends BaseRepository>
+    extends Bloc<BaseEvents, BaseState> {
+
   final R repository;
   final Map<String, UseCase> domain;
   final Presenters presenters;
@@ -92,7 +117,7 @@ class BaseBloc<S extends BaseState, R extends BaseRepository>
       required this.presenters})
       : super(initialState) {
     _subscription = repository.updatesStream.listen((data) {
-      add(DisplayData(data));
+      add((data));
     });
   }
 

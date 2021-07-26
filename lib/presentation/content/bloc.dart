@@ -8,7 +8,7 @@ import 'package:applithium_core/usecases/base.dart';
 
 const STATE_CONTENT_LOADING = "loading";
 
-abstract class BaseContentEvents extends BaseEvent  {
+abstract class BaseContentEvents extends BaseEvents  {
 
   @override
   Map<String, Object> get analyticParams => {};
@@ -17,13 +17,13 @@ abstract class BaseContentEvents extends BaseEvent  {
 }
 
 class UpdateRequested extends BaseContentEvents {
-  UpdateRequested(): super("screen_update");
+  UpdateRequested._(): super("screen_update");
 }
 
 class DisplayData<T> extends BaseContentEvents {
   final T data;
 
-  DisplayData(this.data): super("data_updated");
+  DisplayData._(this.data): super("data_updated");
 }
 
 class ContentState<T> extends BaseState<T> {

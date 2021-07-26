@@ -33,24 +33,14 @@ const EVENT_SCREEN_OPENED_ARG_SCREEN_NAME = "screen_name";
 abstract class AplEvent extends Trackable implements Mappable {
   @override
   final String name;
+
   @override
   Map<String, Object> get params;
 
   AplEvent(this.name);
 
-  factory AplEvent.createCustom({ required String name, Map<String, Object>? params}) => CustomAplEvent._(name, params ?? {});
-
-  factory AplEvent.sendForm() => AplEvent(name: EVENT_SEND_FORM_NAME);
-
-  factory AplEvent.sessionStarted(
-          {required int sessionCount,
-          required int daysFromFirstSession,
-          required int daysFromLastSession}) =>
-      AplEvent(name: EVENT_SESSION_STARTED_NAME, params: {
-        EVENT_SESSION_STARTED_ARG_SESSION_COUNT: sessionCount,
-        EVENT_SESSION_STARTED_ARG_DAYS_FROM_FIRST_SESSION: daysFromFirstSession,
-        EVENT_SESSION_STARTED_ARG_DAYS_FROM_LAST_SESSION: daysFromLastSession
-      });
+  factory AplEvent.sessionStarted(int sessionCount,  int daysFromFirstSession, int dayFromLastSession) =>
+  SessionStarted._(sessionCount, daysFromFirstSession, dayFromLastSession);
 
   @override
   Map<String, dynamic> asArgs() {
@@ -58,10 +48,19 @@ abstract class AplEvent extends Trackable implements Mappable {
   }
 }
 
-class CustomAplEvent extends AplEvent {
+class SessionStarted extends AplEvent {
+
+  final int sessionCount;
+  final int daysFromLastSession;
+  final int daysFromFirstSession;
+
+  SessionStarted._(this.sessionCount, this.daysFromFirstSession,
+      this.daysFromLastSession) : super(EVENT_SESSION_STARTED_NAME);
+
   @override
-  final Map<String, Object> params;
-
-  CustomAplEvent._(String name, this.params): super(name);
-
+  Map<String, Object> get params => {
+    EVENT_SESSION_STARTED_ARG_SESSION_COUNT : sessionCount,
+    EVENT_SESSION_STARTED_ARG_DAYS_FROM_FIRST_SESSION : daysFromFirstSession,
+    EVENT_SESSION_STARTED_ARG_DAYS_FROM_LAST_SESSION : daysFromLastSession
+  };
 }

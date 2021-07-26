@@ -1,6 +1,7 @@
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/presentation/base_bloc.dart';
+import 'package:applithium_core/presentation/content/bloc.dart';
 import 'package:applithium_core/presentation/form/repository.dart';
 import 'package:applithium_core/usecases/base.dart';
 

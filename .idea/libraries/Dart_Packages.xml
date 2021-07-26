@@ -19,6 +19,7 @@
         <entry key="applithium_core">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/git/core-b600de3c8964c9e387b0784292413a3ac29afe6f/lib" />
               <option value="$USER_HOME$/.pub-cache/git/core-4aee5d69f42ce6374e44642b77fd2d109f106aa5/lib" />
             </list>
           </value>
@@ -857,6 +858,7 @@
     </properties>
     <CLASSES>
       <root url="file://$USER_HOME$/.pub-cache/git/core-4aee5d69f42ce6374e44642b77fd2d109f106aa5/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-b600de3c8964c9e387b0784292413a3ac29afe6f/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-20.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/args-2.0.0/lib" />

@@ -4,9 +4,11 @@ packages:
   applithium_core:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: b600de3c8964c9e387b0784292413a3ac29afe6f
+      url: "ssh://git@bitbucket.org/appthink/core.git"
+    source: git
     version: "0.0.1"
   async:
     dependency: transitive
