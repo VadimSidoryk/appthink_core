@@ -1,27 +1,33 @@
 import 'package:applithium_core/networking/errors.dart';
 import 'package:applithium_core/usecases/base.dart';
+import 'package:applithium_core/usecases/http/get.dart';
 import 'package:http/http.dart';
 
-class HttpPostUseCase<T> extends UseCase<T> {
+class PostRequestParams extends GetRequestParams {
+  final Object? body;
 
-  final Uri uri;
-  final Map<String, String> headers;
+  PostRequestParams({this.body, String? path, Map<String, String>? params})
+      : super(path: path, params: params);
+}
 
-  HttpPostUseCase(this.uri, { this.headers = const {}});
-
-  @override
-  Stream<T> invokeImpl(T? state, Map<String, dynamic> params) async* {
-    state as T;
+UseCase<void, int, PostRequestParams> httpPost(
+    {required String staticUrl, Map<String, String>? headers}) {
+  return (_, params) async {
     final response;
+    final pathString = Uri(path: params.path).path;
+    final paramsString = Uri(queryParameters: params.params).query;
+    final uri = Uri.parse("$staticUrl/$pathString?$paramsString");
     try {
-      response = await post(uri, body: state, headers: headers);
+      response = await post(uri, body: params.body, headers: headers);
+      if (response.statusCode != 200) {
+        throw RemoteServerError(uri, response.statusCode, response.bodyJson);
+      }
     } catch (e) {
-      throw NotConnectedError(uri, DateTime.now().millisecondsSinceEpoch);
+      throw NotConnectedError(uri, DateTime
+          .now()
+          .millisecondsSinceEpoch);
     }
 
-    if (response.statusCode != 200) {
-      throw RemoteServerError(uri, response.statusCode, response.bodyJson);
-    }
-    yield state;
-  }
+    return response.statusCode;
+  };
 }

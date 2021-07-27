@@ -1,22 +1,17 @@
 import 'package:applithium_core/usecases/base.dart';
 
-typedef ItemBuilder<T> = T Function(Map<String, dynamic>);
+typedef ItemBuilder<I, O> = O Function(I);
 
-class ListAddItemUseCase<T> extends UseCase<List<T>> {
-
-  final ItemBuilder<T> builder;
-  final bool addToEnd;
-
-  ListAddItemUseCase({required this.builder, required this.addToEnd});
-
-  @override
-  Stream<List<T>> invokeImpl(List<T>? state, Map<String, dynamic> params) async* {
-    final list = state ?? <T>[];
+UseCase<List<T>, List<T>, P> listAddItem<P, T>(ItemBuilder<P, T> builder,
+    {bool addToEnd = true}) {
+  return (originalList, params) async {
+    final list = originalList ?? <T>[];
     final itemToAdd = builder(params);
-    if(addToEnd) {
-      yield list..add(itemToAdd);
+    if (addToEnd) {
+      return list..add(itemToAdd);
     } else {
-      yield [itemToAdd] + list;
+      return [itemToAdd] + list;
     }
-  }
+  };
 }
+

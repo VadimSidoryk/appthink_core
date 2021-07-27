@@ -19,14 +19,12 @@ abstract class BaseRepository<T> {
 
   BaseRepository(this.timeToLiveMillis);
 
-  Future<bool> apply(UseCase<T> useCase) async {
+  Future<bool> apply(FutureOr<T> Function(T?) mapper) async {
     final completer = Completer<bool>();
 
     final dataValue = data.hasValue ? data.value : null;
 
-    _operationSubscription = useCase
-        .invoke(dataValue)
-        .listen((data) => onNewData(data), onError: (error) {
+    _operationSubscription = mapper.call(dataValue).listen((data) => onNewData(data), onError: (error) {
       logError(error);
       _operationSubscription = null;
       completer.complete(false);

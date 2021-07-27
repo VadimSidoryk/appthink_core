@@ -1,31 +1,10 @@
-import 'package:applithium_core/logs/extension.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 
-abstract class UseCase<D> {
-  UseCase<D> withEventParams(Map<String, dynamic> params) {
-    return _UseCaseDelegate(this, params);
-  }
+typedef UseCase<I, O, P> = FutureOr<O> Function(I, P);
 
-  @protected
-  Stream<D> invokeImpl(D? state, Map<String, dynamic> params);
-
-  Stream<D> invoke(D? state) async* {
-    try {
-      yield* invokeImpl(state, {});
-    } catch (e) {
-      logError(e);
-    }
+extension Partial<I, O, P> on UseCase<I, O, P> {
+  FutureOr<O> Function(I) partial(P params) {
+    return (state) => this.call(state, params);
   }
 }
 
-class _UseCaseDelegate<D> extends UseCase<D> {
-  final UseCase<D> source;
-  final Map<String, dynamic> paramsToAdd;
-
-  _UseCaseDelegate(this.source, this.paramsToAdd);
-
-  @override
-  Stream<D> invokeImpl(D? state, Map<String, dynamic> params) {
-    return source.invokeImpl(state, params..addAll(paramsToAdd));
-  }
-}
