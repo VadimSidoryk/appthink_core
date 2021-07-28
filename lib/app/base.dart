@@ -7,12 +7,7 @@ import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
 import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/builder.dart';
-import 'package:applithium_core/presentation/content/builder.dart';
-import 'package:applithium_core/presentation/form/builder.dart';
-import 'package:applithium_core/presentation/listing/builder.dart';
 import 'package:applithium_core/presentation/supervisor.dart';
-import 'package:applithium_core/router/builder.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/scope.dart';
@@ -169,20 +164,11 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
           preferencesProvider: provider.get(),
           listener: SessionEventsAdapter(provider.get(), provider.get())))
       ..add((provider) => ResourceService())
-      ..add((provider) => _provideDefaultPresentationBuilders())
       ..add((provider) => _router);
 
     modules?.forEach((module) => module.addTo(result));
 
     return result;
-  }
-
-  Map<String, AplPresentationBuilder> _provideDefaultPresentationBuilders() {
-    return {
-      PRESENTATION_CONTENT_TYPE: ContentPresenterBuilder(),
-      PRESENTATION_FORM_TYPE: FormPresentationBuilder(),
-      PRESENTATION_LISTING_TYPE: ListingPresentationBuilder()
-    };
   }
 
   void processAction(AplAction action, Object? sender) {

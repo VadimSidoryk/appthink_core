@@ -2,7 +2,7 @@ import 'package:applithium_core/usecases/base.dart';
 
 typedef ItemBuilder<I, O> = O Function(I);
 
-UseCase<List<T>, List<T>, P> listAddItem<P, T>(ItemBuilder<P, T> builder,
+UseCaseWithParams<List<T>, List<T>, P> listAddItem<P, T>(ItemBuilder<P, T> builder,
     {bool addToEnd = true}) {
   return (originalList, params) async {
     final list = originalList ?? <T>[];

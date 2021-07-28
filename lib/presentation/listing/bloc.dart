@@ -106,12 +106,12 @@ class ListingBloc<T> extends BaseBloc<ListingState<T>, ListingRepository> {
   ListingBloc(
       {required ListingRepository repository,
       required Presenters presenters,
-      required Map<String, UseCase<List<T>>> domain})
+      required Map<String, UseCaseWithParams<List<T>>> domain})
       : super(
             initialState: ListingState.initial(),
             presenters: presenters,
             repository: repository,
-            domain: domain);
+            customGraph: domain);
 
   @override
   Stream<ListingState<T>> mapEventToStateImpl(AplEvent event) async* {

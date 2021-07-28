@@ -11,7 +11,7 @@ class GetRequestParams {
   GetRequestParams({this.path, this.params});
 }
 
-UseCase<void, O, GetRequestParams> httpGet<I, O>({required String staticUrl, Map<String, String>? headers, required O Function(dynamic) builder}) {
+UseCaseWithParams<void, O, GetRequestParams> httpGet<I, O>({required String staticUrl, Map<String, String>? headers, required O Function(dynamic) builder}) {
   return (_, params) async {
     final response;
 

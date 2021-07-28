@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/json/mappable.dart';
-import 'package:applithium_core/presentation/base_repository.dart';
+import 'package:applithium_core/presentation/repository.dart';
 import 'package:applithium_core/presentation/supervisor.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
@@ -24,22 +24,20 @@ abstract class BaseEvents extends AplEvent {
   @override
   Map<String, Object> get params => {};
 
-  factory BaseEvents.screenShown(String name) => Shown._(name);
+  factory BaseEvents.screenShown(String name) => ScreenOpened._(name);
 
   factory BaseEvents.dialogClosed(source, result) =>
       DialogClosed._(source, result);
-
-  factory BaseEvents.dataUpdated(dynamic data) => DataUpdated._(data);
 
   factory BaseEvents.screenCreated() => ScreenCreated._("undefined");
 
 }
 
-class Shown extends BaseEvents {
+class ScreenOpened extends BaseEvents {
 
   final String screenName;
 
-  Shown._(this.screenName) : super("screen_shown");
+  ScreenOpened._(this.screenName) : super("screen_opened");
 
   @override
   Map<String, Object> get params => {"screen_name" : screenName};
@@ -56,10 +54,10 @@ class DialogClosed<VM, R> extends BaseEvents {
   Map<String, Object> get params => {"source": source.toString()};
 }
 
-class DataUpdated<VM> extends BaseEvents {
+class ModelUpdated<VM extends Mappable> extends BaseEvents {
   final VM data;
 
-  DataUpdated._(this.data) : super("data_updated");
+  ModelUpdated._(this.data) : super("data_updated");
 }
 
 class ScreenCreated extends BaseEvents {
@@ -98,12 +96,21 @@ abstract class BaseState<T> extends Mappable {
   }
 }
 
-abstract class BaseBloc<S extends BaseState, R extends BaseRepository>
+class DomainGraphEdge<M, S extends BaseState<M>> {
+  final S? newState;
+  final UseCase<M?, M>? sideEffect;
+
+  DomainGraphEdge(this.newState, this.sideEffect);
+}
+
+typedef DomainGraph<M, S extends BaseState<M>> = DomainGraphEdge<M, S> Function(S, BaseEvents);
+
+abstract class BaseBloc<M extends Mappable, S extends BaseState<M>>
     extends Bloc<BaseEvents, BaseState> {
 
-  final R repository;
-  final Map<String, UseCase> domain;
+  final AplRepository<M> repository;
   final Presenters presenters;
+  final DomainGraph<M, S>? customGraph;
 
   StreamSubscription? _subscription;
 
@@ -113,11 +120,11 @@ abstract class BaseBloc<S extends BaseState, R extends BaseRepository>
   BaseBloc(
       {required S initialState,
       required this.repository,
-      required this.domain,
-      required this.presenters})
+      required this.presenters,
+      this.customGraph})
       : super(initialState) {
     _subscription = repository.updatesStream.listen((data) {
-      add((data));
+      add(ModelUpdated._(data));
     });
   }
 
@@ -131,7 +138,7 @@ abstract class BaseBloc<S extends BaseState, R extends BaseRepository>
   }
 
   @override
-  Stream<BaseState> mapEventToState(AplEvent event) async* {
+  Stream<BaseState> mapEventToState(BaseEvents event) async* {
     try {
       BlocSupervisor.listener?.onNewEvent(this, event);
 
@@ -147,10 +154,14 @@ abstract class BaseBloc<S extends BaseState, R extends BaseRepository>
     }
   }
 
-  Stream<S> mapEventToStateImpl(AplEvent event) async* {
-    if (domain.containsKey(event.name)) {
-      final useCase = domain[event.name] as UseCase;
-      repository.apply(useCase.withEventParams(event.asArgs()));
+  Stream<S> mapEventToStateImpl(BaseEvents event) async* {
+    final edge = customGraph?.call(currentState, event);
+    if(edge?.newState != null) {
+      yield edge!.newState!;
+    }
+
+    if(edge?.sideEffect != null) {
+      repository.apply(edge!.sideEffect!);
     }
   }
 

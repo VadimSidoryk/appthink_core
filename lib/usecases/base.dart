@@ -1,9 +1,11 @@
 import 'dart:async';
 
-typedef UseCase<I, O, P> = FutureOr<O> Function(I, P);
+typedef UseCase<I, O> = Future<O> Function(I);
 
-extension Partial<I, O, P> on UseCase<I, O, P> {
-  FutureOr<O> Function(I) partial(P params) {
+typedef UseCaseWithParams<I, O, P> = Future<O> Function(I, P);
+
+extension Partial<I, O, P> on UseCaseWithParams<I, O, P> {
+  UseCase<I, O> withParams(P params) {
     return (state) => this.call(state, params);
   }
 }

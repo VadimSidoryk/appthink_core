@@ -10,7 +10,7 @@ class PostRequestParams extends GetRequestParams {
       : super(path: path, params: params);
 }
 
-UseCase<void, int, PostRequestParams> httpPost(
+UseCaseWithParams<void, int, PostRequestParams> httpPost(
     {required String staticUrl, Map<String, String>? headers}) {
   return (_, params) async {
     final response;

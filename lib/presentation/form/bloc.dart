@@ -1,26 +1,27 @@
 import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/json/mappable.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/content/bloc.dart';
-import 'package:applithium_core/presentation/form/repository.dart';
 import 'package:applithium_core/usecases/base.dart';
+
+import '../repository.dart';
 
 const STATE_FORM_PRESET_LOADING_TAG = "preset_loading";
 const STATE_FORM_PRESET_LOADED_TAG = "preset_loading";
 const STATE_FORM_SENDING_FORM_TAG = "sending_form";
 
-class FormState<T> extends BaseState<T> {
+class FormState<M extends Mappable> extends BaseState<M> {
   final bool isPresetLoading;
   final bool sendingForm;
 
   FormState(
-      String tag, T? value, this.isPresetLoading, this.sendingForm, error)
+      String tag, M? value, this.isPresetLoading, this.sendingForm, error)
       : super(tag: tag, error: error, value: value);
 
   factory FormState.initial() =>
       FormState(STATE_BASE_INITIAL_TAG, null, true, false, null);
 
-  FormState withPresetData(T value) {
+  FormState withPresetData(M value) {
     return FormState(STATE_FORM_PRESET_LOADED_TAG, value, false, false, null);
   }
 
@@ -40,16 +41,22 @@ class FormState<T> extends BaseState<T> {
   }
 }
 
-class FormBloc<T> extends BaseBloc<FormState, FormRepository> {
+class FormBloc<M extends Mappable> extends BaseBloc<M, FormState<M>> {
+
+  final UseCase<M?, M> load;
+  final UseCase<M, int> post;
+
   FormBloc(
-      {required FormRepository repository,
+      {required AplRepository<M> repository,
       required Presenters presenters,
-      required Map<String, UseCase<T>> domain})
+        required this.load,
+        required this.post,
+        DomainGraph<M, FormState<M>>? customGraph})
       : super(
             initialState: FormState.initial(),
             repository: repository,
             presenters: presenters,
-            domain: domain);
+            customGraph: domain);
 
   @override
   Stream<FormState> mapEventToStateImpl(AplEvent event) async* {

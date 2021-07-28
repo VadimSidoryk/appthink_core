@@ -1,6 +1,6 @@
 import 'package:applithium_core/usecases/base.dart';
 
-UseCase<List<T>?, List<T>, P> listLoadMoreItems<T, P>(UseCase<List<T>, List<T>, P> loader,
+UseCaseWithParams<List<T>?, List<T>, P> listLoadMoreItems<T, P>(UseCaseWithParams<List<T>, List<T>, P> loader,
     {bool addToEnd = false}) {
   return (originalList, params) async {
     final list = originalList ?? [];
