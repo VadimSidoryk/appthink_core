@@ -1,26 +1,27 @@
 import 'dart:async';
 
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/json/mappable.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/presentation/listing/repository.dart';
+import 'package:applithium_core/presentation/content/bloc.dart';
+import 'package:applithium_core/presentation/listing/mappable_list.dart';
 import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
+import '../repository.dart';
+
+const STATE_LISTING_INITIAL_TAG = "list_initial";
+const STATE_LISTING_LOADING_TAG = "list_loading";
+const STATE_LISTING_LOADING_FAILED_TAG = "list_loading_failed";
+const STATE_LISTING_LOADED_TAG = "list_loaded";
+const STATE_LISTING_PAGE_LOADING = "list_page_loading";
+const STATE_LISTING_PAGE_LOADED = "list_page_loaded";
+const STATE_LISTING_PAGE_LOADING_FAILED = "list_page_loading_failed";
 
 abstract class BaseListEvent extends BaseEvents {
-
   @override
   Map<String, Object> get analyticParams => {};
 
-  BaseListEvent(String name): super(name);
-}
-
-class Shown extends BaseListEvent {
-  Shown() : super("screen_shown");
-}
-
-class UpdateRequested extends BaseListEvent {
-  UpdateRequested() : super("screen_update");
+  BaseListEvent(String name) : super(name);
 }
 
 class DisplayData<T> extends BaseListEvent {
@@ -34,29 +35,32 @@ class ScrolledToEnd extends BaseListEvent {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 
-class ListingState<T> extends BaseState<List<T>> {
+class ListingState<M extends Mappable> extends BaseState<MappableList<M>> {
   final bool isLoading;
   final bool isPageLoading;
   final bool isEndReached;
 
   ListingState(
-      {List<T>? value,
+      {required String tag,
+      List<M>? value,
       required this.isLoading,
       error,
       dialogModel,
       required this.isPageLoading,
       required this.isEndReached})
-      : super(tag: STATE_BASE_ERROR_TAG, error: error, value: value);
+      : super(tag: tag, error: error, value: value != null ? MappableList(value) : null);
 
   factory ListingState.initial() => ListingState(
+      tag: STATE_LISTING_INITIAL_TAG,
       value: null,
       isLoading: true,
       error: null,
       isPageLoading: false,
       isEndReached: false);
 
-  ListingState<T> withListData(List<T> value, bool endReached) {
+  ListingState<M> withListData(List<M> value, bool endReached) {
     return ListingState(
+        tag: STATE_LISTING_LOADED_TAG,
         value: value,
         isLoading: false,
         error: null,
@@ -64,8 +68,9 @@ class ListingState<T> extends BaseState<List<T>> {
         isEndReached: endReached);
   }
 
-  ListingState<T> withLoading() {
+  ListingState<M> withLoading() {
     return ListingState(
+        tag: STATE_LISTING_LOADING_TAG,
         value: value,
         isLoading: true,
         error: null,
@@ -74,8 +79,9 @@ class ListingState<T> extends BaseState<List<T>> {
   }
 
   @override
-  ListingState<T> withError(dynamic error) {
+  ListingState<M> withError(dynamic error) {
     return ListingState(
+        tag: STATE_LISTING_LOADING_FAILED_TAG,
         value: value,
         isLoading: false,
         error: error,
@@ -83,8 +89,9 @@ class ListingState<T> extends BaseState<List<T>> {
         isEndReached: isEndReached);
   }
 
-  ListingState<T> withPageLoading() {
+  ListingState<M> withPageLoading() {
     return ListingState(
+        tag: STATE_LISTING_PAGE_LOADING,
         value: value,
         isLoading: false,
         error: error,
@@ -92,8 +99,9 @@ class ListingState<T> extends BaseState<List<T>> {
         isEndReached: isEndReached);
   }
 
-  ListingState<T> endReached() {
+  ListingState<M> endReached() {
     return ListingState(
+        tag: STATE_LISTING_PAGE_LOADING,
         value: value,
         isLoading: false,
         error: error,
@@ -102,42 +110,41 @@ class ListingState<T> extends BaseState<List<T>> {
   }
 }
 
-class ListingBloc<T> extends BaseBloc<ListingState<T>, ListingRepository> {
+class ListingBloc<IM extends Mappable>
+    extends BaseBloc<MappableList<IM>, ListingState<IM>> {
+  final UseCase<void, MappableList<IM>> load;
+  final UseCase<MappableList<IM>?, MappableList<IM>> loadMore;
+
   ListingBloc(
-      {required ListingRepository repository,
+      {required AplRepository<MappableList<IM>> repository,
       required Presenters presenters,
-      required Map<String, UseCaseWithParams<List<T>>> domain})
+      required this.load,
+      required this.loadMore,
+      DomainGraph<MappableList<IM>, ListingState<IM>>? customGraph})
       : super(
             initialState: ListingState.initial(),
-            presenters: presenters,
             repository: repository,
-            customGraph: domain);
+            presenters: presenters,
+            customGraph: customGraph);
 
   @override
-  Stream<ListingState<T>> mapEventToStateImpl(AplEvent event) async* {
-    switch (event.name) {
-      case EVENT_CREATED_NAME:
-        yield currentState.withLoading();
-        repository.updateData(isForced: true);
-        break;
-      case EVENT_SCREEN_OPENED_NAME:
-        repository.updateData(isForced: false);
-        break;
-      case EVENT_UPDATE_REQUESTED_NAME:
-        yield currentState.withLoading();
-        final isUpdated = await repository.updateData(isForced: true);
-        log("isUpdated: $isUpdated");
-        break;
-      case EVENT_SCROLLED_TO_END:
-        if (!currentState.isPageLoading) {
-          yield currentState.withPageLoading();
-          repository.loadMoreItems();
-        }
-        break;
-      case EVENT_DATA_UPDATED_NAME:
-        yield currentState.withListData(
-            event.params[EVENT_DATA_UPDATED_ARG_DATA] as List<T>,
-            event.params[EVENT_DATA_UPDATED_ARG_IS_END_REACHED] as bool);
+  Stream<ListingState<IM>> mapEventToStateImpl(BaseEvents event) async* {
+    yield* super.mapEventToStateImpl(event);
+
+    if (event is ScreenCreated) {
+      yield currentState.withLoading();
+      repository.apply(load, resetOperationsStack: true);
+    } else if (event is ScreenOpened) {
+      repository.apply(load);
+    } else if (event is UpdateRequested) {
+      yield currentState.withLoading();
+      final isUpdated = await repository.apply(load);
+      log("isUpdated: $isUpdated");
+    } else if (event is ScrolledToEnd) {
+      if (!currentState.isPageLoading) {
+        yield currentState.withPageLoading();
+        repository.apply(loadMore);
+      }
     }
   }
 }

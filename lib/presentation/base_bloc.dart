@@ -24,7 +24,7 @@ abstract class BaseEvents extends AplEvent {
   @override
   Map<String, Object> get params => {};
 
-  factory BaseEvents.screenShown(String name) => ScreenOpened._(name);
+  factory BaseEvents.screenOpened(String name) => ScreenOpened._(name);
 
   factory BaseEvents.dialogClosed(source, result) =>
       DialogClosed._(source, result);
@@ -68,10 +68,6 @@ class ScreenCreated extends BaseEvents {
 
   ScreenCreated._(this.screenName) : super(EVENT_CREATED_NAME);
 }
-
-const STATE_BASE_INITIAL_TAG = "initial";
-const STATE_BASE_ERROR_TAG = "error";
-const STATE_BASE_DATA_TAG = "data";
 
 const STATE_BASE_ERROR_KEY = "error";
 const STATE_BASE_VALUE_KEY = "value";

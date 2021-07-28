@@ -36,7 +36,6 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
-  final AplLayoutBuilder layoutBuilder;
 
   StreamSubscription? _deepLinkSubscription;
 
@@ -44,7 +43,6 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
       {String? title,
       this.configProvider,
       required this.splashBuilder,
-      required this.layoutBuilder,
       Set<Analyst>? analysts,
       this.modules})
       : this.title = title ?? "Applithium Based Application",
@@ -89,8 +87,8 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
     if (config != null) {
       log("config received");
       globalStore?.add((provider) => config);
-      _router.routes = RoutesBuilder.fromPresentationsMap(
-          context.get(), layoutBuilder, config.presentations);
+      // _router.routes = RoutesBuilder.fromPresentationsMap(
+      //     context.get(), layoutBuilder, config.presentations);
       initServices(context, config);
       log("services initialized");
     }
@@ -154,7 +152,8 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   Store createDependencyTree() {
     final result = Store()
       ..add((provider) => SharedPreferences.getInstance())
-      ..add((provider) => EventTriggeredHandlerService(provider.get(), processAction))
+      ..add((provider) =>
+          EventTriggeredHandlerService(provider.get(), processAction))
       ..add((provider) => AnalyticsService(analysts: analysts))
       ..add((provider) => EventBus(listeners: {
             TriggeredEventsHandlerAdapter(provider.get()),

@@ -29,7 +29,7 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   void didPop(Route newRoute, Route? previousRoute) {
     if (previousRoute is PageRoute && newRoute is PageRoute) {
       final name = newRoute.settings.name ?? "undefined";
-      _service.handleEvent(BaseEvents.screenShown(name));
+      _service.handleEvent(BaseEvents.screenOpened(name));
     }
   }
 
@@ -37,7 +37,7 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   void didPush(Route route, Route? previousRoute) {
     if (route is PageRoute) {
       final name = route.settings.name ?? "undefined";
-      _service.handleEvent(BaseEvents.screenShown(name));
+      _service.handleEvent(BaseEvents.screenOpened(name));
     }
   }
 
@@ -45,7 +45,7 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     if (newRoute is PageRoute) {
       final name = newRoute.settings.name ?? "undefined";
-      _service.handleEvent(BaseEvents.screenShown(name));
+      _service.handleEvent(BaseEvents.screenOpened(name));
     }
   }
 }
