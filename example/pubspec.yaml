@@ -14,17 +14,14 @@ dependencies:
 
   flutter_local_notifications: ^6.0.0
 
-  copy_with_extension: ^2.0.0
   applithium_core:
     path: ../
-
 
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  copy_with_extension_gen: ^2.0.1
 
 flutter:
 

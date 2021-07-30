@@ -1,4 +1,5 @@
 import 'package:applithium_core/domain/base_bloc.dart';
+import 'package:applithium_core/events/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,10 +7,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 typedef BlocFactory<M, S extends BaseState<M>> = BaseBloc<M, S> Function(
     BuildContext, Presenters);
-typedef StatefulWidgetFactory<M, S extends BaseState<M>> = Widget Function(BuildContext, S);
+
+typedef EventsHandler = Function(AplEvent);
+
+typedef StatefulWidgetFactory<M, S extends BaseState<M>> = Widget Function(BuildContext, S, EventsHandler listener);
+
 
 class AplPresentationState<M, S extends BaseState<M>, W extends StatefulWidget> extends State<W> {
-  late final BaseBloc<M, S> _bloc;
+  late BaseBloc<M, S> _bloc;
 
   final BlocFactory<M, S> blocFactory;
   final StatefulWidgetFactory<M, S> widgetFactory;
@@ -21,7 +26,13 @@ class AplPresentationState<M, S extends BaseState<M>, W extends StatefulWidget> 
     _bloc = blocFactory.call(context, _buildPresenters(context));
     _bloc..add(BaseEvents.screenCreated());
     return BlocBuilder<BaseBloc<M, S>, S>(
-        bloc: _bloc, builder: widgetFactory);
+        bloc: _bloc, builder: (context, state) => widgetFactory.call(context, state, onNewEvent));
+  }
+
+  void onNewEvent(AplEvent event) {
+    if(event is BaseEvents) {
+      _bloc.add(event);
+    }
   }
 
   Presenters _buildPresenters(BuildContext context) {

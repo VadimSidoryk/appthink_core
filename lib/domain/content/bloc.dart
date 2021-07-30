@@ -27,28 +27,30 @@ class DisplayData<M> extends BaseContentEvents {
 
 class ContentState<M> extends BaseState<M> {
 
-  final bool isLoading;
-
-  ContentState._({required String tag, dynamic error, M? value, this.isLoading = false}): super(
-    tag: tag, error: error, value: value
-  );
+  ContentState._({required String tag}): super(tag);
 
   factory ContentState.initial() => ContentState._(tag: STATE_CONTENT_INITIAL);
 
   @override
-  ContentState withError(dynamic error) => Failed(error);
+  ContentState withError(dynamic error) => ContentFailed(error);
 }
 
-class Loading<M> extends ContentState<M> {
-  Loading(): super._(tag: STATE_CONTENT_LOADING, isLoading: true);
+class ContentLoading<M> extends ContentState<M> {
+  ContentLoading(): super._(tag: STATE_CONTENT_LOADING);
 }
 
 class ContentChanged<M> extends ContentState<M> {
-  ContentChanged(M data): super._(tag: STATE_CONTENT_LOADED, value: data);
+
+  final M data;
+
+  ContentChanged(this.data): super._(tag: STATE_CONTENT_LOADED);
 }
 
-class Failed<M> extends ContentState<M> {
-  Failed(dynamic error): super._(tag: STATE_CONTENT_ERROR, error: error);
+class ContentFailed<M> extends ContentState<M> {
+
+  final dynamic error;
+
+  ContentFailed(this.error): super._(tag: STATE_CONTENT_ERROR);
 }
 
 class ContentBloc<M> extends BaseBloc<M, ContentState<M>> {
@@ -70,12 +72,12 @@ class ContentBloc<M> extends BaseBloc<M, ContentState<M>> {
     yield* super.mapEventToStateImpl(event);
 
     if(event is ScreenCreated) {
-      yield Loading();
+      yield ContentLoading();
       repository.applyInitial(load);
     } else if(event is ScreenOpened) {
       repository.apply(load);
     } else if(event is UpdateRequested) {
-      yield Loading();
+      yield ContentLoading();
       final isUpdated = await repository.apply(load, resetOperationsStack: true);
       log("isUpdated: $isUpdated");
     } else if(event is ModelUpdated<M>) {

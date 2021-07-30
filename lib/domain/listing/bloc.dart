@@ -34,17 +34,15 @@ class ScrolledToEnd extends BaseListEvent {
 }
 
 class ListingState<M> extends BaseState<List<M>> {
-  final bool isLoading;
   final bool isPageLoading;
 
   ListingState._(
       {required String tag,
       List<M>? value,
-      this.isLoading = false,
       error,
       dialogModel,
       this.isPageLoading = false})
-      : super(tag: tag, error: error, value: value);
+      : super(tag);
 
   factory ListingState.initial() =>
       ListingState._(tag: STATE_LISTING_INITIAL_TAG);
@@ -58,11 +56,14 @@ class ListLoadingFailed<M> extends ListingState<M> {
 }
 
 class ListLoading<M> extends ListingState<M> {
-  ListLoading(): super._(tag: STATE_LISTING_LOADING_TAG, isLoading: true);
+  ListLoading(): super._(tag: STATE_LISTING_LOADING_TAG);
 }
 
 class ListChanged<M> extends ListingState<M> {
-  ListChanged(List<M> list) : super._(tag: STATE_LISTING_LOADED_TAG, value: list);
+
+  final List<M> list;
+
+  ListChanged(this.list) : super._(tag: STATE_LISTING_LOADED_TAG);
 }
 
 class ListPageLoading<M> extends ListingState<M> {

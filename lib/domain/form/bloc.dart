@@ -30,12 +30,12 @@ class _SendForm extends FormEvents {
 }
 
 class FormState<M> extends BaseState<M> {
-
-  final bool isFormLoading;
   final bool isFormSending;
 
-  FormState._({required String tag, dynamic error, M? value, this.isFormLoading = false, this.isFormSending = false}): super(
-      tag: tag, error: error, value: value);
+  FormState._(
+      {required String tag,
+      this.isFormSending = false})
+      : super(tag);
 
   factory FormState.initial() => FormState._(tag: "initial");
 
@@ -46,19 +46,23 @@ class FormState<M> extends BaseState<M> {
 }
 
 class FormLoading<M> extends FormState<M> {
-  FormLoading(): super._(tag: STATE_FORM_LOADING, isFormLoading: true);
+  FormLoading() : super._(tag: STATE_FORM_LOADING);
 }
 
 class FormLoadingFailed<M> extends FormState<M> {
-  FormLoadingFailed(dynamic error): super._(tag: STATE_FORM_LOADING_ERROR, error: error);
+  final dynamic error;
+
+  FormLoadingFailed(this.error) : super._(tag: STATE_FORM_LOADING_ERROR);
 }
 
 class FormChanged<M> extends FormState<M> {
-  FormChanged(M form): super._(tag: STATE_FORM_CHANGED, value: form);
+  final M form;
+
+  FormChanged(this.form) : super._(tag: STATE_FORM_CHANGED);
 }
 
 class FormSending<M> extends FormState<M> {
-  FormSending(): super._(tag: STATE_FORM_SENDING, isFormSending: true);
+  FormSending() : super._(tag: STATE_FORM_SENDING, isFormSending: true);
 
   @override
   BaseState withError(error) {
@@ -67,8 +71,7 @@ class FormSending<M> extends FormState<M> {
 }
 
 class FormSent<M> extends FormState<M> {
-
-  FormSent(): super._(tag:STATE_FORM_SENT);
+  FormSent() : super._(tag: STATE_FORM_SENT);
 
   @override
   BaseState withError(error) {
@@ -77,15 +80,15 @@ class FormSent<M> extends FormState<M> {
 }
 
 class FormSendingFailed<M> extends FormState<M> {
-  FormSendingFailed(error): super._(tag: STATE_FORM_SENDING_ERROR, error: error);
+  final dynamic error;
 
+  FormSendingFailed(this.error) : super._(tag: STATE_FORM_SENDING_ERROR);
 
   @override
   BaseState withError(error) {
     return FormSendingFailed(error);
   }
 }
-
 
 class FormBloc<M> extends BaseBloc<M, FormState<M>> {
   final UseCase<void, M> load;

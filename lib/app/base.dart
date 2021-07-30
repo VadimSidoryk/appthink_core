@@ -28,7 +28,6 @@ import 'package:uni_links/uni_links.dart';
 
 class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   final String title;
-  final _navigatorKey = GlobalKey<NavigatorState>();
   @protected
   Store? globalStore;
   final ConfigProvider? configProvider;
@@ -37,6 +36,7 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
+  final List<RouteDetails> routes;
 
   StreamSubscription? _deepLinkSubscription;
 
@@ -45,13 +45,11 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
       this.configProvider,
       required this.splashBuilder,
       Set<Analyst>? analysts,
-      required List<RouteDetails> routes,
+      required this.routes,
       this.modules})
       : this.title = title ?? "Applithium Based Application",
         this.analysts =
-            analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()} {
-    _router = AplRouter(navigationKey: _navigatorKey, routes: routes);
-  }
+            analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()};
 
   @override
   initState() {
@@ -119,11 +117,13 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   @protected
   Widget buildApp(BuildContext context, String? initialLink) {
     logMethod(methodName: "buildApp");
+    final navigationKey = GlobalKey<NavigatorState>();
+    _router = AplRouter(navigationKey: navigationKey, routes: this.routes);
 
     return MaterialApp(
       title: title,
       theme: context.getOrNull(),
-      navigatorKey: _navigatorKey,
+      navigatorKey: navigationKey,
       initialRoute: initialLink,
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: globalStore!.get<EventBus>().navigatorObservers,

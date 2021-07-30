@@ -68,10 +68,8 @@ class ScreenCreated extends BaseEvents {
 
 abstract class BaseState<T> {
   final String tag;
-  final dynamic error;
-  final T? value;
 
-  BaseState({required this.tag, required this.error, required this.value});
+  BaseState(this.tag);
 
   BaseState withError(dynamic error);
 }
