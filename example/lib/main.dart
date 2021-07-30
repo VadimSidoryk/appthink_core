@@ -1,4 +1,4 @@
-import 'package:applithium_core/app/base.dart';
+import 'package:applithium_core/app/base_state.dart';
 import 'package:applithium_core/router/route_details.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core_example/test/presentation.dart';

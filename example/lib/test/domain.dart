@@ -18,6 +18,11 @@ final DomainGraph<TestViewModel, ContentState<TestViewModel>> testGraph = (state
     return DomainGraphEdge(
      sideEffect: removeLike
     );
+  } else if(event is _ForceUpdate) {
+    return DomainGraphEdge(
+      newState: ContentLoading(),
+      sideEffect: testLoad
+    );
   }
 };
 
@@ -28,6 +33,7 @@ abstract class TestScreenEvents extends BaseContentEvents {
 
   factory TestScreenEvents.likeRemoved() => _LikeRemoved();
 
+  factory TestScreenEvents.forceUpdate() => _ForceUpdate();
 }
 
 class _LikeAdded extends TestScreenEvents {
@@ -36,5 +42,9 @@ class _LikeAdded extends TestScreenEvents {
 
 class _LikeRemoved extends TestScreenEvents {
   _LikeRemoved(): super("dislike");
+}
+
+class _ForceUpdate extends TestScreenEvents {
+  _ForceUpdate(): super("force_update");
 }
 

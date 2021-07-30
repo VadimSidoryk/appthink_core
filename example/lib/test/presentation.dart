@@ -34,15 +34,27 @@ class TestWidget extends StatefulWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          ElevatedButton(
-                              child: Text("remove"),
-                              onPressed: () =>
-                                  handler.call(TestScreenEvents.likeRemoved())),
-                          ElevatedButton(
-                              child: Text("add"),
-                              onPressed: () =>
-                                  handler.call(TestScreenEvents.likeAdded())),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: ElevatedButton(
+                                child: Text("remove"),
+                                onPressed: () => handler
+                                    .call(TestScreenEvents.likeRemoved())),
+                          ),
+                          Container(
+                              padding: EdgeInsets.all(5),
+                              child: ElevatedButton(
+                                  child: Text("add"),
+                                  onPressed: () => handler
+                                      .call(TestScreenEvents.likeAdded()))),
                         ],
+                      )),
+                  Padding(
+                      padding: EdgeInsets.all(20),
+                      child: ElevatedButton(
+                        child: Text("Force update"),
+                        onPressed: () =>
+                            handler.call(TestScreenEvents.forceUpdate()),
                       ))
                 ],
               ),

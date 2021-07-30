@@ -18,7 +18,6 @@ class FirebaseAnalyst extends Analyst {
 
   @override
   void onNewEvent(AplEvent event) {
-    final nullableParams = event.params.isNotEmpty ? event.params : null;
-    _analytics.logEvent(name: event.name, parameters: nullableParams);
+    _analytics.logEvent(name: event.name, parameters: event.params);
   }
 }

@@ -16,13 +16,6 @@
             </list>
           </value>
         </entry>
-        <entry key="applithium_core">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/git/core-4aee5d69f42ce6374e44642b77fd2d109f106aa5/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="args">
           <value>
             <list>
@@ -204,13 +197,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dbus-0.5.4/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="equatable">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/equatable-2.0.2/lib" />
             </list>
           </value>
         </entry>
@@ -895,7 +881,6 @@
       </option>
     </properties>
     <CLASSES>
-      <root url="file://$USER_HOME$/.pub-cache/git/core-4aee5d69f42ce6374e44642b77fd2d109f106aa5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-22.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.7.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/args-2.2.0/lib" />
@@ -926,7 +911,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dart_style-2.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dbus-0.5.4/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/equatable-2.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/ffi-1.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.1/lib" />

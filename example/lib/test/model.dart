@@ -1,8 +1,6 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
-@CopyWith()
 class TestViewModel {
   final String title;
   final String description;
