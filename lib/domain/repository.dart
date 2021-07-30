@@ -20,13 +20,31 @@ class AplRepository<T> {
 
   AplRepository(this.timeToLiveMillis);
 
-  Future<bool> apply(UseCase<T?, T> operation,
+  Future<bool> applyInitial(UseCase<void, T> sourceOperation) async {
+    final completer = Completer<bool>();
+
+    await _cancelableOperation?.cancel();
+    _cancelableOperation =
+        CancelableOperation.fromFuture(sourceOperation.call(null)).then((data) {
+      onNewData(data);
+      completer.complete(true);
+    }, onError: (error, stacktrace) {
+      logError(error);
+      completer.complete(false);
+    }, onCancel: () {
+      completer.complete(false);
+    });
+
+    return completer.future.whenComplete(() => _cancelableOperation = null);
+  }
+
+  Future<bool> apply(UseCase<T, T> operation,
       {resetOperationsStack = false}) async {
     final completer = Completer<bool>();
 
     if (resetOperationsStack || _cancelableOperation == null) {
       await _cancelableOperation?.cancel();
-      final dataValue = data.hasValue ? data.value : null;
+      final dataValue = data.value!;
       _cancelableOperation =
           CancelableOperation.fromFuture(operation.call(dataValue)).then(
               (data) {

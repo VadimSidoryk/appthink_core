@@ -1,4 +1,5 @@
-import 'package:applithium_core/presentation/base_bloc.dart';
+
+import '../domain/base_bloc.dart';
 
 class PresentationConfig<T> {
   final String type;

@@ -11,8 +11,7 @@ enum AplActionType {
   SHOW_BOTTOM_SHEET,
   SHOW_DIALOG,
   SHOW_TOAST,
-  REQUEST_GET,
-  DOMAIN_LEVEL_EVENT,
+  SIDE_EFFECT,
   BACK
 }
 
@@ -29,10 +28,8 @@ extension RouteTypeFactory on String {
         return AplActionType.SHOW_DIALOG;
       case "toast":
         return AplActionType.SHOW_TOAST;
-      case "get":
-        return AplActionType.REQUEST_GET;
-      case "domain":
-        return AplActionType.DOMAIN_LEVEL_EVENT;
+      case "side_effect":
+        return AplActionType.SIDE_EFFECT;
       default:
         return AplActionType.BACK;
     }

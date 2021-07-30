@@ -2,12 +2,13 @@ import 'dart:async';
 
 import 'package:applithium_core/config/base.dart';
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/domain/base_bloc.dart';
+import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/action.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/supervisor.dart';
+import 'package:applithium_core/router/route_details.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/scope.dart';
@@ -32,7 +33,7 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   Store? globalStore;
   final ConfigProvider? configProvider;
   final Set<Analyst> analysts;
-  late MainRouter _router;
+  late AplRouter _router;
   WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
@@ -44,11 +45,12 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
       this.configProvider,
       required this.splashBuilder,
       Set<Analyst>? analysts,
+      required List<RouteDetails> routes,
       this.modules})
       : this.title = title ?? "Applithium Based Application",
         this.analysts =
             analysts != null ? (analysts..add(LogAnalyst())) : {LogAnalyst()} {
-    _router = MainRouter(_navigatorKey);
+    _router = AplRouter(navigationKey: _navigatorKey, routes: routes);
   }
 
   @override

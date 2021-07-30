@@ -3,12 +3,11 @@ import 'package:flutter/widgets.dart';
 
 import 'route_details.dart';
 
-class MainRouter {
-  List<RouteDetails> routes = [];
+class AplRouter {
+  final List<RouteDetails> routes;
+  final GlobalKey<NavigatorState> navigationKey;
 
-  final GlobalKey<NavigatorState> _navigationKey;
-
-  MainRouter(this._navigationKey);
+  AplRouter({required this.navigationKey, required this.routes});
 
   Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final result = evaluate(settings);
@@ -20,7 +19,7 @@ class MainRouter {
   }
 
   void applyRoute(String path) {
-    _navigationKey.currentState?.pushNamed(path);
+    navigationKey.currentState?.pushNamed(path);
   }
 
   @protected

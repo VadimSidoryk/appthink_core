@@ -1,8 +1,8 @@
+import 'package:applithium_core/domain/base_bloc.dart';
+import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/supervisor.dart';
 
 const KEY_SENDER = "sender";
 
