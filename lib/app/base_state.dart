@@ -29,7 +29,7 @@ import 'package:uni_links/uni_links.dart';
 class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   final String title;
   @protected
-  Store? globalStore;
+  late Store globalStore;
   final ConfigProvider? configProvider;
   final Set<Analyst> analysts;
   late AplRouter _router;
@@ -37,6 +37,8 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
   final List<RouteDetails> routes;
+
+  late GlobalKey<NavigatorState> _navigationKey;
 
   StreamSubscription? _deepLinkSubscription;
 
@@ -71,10 +73,11 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
 
   void _initSyncComponents() {
     logMethod(methodName: "init sync components");
+    _navigationKey = GlobalKey<NavigatorState>();
+    _router = AplRouter(navigationKey: _navigationKey, routes: this.routes);
     globalStore = createDependencyTree();
     log("globalStore created");
-    _widgetObserver =
-        globalStore!.get<UsageHistoryService>().asWidgetObserver();
+    _widgetObserver = globalStore.get<UsageHistoryService>().asWidgetObserver();
     if (_widgetObserver != null) {
       WidgetsBinding.instance?.addObserver(_widgetObserver!);
     }
@@ -86,9 +89,7 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
         await configProvider?.getApplicationConfig();
     if (config != null) {
       log("config received");
-      globalStore?.add((provider) => config);
-      // _router.routes = RoutesBuilder.fromPresentationsMap(
-      //     context.get(), layoutBuilder, config.presentations);
+      globalStore.add((provider) => config);
       initServices(context, config);
       log("services initialized");
     }
@@ -117,23 +118,21 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
   @protected
   Widget buildApp(BuildContext context, String? initialLink) {
     logMethod(methodName: "buildApp");
-    final navigationKey = GlobalKey<NavigatorState>();
-    _router = AplRouter(navigationKey: navigationKey, routes: this.routes);
 
     return MaterialApp(
       title: title,
       theme: context.getOrNull(),
-      navigatorKey: navigationKey,
+      navigatorKey: _navigationKey,
       initialRoute: initialLink,
       onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: globalStore!.get<EventBus>().navigatorObservers,
+      navigatorObservers: globalStore.get<EventBus>().navigatorObservers,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    BlocSupervisor.listener = globalStore!.get<EventBus>().blocListener;
-    globalStore!.get<UsageHistoryService>().openSession();
+    BlocSupervisor.listener = globalStore.get<EventBus>().blocListener;
+    globalStore.get<UsageHistoryService>().openSession();
 
     return _wrapWithGlobalScope(MaterialApp(
       home: _SplashScreen(
@@ -147,7 +146,7 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
 
   @protected
   void initServices(BuildContext context, ApplicationConfig config) {
-    globalStore!.get<ResourceService>().init(context, config.resources);
+    globalStore.get<ResourceService>().init(context, config.resources);
     modules?.forEach((module) => module.init(context, config));
   }
 
@@ -189,11 +188,13 @@ class ApplithiumAppState<A extends StatefulWidget> extends State<A> {
           senderBloc.showToast(action.path);
         }
         break;
+      default:
+        break;
     }
   }
 
   Widget _wrapWithGlobalScope(Widget wrapped) {
-    return Scope(store: globalStore!, child: wrapped);
+    return Scope(store: globalStore, child: wrapped);
   }
 }
 
