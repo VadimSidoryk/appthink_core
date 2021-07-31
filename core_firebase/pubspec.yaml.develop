@@ -15,6 +15,7 @@ dependencies:
   firebase_analytics: ^8.1.2
   firebase_remote_config: ^0.10.0+2
   firebase_messaging: ^10.0.2
+  flutter_local_notifications: ^8.0.0
 
   applithium_core:
     path: ../
