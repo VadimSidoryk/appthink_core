@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/config/base.dart';
+import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/supervisor.dart';

@@ -1,12 +1,12 @@
-import 'package:applithium_core/config/base.dart';
-import 'package:applithium_core/presentation/config.dart';
+import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/config/provider.dart';
+import 'package:applithium_core/services/resources/model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 const FIREBASE_CONFIG_RESOURCES_KEY = "resources";
 const FIREBASE_CONFIG_EVENTS_KEY = "event_handlers";
 const FIREBASE_CONFIG_PRESENTATION_KEY = "presentation";
-
 
 class FirebaseConfigProvider extends ConfigProvider {
 
@@ -27,9 +27,7 @@ class FirebaseConfigProvider extends ConfigProvider {
     RemoteConfigValue(null, ValueSource.valueStatic);
 
     return ApplicationConfig(
-      resources:  as ,
-      eventHandlers: remoteConfig.getValue(FIREBASE_CONFIG_EVENTS_KEY) as Map<String, Map<String, dynamic>>,
-      presentations: PresentationConfig.fromMap(remoteConfig.getValue(FIREBASE_CONFIG_PRESENTATION_KEY) as Map<String, dynamic>)
+      resources: ResourceConfig({})
     );
   }
 

@@ -10,6 +10,8 @@ class AplRepository<T> {
   @protected
   final data = BehaviorSubject<T>();
 
+  T? get currentData => data.hasValue ? data.value : null;
+
   Stream<T> get updatesStream => data.stream;
 
   CancelableOperation? _cancelableOperation;
