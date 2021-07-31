@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 @immutable
-class TestViewModel {
+class ContentViewModel {
   final String title;
   final String description;
   final int likes;
 
-  TestViewModel(this.title, this.description, this.likes);
+  ContentViewModel(this.title, this.description, this.likes);
 
-  TestViewModel copyWith({String? title, String? description, int? likes}) {
-    return TestViewModel(
+  ContentViewModel copyWith({String? title, String? description, int? likes}) {
+    return ContentViewModel(
       title != null ? title : this.title,
       description != null ? description : this.description,
       likes != null ? likes : this.likes

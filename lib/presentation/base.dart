@@ -5,28 +5,25 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-typedef BlocFactory<M, S extends BaseState<M>> = BaseBloc<M, S> Function(
-    BuildContext, Presenters);
+typedef WidgetForStateFactory<M, S extends BaseState<M>> = Widget Function(BuildContext, S, EventsHandler);
 
 typedef EventsHandler = Function(AplEvent);
 
-typedef StatefulWidgetFactory<M, S extends BaseState<M>> = Widget Function(BuildContext, S, EventsHandler listener);
+abstract class AplWidget<M, S extends BaseState<M>> extends StatelessWidget {
 
+  late final BaseBloc<dynamic, S> _bloc;
+  final WidgetForStateFactory<M, S> widgetForStateFactory;
 
-class AplPresentationState<M, S extends BaseState<M>, W extends StatefulWidget> extends State<W> {
-  late BaseBloc<M, S> _bloc;
+  AplWidget(this.widgetForStateFactory, {Key? key}) : super(key: key);
 
-  final BlocFactory<M, S> blocFactory;
-  final StatefulWidgetFactory<M, S> widgetFactory;
-
-  AplPresentationState({required this.blocFactory, required this.widgetFactory});
+  BaseBloc<dynamic, S> createBloc(BuildContext context, Presenters presenters);
 
   @override
   Widget build(BuildContext context) {
-    _bloc = blocFactory.call(context, _buildPresenters(context));
+    _bloc = createBloc(context, _buildPresenters(context));
     _bloc..add(BaseEvents.screenCreated());
-    return BlocBuilder<BaseBloc<M, S>, S>(
-        bloc: _bloc, builder: (context, state) => widgetFactory.call(context, state, onNewEvent));
+    return BlocBuilder<BaseBloc<dynamic, S>, S>(
+        bloc: _bloc, builder: (context, state) => widgetForStateFactory.call(context, state, onNewEvent));
   }
 
   void onNewEvent(AplEvent event) {

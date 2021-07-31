@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:applithium_core/domain/content/bloc.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/usecases/base.dart';
+import 'package:applithium_core/usecases/list/load_more.dart';
 
 import '../base_bloc.dart';
 import '../repository.dart';
@@ -39,7 +40,6 @@ class ListingState<M> extends BaseState<List<M>> {
   ListingState._(
       {required String tag,
       List<M>? value,
-      error,
       dialogModel,
       this.isPageLoading = false})
       : super(tag);
@@ -52,22 +52,29 @@ class ListingState<M> extends BaseState<List<M>> {
 }
 
 class ListLoadingFailed<M> extends ListingState<M> {
-  ListLoadingFailed(error) : super._(tag: STATE_LISTING_LOADING_FAILED_TAG, error: error);
+  final dynamic error;
+  ListLoadingFailed(this.error) : super._(tag: STATE_LISTING_LOADING_FAILED_TAG);
 }
 
 class ListLoading<M> extends ListingState<M> {
   ListLoading(): super._(tag: STATE_LISTING_LOADING_TAG);
 }
 
-class ListChanged<M> extends ListingState<M> {
+abstract class HasList<M> {
+  List<M> get list;
+}
+
+class ListChanged<M> extends ListingState<M> implements HasList<M> {
 
   final List<M> list;
 
   ListChanged(this.list) : super._(tag: STATE_LISTING_LOADED_TAG);
 }
 
-class ListPageLoading<M> extends ListingState<M> {
-  ListPageLoading(): super._(tag: STATE_LISTING_PAGE_LOADING, isPageLoading: true);
+class ListPageLoading<M> extends ListingState<M> implements HasList<M> {
+  final List<M> list;
+
+  ListPageLoading(this.list): super._(tag: STATE_LISTING_PAGE_LOADING, isPageLoading: true);
 }
 
 class ListingBloc<IM> extends BaseBloc<List<IM>, ListingState<IM>> {
@@ -101,8 +108,8 @@ class ListingBloc<IM> extends BaseBloc<List<IM>, ListingState<IM>> {
       log("isUpdated: $isUpdated");
     } else if (event is ScrolledToEnd) {
       if (!currentState.isPageLoading) {
-        yield ListPageLoading();
-        repository.apply(loadMore);
+        yield ListPageLoading(repository.currentData!);
+        repository.apply(listLoadMoreItems(loadMore));
       }
     } else if (event is ModelUpdated) {
       yield ListChanged(event.data);
