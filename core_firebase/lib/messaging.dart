@@ -7,9 +7,9 @@ import 'package:applithium_core/logs/extension.dart';
 class FirebaseMessagingService extends MessagingService {
   final AndroidNotificationChannel _androidChannel;
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final AplRouter _router;
+  final Future<AplRouter> _routerFuture;
 
-  FirebaseMessagingService(this._router,
+  FirebaseMessagingService(this._routerFuture,
       {String channelId = "applithium_notification_channel",
       String channelTitle = "Applithium based App's channel",
       channelDesc = "This channel is used for important notifications.",
@@ -44,9 +44,10 @@ class FirebaseMessagingService extends MessagingService {
       }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       log('A new onMessageOpenedApp event was published!');
-      _router.applyRoute("/message");
+      final router = await _routerFuture;
+      router.applyRoute("/message");
     });
   }
 

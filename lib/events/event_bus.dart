@@ -18,6 +18,14 @@ class EventBus {
         .toList();
   }
 
+  void addListener(EventsListener listener) {
+    listeners.add(listener);
+  }
+
+  void removeListener(EventsListener listener) {
+    listeners.remove(listener);
+  }
+
   BlocsListener get blocListener {
     return BlocEventsAdapter(this);
   }

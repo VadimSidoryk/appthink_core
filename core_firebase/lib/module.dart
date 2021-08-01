@@ -16,4 +16,10 @@ class FirebaseModule extends AplModule {
   void init(BuildContext context, ApplicationConfig config) async {
     await Firebase.initializeApp();
   }
+
+  @override
+  injectInTree(Store store) {
+    // TODO: implement injectInTree
+    throw UnimplementedError();
+  }
 }
