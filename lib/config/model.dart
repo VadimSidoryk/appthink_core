@@ -2,7 +2,7 @@ import 'package:applithium_core/services/resources/model.dart';
 
 class ApplicationConfig {
 
-  factory ApplicationConfig.getDefault() => ApplicationConfig(messagingApiKey: "", resources: ResourceConfig({}));
+  factory ApplicationConfig.getDefault() => ApplicationConfig(messagingApiKey: "", resources: ResourceConfig({"": {}}));
 
   final String messagingApiKey;
 
