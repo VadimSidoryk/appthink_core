@@ -19,6 +19,12 @@ dependencies:
       url: ssh://git@bitbucket.org/appthink/core.git
       ref: master
 
+  applithium_core_firebase:
+      git:
+        url: ssh://git@bitbucket.org/appthink/core.git
+        ref: master
+        path: applithium_core_firebase
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
