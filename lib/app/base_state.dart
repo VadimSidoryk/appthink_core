@@ -31,8 +31,6 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
   @protected
   late Store globalStore;
   final ConfigProvider? configProvider;
-  final Set<Analyst> analysts;
-  WidgetsBindingObserver? _widgetObserver;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
   final List<RouteDetails> routes;
@@ -44,8 +42,7 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
       Set<Analyst>? analysts,
       required this.routes,
       this.modules})
-      : this.title = title ?? "Applithium Based Application",
-        this.analysts = (analysts ?? {})..add(LogAnalyst());
+      : this.title = title ?? "Applithium Based Application";
 
   @override
   initState() {
@@ -54,29 +51,14 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
     _initGlobalComponents();
   }
 
-  @override
-  void dispose() {
-    if (_widgetObserver != null) {
-      WidgetsBinding.instance?.removeObserver(_widgetObserver!);
-    }
-    super.dispose();
-  }
-
   void _initGlobalComponents() {
     logMethod(methodName: "init global components");
-    globalStore = createGlobalDependencyTree();
+    globalStore = _buildGlobalDependencyTree();
     log("globalStore created");
-    _widgetObserver = globalStore.get<UsageHistoryService>().asWidgetObserver();
-    if (_widgetObserver != null) {
-      WidgetsBinding.instance?.addObserver(_widgetObserver!);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    BlocSupervisor.listener = globalStore.get<EventBus>().blocListener;
-    globalStore.get<UsageHistoryService>().openSession();
-
     return _wrapWithGlobalScope(MaterialApp(
       home: _SplashScreen<_AppInitialData>(
         builder: splashBuilder,
@@ -99,16 +81,8 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
     ));
   }
 
-  Store createGlobalDependencyTree() {
-    return Store()
-      ..add((provider) => SharedPreferences.getInstance())
-      ..add((provider) => AnalyticsService(analysts: analysts))
-      ..add(
-          (provider) => EventBus(listeners: {provider.get<AnalyticsService>()}))
-      ..add((provider) => UsageHistoryService(
-          preferencesProvider: provider.get(),
-          listener: SessionEventsAdapter(provider.get(), provider.get())))
-      ..add((provider) => ResourceService());
+  Store _buildGlobalDependencyTree() {
+    return Store()..add((provider) => SharedPreferences.getInstance());
   }
 
   Widget _wrapWithGlobalScope(Widget wrapped) {
@@ -172,17 +146,29 @@ class _RealApplicationState extends State<_RealApplication> {
 
   late GlobalKey<NavigatorState> _navigationKey;
   late AplRouter _router;
+  late WidgetsBindingObserver _widgetObserver;
 
   @override
   void initState() {
     super.initState();
     _navigationKey = GlobalKey<NavigatorState>();
     _router = AplRouter(navigationKey: _navigationKey, routes: widget.routes);
-    _initAppComponents();
+    _buildAppDependencyTree();
+    _setupWidgetObservers();
     _handleIncomingLinks();
+
+    BlocSupervisor.listener = widget.globalStore.get<EventBus>().blocListener;
+    widget.globalStore.get<UsageHistoryService>().openSession();
+  }
+
+  void _setupWidgetObservers() {
+    logMethod(methodName: "setupWidgetObservers");
+    _widgetObserver = widget.globalStore.get<UsageHistoryService>().asWidgetObserver();
+    WidgetsBinding.instance?.addObserver(_widgetObserver);
   }
 
   void _handleIncomingLinks() {
+    logMethod(methodName: "handleIncomingLinks");
     // It will handle app links while the app is already started - be it in
     // the foreground or in the background.
     _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {
@@ -199,30 +185,30 @@ class _RealApplicationState extends State<_RealApplication> {
     });
   }
 
-  Future<String?> _initAppComponents() async {
+  void _buildAppDependencyTree() async {
     logMethod(methodName: "init app components");
 
-    log("config received");
-    widget.globalStore.add((provider) => _router);
-    widget.globalStore.add((provider) =>
-        EventTriggeredHandlerService(provider.get(), processAction));
     widget.globalStore
-        .get<EventBus>()
-        .addListener(TriggeredEventsHandlerAdapter(widget.globalStore.get()));
+      ..add((provider) => _router)
+      ..add((provider) =>
+          EventTriggeredHandlerService(provider.get(), processAction))
+      ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
+      ..add((provider) => EventBus(listeners: {
+            provider.get<AnalyticsService>(),
+            TriggeredEventsHandlerAdapter(provider.get())
+          }))
+      ..add((provider) => UsageHistoryService(
+          preferencesProvider: provider.get(),
+          listener: SessionEventsAdapter(provider.get(), provider.get())))
+      ..add((provider) => ResourceService())
+      ..add((provider) => widget.config);
 
-    widget.globalStore.add((provider) => widget.config);
-    widget.globalStore
-        .get<ResourceService>()
-        .init(context, widget.config.resources);
     widget.modules.forEach((module) => module.injectInTree(widget.globalStore));
-    log("services initialized");
-
-    final initialLink = await getInitialLink();
-    log("initial deepLink = $initialLink");
-    return initialLink;
+    log("modules added");
   }
 
   void processAction(AplAction action, Object? sender) async {
+    logMethod(methodName: "processAction", params: [action, sender]);
     switch (action.type) {
       case AplActionType.ROUTE:
         _router.applyRoute(action.path);
@@ -244,6 +230,15 @@ class _RealApplicationState extends State<_RealApplication> {
     }
   }
 
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    widget.globalStore
+        .get<ResourceService>()
+        .init(context, widget.config.resources);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -260,6 +255,7 @@ class _RealApplicationState extends State<_RealApplication> {
   void dispose() {
     _deepLinkSubscription?.cancel();
     _deepLinkSubscription = null;
+    WidgetsBinding.instance?.removeObserver(_widgetObserver);
     super.dispose();
   }
 }

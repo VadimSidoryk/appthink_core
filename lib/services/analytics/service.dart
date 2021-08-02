@@ -11,9 +11,11 @@ import 'config.dart';
 
 class AnalyticsService extends AplService<AnalyticsConfig>
     implements EventsListener {
-  final Set<Analyst> analysts;
+  final Set<Analyst> analysts = Set();
 
-  AnalyticsService({required this.analysts});
+  void addAnalyst(Analyst analyst) {
+    analysts.add(analyst);
+  }
 
   void setUserProperty(String name, dynamic value) {
     log("setUserProperty $name : $value");
