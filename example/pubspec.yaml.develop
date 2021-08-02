@@ -15,6 +15,9 @@ dependencies:
   applithium_core:
     path: ../
 
+  applithium_core_firebase:
+    path: ../applithium_core_firebase
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
