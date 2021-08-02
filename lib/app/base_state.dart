@@ -94,7 +94,7 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
                 initialLink: initialData.initialLink,
                 routes: routes,
                 title: title,
-                modules: modules)),
+                modules: modules ?? {})),
       ),
     ));
   }
@@ -148,16 +148,16 @@ class _RealApplication extends StatefulWidget {
   final String title;
   final String? initialLink;
   final Store globalStore;
-  final Set<AplModule>? modules;
   final List<RouteDetails> routes;
+  final Set<AplModule> modules;
 
   const _RealApplication(
       {Key? key,
+      required this.modules,
       required this.globalStore,
       required this.title,
       required this.config,
       this.initialLink,
-      this.modules,
       required this.routes})
       : super(key: key);
 
@@ -203,6 +203,7 @@ class _RealApplicationState extends State<_RealApplication> {
     logMethod(methodName: "init app components");
 
     log("config received");
+    widget.globalStore.add((provider) => _router);
     widget.globalStore.add((provider) =>
         EventTriggeredHandlerService(provider.get(), processAction));
     widget.globalStore
@@ -213,8 +214,7 @@ class _RealApplicationState extends State<_RealApplication> {
     widget.globalStore
         .get<ResourceService>()
         .init(context, widget.config.resources);
-    widget.modules
-        ?.forEach((module) => module.injectInTree(widget.globalStore));
+    widget.modules.forEach((module) => module.injectInTree(widget.globalStore));
     log("services initialized");
 
     final initialLink = await getInitialLink();

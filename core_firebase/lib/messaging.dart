@@ -3,14 +3,19 @@ import 'package:applithium_core/services/messaging/service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:rxdart/rxdart.dart';
 
 class FirebaseMessagingService extends MessagingService {
+  final String appKey;
+
   final AndroidNotificationChannel _androidChannel;
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  final Future<AplRouter> _routerFuture;
+  final AplRouter router;
 
-  FirebaseMessagingService(this._routerFuture,
-      {String channelId = "applithium_notification_channel",
+  FirebaseMessagingService(
+      {required this.appKey,
+      required this.router,
+      String channelId = "applithium_notification_channel",
       String channelTitle = "Applithium based App's channel",
       channelDesc = "This channel is used for important notifications.",
       channelImportance = Importance.high})
@@ -21,8 +26,17 @@ class FirebaseMessagingService extends MessagingService {
           importance: channelImportance,
         );
 
+  final _tokenSubj = BehaviorSubject<String>();
+
+  @override
+  Stream<String> get tokenStream {
+    return _tokenSubj.stream;
+  }
+
   @override
   void startListening() {
+    _getTokenImpl();
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -46,9 +60,19 @@ class FirebaseMessagingService extends MessagingService {
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       log('A new onMessageOpenedApp event was published!');
-      final router = await _routerFuture;
       router.applyRoute("/message");
     });
+  }
+
+  void _getTokenImpl() {
+    FirebaseMessaging.instance.getToken(vapidKey: appKey).then((token) {
+      if (token != null) {
+        _tokenSubj.add(token);
+      }
+    });
+
+    FirebaseMessaging.instance.onTokenRefresh
+        .listen((token) => _tokenSubj.add(token));
   }
 
   @override
