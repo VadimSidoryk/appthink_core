@@ -4,5 +4,5 @@ import 'package:flutter/widgets.dart';
 
 abstract class AplModule<T> {
 
-  T injectInTree(Store store);
+  void injectInTree(Store store);
 }

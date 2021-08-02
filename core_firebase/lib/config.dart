@@ -26,9 +26,8 @@ class FirebaseConfigProvider extends ConfigProvider {
     await remoteConfig.setDefaults(defaults);
     RemoteConfigValue(null, ValueSource.valueStatic);
 
-    return ApplicationConfig(
-      resources: ResourceConfig({})
-    );
+    return ApplicationConfig.getDefault();
+
   }
 
 }
