@@ -4,16 +4,20 @@ packages:
   applithium_core:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: bf511fc126aa9c717d8fc7c7136f83b0cefdea1a
+      url: "ssh://git@bitbucket.org/appthink/core.git"
+    source: git
     version: "0.0.1"
   applithium_core_firebase:
     dependency: "direct main"
     description:
-      path: "../applithium_core_firebase"
-      relative: true
-    source: path
+      path: applithium_core_firebase
+      ref: master
+      resolved-ref: bf511fc126aa9c717d8fc7c7136f83b0cefdea1a
+      url: "ssh://git@bitbucket.org/appthink/core.git"
+    source: git
     version: "0.0.1"
   async:
     dependency: transitive
@@ -64,6 +68,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  copy_with_extension:
+    dependency: transitive
+    description:
+      name: copy_with_extension
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:
