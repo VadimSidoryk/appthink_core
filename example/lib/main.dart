@@ -33,10 +33,10 @@ class MyApp extends StatefulWidget {
               subRoutes: [
                 RouteDetails(
                     matcher: Matcher.path("content"),
-                    builder: presentationScope(() => ContentScreen())),
+                    builder: presentationScope((context) => ContentScreen())),
                 RouteDetails(
                     matcher: Matcher.path("list"),
-                    builder: presentationScope(() => ListingScreen())),
+                    builder: presentationScope((context) => ListingScreen())),
               ])
         ]);
   }

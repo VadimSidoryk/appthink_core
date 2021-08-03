@@ -59,29 +59,27 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
   @override
   Widget build(BuildContext context) {
-    return _wrapWithGlobalScope(MaterialApp(
-      home: _SplashScreen<_AppInitialData>(
-        builder: splashBuilder,
-        configLoader: (context) async {
-          final provider = globalStore.getOrNull<ConfigProvider>();
-          final config = provider != null
-              ? (await provider.getApplicationConfig())
-              : defaultConfig;
-          final initialLink = await getInitialLink();
-          return _AppInitialData(defaultConfig, config, initialLink);
-        },
-        nextScreenBuilder: (context, initialData) => _wrapWithGlobalScope(
-            _RealApplication(
-                initialData: initialData,
-                routes: routes,
-                title: title,
-                modules: modules ?? {})),
-      ),
-    ));
+    return _wrapWithGlobalScope((context) => MaterialApp(
+          home: _SplashScreen<_AppInitialData>(
+              builder: splashBuilder,
+              configLoader: (context) async {
+                final provider = globalStore.getOrNull<ConfigProvider>();
+                final config = provider != null
+                    ? (await provider.getApplicationConfig())
+                    : defaultConfig;
+                final initialLink = await getInitialLink();
+                return _AppInitialData(defaultConfig, config, initialLink);
+              },
+              nextScreenBuilder: (context, initialData) => _RealApplication(
+                  initialData: initialData,
+                  routes: routes,
+                  title: title,
+                  modules: modules ?? {})),
+        ));
   }
 
-  Widget _wrapWithGlobalScope(Widget wrapped) {
-    return Scope(store: globalStore, child: wrapped);
+  Widget _wrapWithGlobalScope(WidgetBuilder builder) {
+    return Scope(parentContext: null, store: globalStore, builder: builder);
   }
 }
 
@@ -157,24 +155,28 @@ class _RealApplicationState extends State<_RealApplication> {
         modules: widget.modules,
         config: widget.initialData.config);
 
-    _setupWidgetObservers();
+   // _setupWidgetObservers();
     _handleIncomingLinks();
 
     BlocSupervisor.listener = _appStore.get<EventBus>().blocListener;
-    _appStore.get<UsageHistoryService>().openSession();
-    _appStore.get<ResourceService>().init(context, widget.initialData.config.resources);
+    // _appStore.get<UsageHistoryService>().openSession();
+    _appStore
+        .get<ResourceService>()
+        .init(context, widget.initialData.config.resources);
   }
 
   @override
   Widget build(BuildContext context) {
-    return _wrapWithAppStore(MaterialApp(
-      title: widget.title,
-      theme: context.getOrNull(),
-      navigatorKey: _navigationKey,
-      initialRoute: widget.initialData.link,
-      onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: _appStore.get<EventBus>().navigatorObservers,
-    ));
+    return _wrapWithAppStore(
+        context,
+        (context) => MaterialApp(
+              title: widget.title,
+              theme: context.getOrNull(),
+              navigatorKey: _navigationKey,
+              initialRoute: widget.initialData.link,
+              onGenerateRoute: _router.onGenerateRoute,
+              navigatorObservers: _appStore.get<EventBus>().navigatorObservers,
+            ));
   }
 
   @override
@@ -187,10 +189,11 @@ class _RealApplicationState extends State<_RealApplication> {
     super.dispose();
   }
 
-  Widget _wrapWithAppStore(Widget widget) {
+  Widget _wrapWithAppStore(BuildContext parentContext, WidgetBuilder builder) {
     return Scope(
+      parentContext: parentContext,
       store: _appStore,
-      child: widget,
+      builder: builder,
     );
   }
 
@@ -227,7 +230,7 @@ class _RealApplicationState extends State<_RealApplication> {
       required ActionHandler handler,
       required Set<AplModule> modules,
       required AplConfig config}) {
-    final store = Store.extend(context)
+    final store = Store()
       ..add((provider) => router)
       ..add((provider) => EventTriggeredHandlerService(provider.get(), handler))
       ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))

@@ -6,24 +6,32 @@ class Scope extends InheritedWidget {
   final Store store;
 
   Scope(
-      {required this.store,
-      Widget? child,
-      Widget Function(BuildContext)? builder,
+      { required BuildContext? parentContext,
+      required this.store,
+      required Widget Function(BuildContext) builder,
       Key? key})
-      : assert(child != null || builder != null),
-        super(child: child ?? _WidgetBuilder(builder: builder!), key: key);
+      : super(
+            child: _WidgetBuilder(builder: (BuildContext context) {
+              final parentStore =
+                  parentContext != null ? of(parentContext)?.store : null;
+              if (parentStore != null) {
+                store.extend(parentStore);
+              }
+              return builder.call(context);
+            }),
+            key: key);
 
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
-  static Scope of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<Scope>() as Scope;
+  static Scope? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<Scope>();
 
   static T get<T>(BuildContext context, String key) {
-    return of(context).store.get<T>(key: key);
+    return of(context)!.store.get<T>(key: key);
   }
 
   static T? getOrNull<T>(BuildContext context, String key) {
-    return of(context).store.getOrNull<T>(key: key);
+    return of(context)?.store.getOrNull<T>(key: key);
   }
 }
 
