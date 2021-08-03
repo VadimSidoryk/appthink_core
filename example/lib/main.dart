@@ -1,4 +1,5 @@
 import 'package:applithium_core/app/base_state.dart';
+import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/router/matchers.dart';
 import 'package:applithium_core/router/route_details.dart';
 import 'package:applithium_core_example/listing/presentation.dart';
@@ -15,18 +16,28 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return ApplithiumAppState<MyApp>(
+        defaultConfig: ApplicationConfig.getDefault(),
         splashBuilder: (config) => Scaffold(
               body: Center(child: Text("Splash...")),
             ),
         title: "Applithium Core Example",
-        modules: {FirebaseModule()},
-        routes: [RouteDetails(builder: (context, result) => PickerScreen(), subRoutes: [
-          RouteDetails(matcher: Matcher.path("content"), builder: presentationScope(() => ContentScreen())),
-          RouteDetails(matcher: Matcher.path("list"), builder: presentationScope(() => ListingScreen())),
-        ])]);
+        modules: {
+          FirebaseModule()
+        },
+        routes: [
+          RouteDetails(
+              builder: (context, result) => PickerScreen(),
+              subRoutes: [
+                RouteDetails(
+                    matcher: Matcher.path("content"),
+                    builder: presentationScope(() => ContentScreen())),
+                RouteDetails(
+                    matcher: Matcher.path("list"),
+                    builder: presentationScope(() => ListingScreen())),
+              ])
+        ]);
   }
 }

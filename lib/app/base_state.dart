@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/action.dart';
@@ -30,14 +30,14 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
   final String title;
   @protected
   late Store globalStore;
-  final ConfigProvider? configProvider;
+  final ApplicationConfig defaultConfig;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
   final List<RouteDetails> routes;
 
   ApplithiumAppState(
       {String? title,
-      this.configProvider,
+      required this.defaultConfig,
       required this.splashBuilder,
       Set<Analyst>? analysts,
       required this.routes,
@@ -48,13 +48,13 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
   initState() {
     log("initState");
     super.initState();
-    _initGlobalComponents();
+    globalStore = _buildGlobalStore(modules ?? {});
   }
 
-  void _initGlobalComponents() {
-    logMethod(methodName: "init global components");
-    globalStore = _buildGlobalDependencyTree();
-    log("globalStore created");
+  static Store _buildGlobalStore(Set<AplModule> modules) {
+    final result = Store()..add((provider) => SharedPreferences.getInstance());
+    modules.forEach((module) => module.injectInGlobalLevel(result));
+    return result;
   }
 
   @override
@@ -63,26 +63,21 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
       home: _SplashScreen<_AppInitialData>(
         builder: splashBuilder,
         configLoader: (context) async {
-          final config = configProvider != null
-              ? (await configProvider!.getApplicationConfig())
-              : ApplicationConfig.getDefault();
+          final provider = globalStore.getOrNull<ConfigProvider>();
+          final config = provider != null
+              ? (await provider.getApplicationConfig())
+              : defaultConfig;
           final initialLink = await getInitialLink();
-          return _AppInitialData(config, initialLink);
+          return _AppInitialData(defaultConfig, config, initialLink);
         },
         nextScreenBuilder: (context, initialData) => _wrapWithGlobalScope(
             _RealApplication(
-                globalStore: globalStore,
-                config: initialData.config,
-                initialLink: initialData.initialLink,
+                initialData: initialData,
                 routes: routes,
                 title: title,
                 modules: modules ?? {})),
       ),
     ));
-  }
-
-  Store _buildGlobalDependencyTree() {
-    return Store()..add((provider) => SharedPreferences.getInstance());
   }
 
   Widget _wrapWithGlobalScope(Widget wrapped) {
@@ -118,20 +113,16 @@ class _SplashScreen<D> extends StatelessWidget {
 }
 
 class _RealApplication extends StatefulWidget {
-  final ApplicationConfig config;
+  final _AppInitialData initialData;
   final String title;
-  final String? initialLink;
-  final Store globalStore;
   final List<RouteDetails> routes;
   final Set<AplModule> modules;
 
   const _RealApplication(
       {Key? key,
       required this.modules,
-      required this.globalStore,
       required this.title,
-      required this.config,
-      this.initialLink,
+      required this.initialData,
       required this.routes})
       : super(key: key);
 
@@ -146,25 +137,70 @@ class _RealApplicationState extends State<_RealApplication> {
 
   late GlobalKey<NavigatorState> _navigationKey;
   late AplRouter _router;
-  late WidgetsBindingObserver _widgetObserver;
+  late Store _appStore;
+  WidgetsBindingObserver? _widgetObserver;
 
   @override
   void initState() {
     super.initState();
     _navigationKey = GlobalKey<NavigatorState>();
     _router = AplRouter(navigationKey: _navigationKey, routes: widget.routes);
-    _buildAppDependencyTree();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _appStore = _buildAppStore(
+        context: context,
+        router: _router,
+        handler: _processAction,
+        modules: widget.modules,
+        config: widget.initialData.config);
+
     _setupWidgetObservers();
     _handleIncomingLinks();
 
-    BlocSupervisor.listener = widget.globalStore.get<EventBus>().blocListener;
-    widget.globalStore.get<UsageHistoryService>().openSession();
+    BlocSupervisor.listener = _appStore.get<EventBus>().blocListener;
+    _appStore.get<UsageHistoryService>().openSession();
+    _appStore.get<ResourceService>().init(context, widget.initialData.config.resources);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _wrapWithAppStore(MaterialApp(
+      title: widget.title,
+      theme: context.getOrNull(),
+      navigatorKey: _navigationKey,
+      initialRoute: widget.initialData.link,
+      onGenerateRoute: _router.onGenerateRoute,
+      navigatorObservers: _appStore.get<EventBus>().navigatorObservers,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _deepLinkSubscription?.cancel();
+    _deepLinkSubscription = null;
+    if (_widgetObserver != null) {
+      WidgetsBinding.instance?.removeObserver(_widgetObserver!);
+    }
+    super.dispose();
+  }
+
+  Widget _wrapWithAppStore(Widget widget) {
+    return Scope(
+      store: _appStore,
+      child: widget,
+    );
   }
 
   void _setupWidgetObservers() {
     logMethod(methodName: "setupWidgetObservers");
-    _widgetObserver = widget.globalStore.get<UsageHistoryService>().asWidgetObserver();
-    WidgetsBinding.instance?.addObserver(_widgetObserver);
+    if (_widgetObserver != null) {
+      WidgetsBinding.instance?.removeObserver(_widgetObserver!);
+    }
+    _widgetObserver = _appStore.get<UsageHistoryService>().asWidgetObserver();
+    WidgetsBinding.instance?.addObserver(_widgetObserver!);
   }
 
   void _handleIncomingLinks() {
@@ -185,30 +221,33 @@ class _RealApplicationState extends State<_RealApplication> {
     });
   }
 
-  void _buildAppDependencyTree() async {
-    logMethod(methodName: "init app components");
-
-    widget.globalStore
-      ..add((provider) => _router)
-      ..add((provider) =>
-          EventTriggeredHandlerService(provider.get(), processAction))
+  static Store _buildAppStore(
+      {required BuildContext context,
+      required AplRouter router,
+      required ActionHandler handler,
+      required Set<AplModule> modules,
+      required ApplicationConfig config}) {
+    final store = Store.extend(context)
+      ..add((provider) => router)
+      ..add((provider) => EventTriggeredHandlerService(provider.get(), handler))
       ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
       ..add((provider) => EventBus(listeners: {
             provider.get<AnalyticsService>(),
             TriggeredEventsHandlerAdapter(provider.get())
           }))
       ..add((provider) => ResourceService())
-      ..add((provider) => widget.config);
+      ..add((provider) => config);
 
-    widget.modules.forEach((module) => module.injectInTree(widget.globalStore));
-    log("modules added");
+    modules.forEach((module) => module.injectInAppLevel(store));
 
-    widget.globalStore.add((provider) => UsageHistoryService(
-    preferencesProvider: provider.get(),
-    listener: SessionEventsAdapter(provider.get(), provider.get())));
+    store.add((provider) => UsageHistoryService(
+        preferencesProvider: provider.get(),
+        listener: SessionEventsAdapter(provider.get(), provider.get())));
+
+    return store;
   }
 
-  void processAction(AplAction action, Object? sender) async {
+  void _processAction(AplAction action, Object? sender) async {
     logMethod(methodName: "processAction", params: [action, sender]);
     switch (action.type) {
       case AplActionType.ROUTE:
@@ -230,40 +269,12 @@ class _RealApplicationState extends State<_RealApplication> {
         break;
     }
   }
-
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    widget.globalStore
-        .get<ResourceService>()
-        .init(context, widget.config.resources);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: widget.title,
-      theme: context.getOrNull(),
-      navigatorKey: _navigationKey,
-      initialRoute: widget.initialLink,
-      onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: context.get<EventBus>().navigatorObservers,
-    );
-  }
-
-  @override
-  void dispose() {
-    _deepLinkSubscription?.cancel();
-    _deepLinkSubscription = null;
-    WidgetsBinding.instance?.removeObserver(_widgetObserver);
-    super.dispose();
-  }
 }
 
 class _AppInitialData {
+  final ApplicationConfig defaultConfig;
   final ApplicationConfig config;
-  final String? initialLink;
+  final String? link;
 
-  _AppInitialData(this.config, this.initialLink);
+  _AppInitialData(this.defaultConfig, this.config, this.link);
 }
