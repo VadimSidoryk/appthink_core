@@ -1,5 +1,6 @@
 import 'package:applithium_core/app/base_state.dart';
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/router/matchers.dart';
 import 'package:applithium_core/router/route_details.dart';
 import 'package:applithium_core_example/listing/presentation.dart';
@@ -7,7 +8,6 @@ import 'package:applithium_core_example/picker/presentation.dart';
 import 'package:applithium_core_firebase/module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/presentation/builder.dart';
 
 import 'content/presentation.dart';
 
@@ -18,8 +18,8 @@ void main() {
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ApplithiumAppState<MyApp>(
-        defaultConfig: ApplicationConfig.getDefault(),
+    return AplAppState<MyApp>(
+        defaultConfig: AplConfig.getDefault(),
         splashBuilder: (config) => Scaffold(
               body: Center(child: Text("Splash...")),
             ),

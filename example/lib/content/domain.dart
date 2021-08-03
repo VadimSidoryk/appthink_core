@@ -1,8 +1,8 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/content/bloc.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 
 import 'model.dart';
 

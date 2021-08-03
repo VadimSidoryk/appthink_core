@@ -26,16 +26,16 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
-class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
+class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
   @protected
   late Store globalStore;
-  final ApplicationConfig defaultConfig;
+  final AplConfig defaultConfig;
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule>? modules;
   final List<RouteDetails> routes;
 
-  ApplithiumAppState(
+  AplAppState(
       {String? title,
       required this.defaultConfig,
       required this.splashBuilder,
@@ -53,7 +53,7 @@ class ApplithiumAppState<W extends StatefulWidget> extends State<W> {
 
   static Store _buildGlobalStore(Set<AplModule> modules) {
     final result = Store()..add((provider) => SharedPreferences.getInstance());
-    modules.forEach((module) => module.injectInGlobalLevel(result));
+    modules.forEach((module) => module.injectToGlobal(result));
     return result;
   }
 
@@ -226,7 +226,7 @@ class _RealApplicationState extends State<_RealApplication> {
       required AplRouter router,
       required ActionHandler handler,
       required Set<AplModule> modules,
-      required ApplicationConfig config}) {
+      required AplConfig config}) {
     final store = Store.extend(context)
       ..add((provider) => router)
       ..add((provider) => EventTriggeredHandlerService(provider.get(), handler))
@@ -238,7 +238,7 @@ class _RealApplicationState extends State<_RealApplication> {
       ..add((provider) => ResourceService())
       ..add((provider) => config);
 
-    modules.forEach((module) => module.injectInAppLevel(store));
+    modules.forEach((module) => module.injectToApp(store));
 
     store.add((provider) => UsageHistoryService(
         preferencesProvider: provider.get(),
@@ -272,8 +272,8 @@ class _RealApplicationState extends State<_RealApplication> {
 }
 
 class _AppInitialData {
-  final ApplicationConfig defaultConfig;
-  final ApplicationConfig config;
+  final AplConfig defaultConfig;
+  final AplConfig config;
   final String? link;
 
   _AppInitialData(this.defaultConfig, this.config, this.link);

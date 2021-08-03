@@ -1,8 +1,8 @@
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/services/messaging/service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:applithium_core/logs/extension.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FirebaseMessagingService extends MessagingService {

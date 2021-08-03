@@ -1,11 +1,11 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/listing/bloc.dart';
 import 'package:applithium_core/mocks/utils.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/usecases/base.dart';
+import 'package:applithium_core/usecases/list/remove_items.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:applithium_core_example/listing/model.dart';
-import 'package:applithium_core/usecases/list/remove_items.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter/cupertino.dart';
 
 
