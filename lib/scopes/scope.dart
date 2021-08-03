@@ -6,14 +6,13 @@ class Scope extends InheritedWidget {
   final Store store;
 
   Scope(
-      { required BuildContext? parentContext,
+      {required BuildContext? parentContext,
       required this.store,
       required Widget Function(BuildContext) builder,
       Key? key})
       : super(
             child: _WidgetBuilder(builder: (BuildContext context) {
-              final parentStore =
-                  parentContext != null ? of(parentContext)?.store : null;
+              final parentStore = parentContext != null ? of(parentContext)?.store : null;
               if (parentStore != null) {
                 store.extend(parentStore);
               }
