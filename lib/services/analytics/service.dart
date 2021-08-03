@@ -1,30 +1,31 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:applithium_core/events/event.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
+import 'package:applithium_core/logs/extension.dart';
 
 import 'analyst.dart';
 import 'config.dart';
 
 class AnalyticsService extends AplService<AnalyticsConfig>
     implements EventsListener {
-  final Set<Analyst> analysts = Set();
+  final List<Analyst> analysts = [];
 
   void addAnalyst(Analyst analyst) {
+    logMethod(methodName: "addAnalyst", params: [analyst]);
     analysts.add(analyst);
   }
 
   void setUserProperty(String name, dynamic value) {
-    log("setUserProperty $name : $value");
+    logMethod(methodName: "setUserProperty", params: [name, value]);
     analysts.forEach((impl) => impl.setUserProperty(name, value));
   }
 
   @override
   void onNewEvent(AplEvent event) {
-    log("trackEventWithParams ${event.name} params: ${event.params}");
+    logMethod(methodName: "trackEventWithParams", params: [event]);
     analysts.forEach((impl) => impl.onNewEvent(event));
   }
 
@@ -44,6 +45,7 @@ class AnalyticsService extends AplService<AnalyticsConfig>
 
   @override
   List<NavigatorObserver> get navigatorObservers {
+    logMethod(methodName: "navigatorObservers");
     return analysts
         .map((impl) => impl.navigatorObservers)
         .reduce((result, currentList) => result + currentList)
