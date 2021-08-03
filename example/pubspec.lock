@@ -64,13 +64,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
-  copy_with_extension:
-    dependency: transitive
-    description:
-      name: copy_with_extension
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -225,7 +218,7 @@ packages:
       name: fluttertoast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "8.0.7"
+    version: "8.0.8"
   http:
     dependency: transitive
     description:

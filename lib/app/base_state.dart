@@ -46,11 +46,11 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       ..add((provider) => ResourceService())
       ..add((provider) => data.config);
 
-    modules.forEach((module) => module.injectToApp(store));
-
     store.add((provider) => UsageHistoryService(
         preferencesProvider: provider.get(),
         listener: SessionEventsAdapter(provider.get(), provider.get())));
+
+    modules.forEach((module) => module.injectToApp(store));
 
     return store;
   }
@@ -76,7 +76,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   initState() {
     log("initState");
     super.initState();
-    globalStore = _buildGlobalStore(modules ?? {});
+    globalStore = _buildGlobalStore(modules);
   }
 
   @override
@@ -169,13 +169,13 @@ class _RealApplicationState extends State<_RealApplication> {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
     BlocSupervisor.listener = context.get<EventBus>().blocListener;
-    context.get<UsageHistoryService>().openSession();
     context.get<ResourceService>()
         .init(context, widget.initialData.config.resources);
     context.get<EventTriggeredHandlerService>()
         .setActionHandler(_processAction);
     _setupWidgetObservers();
     _handleIncomingLinks();
+    context.get<UsageHistoryService>().openSession();
   }
 
   @override
