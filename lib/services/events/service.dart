@@ -17,11 +17,15 @@ class EventTriggeredHandlerService  extends AplService {
 
   final Future<SharedPreferences> _preferencesProvider;
   Map<String, Set<AplEventTrigger>> _triggers = {};
-  final ActionHandler _actionsHandler;
+  ActionHandler? _actionsHandler;
 
   final _interpolation = Interpolation();
 
-  EventTriggeredHandlerService(this._preferencesProvider, this._actionsHandler);
+  EventTriggeredHandlerService(this._preferencesProvider);
+
+  void setActionHandler(ActionHandler handler) {
+    _actionsHandler = handler;
+  }
 
   void handleEvent(AplEvent event) async {
     final key = "${event.name}.$_countKey";
@@ -42,7 +46,7 @@ class EventTriggeredHandlerService  extends AplService {
           }
 
           if (isHandled) {
-            _actionsHandler.call(trigger.action, event.params[KEY_SENDER]);
+            _actionsHandler?.call(trigger.action, event.params[KEY_SENDER]);
             return;
           }
         }
