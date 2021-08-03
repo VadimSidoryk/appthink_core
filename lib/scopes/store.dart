@@ -69,12 +69,12 @@ class Store extends InstanceProvider {
     final map = _map[T];
     if (map == null) {
       _map[T] = Map.from({
-        key : _StoreFactory<T>(_StoreFactoryType.factory,
+        key : _StoreFactory<T>(type,
             func: () => func.call(this))
       });
     } else {
       _map[T] = map
-        ..[key] = _StoreFactory<T>(_StoreFactoryType.factory,
+        ..[key] = _StoreFactory<T>(type,
             func: () => func.call(this));
     }
   }
