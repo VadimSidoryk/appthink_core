@@ -11,10 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  firebase_core: ^1.3.0
-  firebase_analytics: ^8.1.2
-  firebase_remote_config: ^0.10.0+2
-  firebase_messaging: ^10.0.2
+  firebase_core: ^1.4.0
+  firebase_analytics: ^8.2.0
+  firebase_remote_config: ^0.10.0+3
+  firebase_messaging: ^10.0.4
   flutter_local_notifications: ^8.0.0
 
   applithium_core:
