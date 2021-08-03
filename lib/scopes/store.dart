@@ -1,7 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
-import 'scope.dart';
-
 enum _StoreFactoryType { factory, single }
 
 abstract class InstanceProvider {
@@ -16,9 +12,8 @@ class Store extends InstanceProvider {
 
   Store();
 
-  Store.extend(BuildContext parentsSource) {
-    final parentScope = Scope.of(parentsSource);
-    final Map<Type, Map<String, _StoreFactory<dynamic>>> resultMap = Map.from(parentScope.store._map);
+  void extend(Store store) {
+    final Map<Type, Map<String, _StoreFactory<dynamic>>> resultMap = Map.from(store._map);
     _map.keys.forEach((key) {
       if(resultMap.containsKey(key)) {
         resultMap[key]!.addAll(_map[key]!);

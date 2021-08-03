@@ -1,5 +1,5 @@
 import 'package:applithium_core/json/condition.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test("1 == 0 -> false content", () {
@@ -84,5 +84,4 @@ void main() {
     final condition = Condition.fromString(sampleFalseConditionString);
     assert (condition.evaluate() == false);
   });
-
 }
