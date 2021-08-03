@@ -18,7 +18,9 @@ dependencies:
   flutter_local_notifications: ^8.0.0
 
   applithium_core:
-    path: ../
+    git:
+      url: ssh://git@bitbucket.org/appthink/core.git
+      ref: master
 
 dev_dependencies:
   flutter_test:
