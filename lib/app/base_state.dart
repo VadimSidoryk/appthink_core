@@ -197,14 +197,15 @@ class _RealApplicationState extends State<_RealApplication> {
             provider.get<AnalyticsService>(),
             TriggeredEventsHandlerAdapter(provider.get())
           }))
-      ..add((provider) => UsageHistoryService(
-          preferencesProvider: provider.get(),
-          listener: SessionEventsAdapter(provider.get(), provider.get())))
       ..add((provider) => ResourceService())
       ..add((provider) => widget.config);
 
     widget.modules.forEach((module) => module.injectInTree(widget.globalStore));
     log("modules added");
+
+    widget.globalStore.add((provider) => UsageHistoryService(
+    preferencesProvider: provider.get(),
+    listener: SessionEventsAdapter(provider.get(), provider.get())));
   }
 
   void processAction(AplAction action, Object? sender) async {
