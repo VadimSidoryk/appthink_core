@@ -66,7 +66,7 @@ class RouteResult {
   Route<dynamic> build() {
     assert(isMatch);
 
-    return MaterialPageRoute(builder: (BuildContext context) => builder!(context, this));
+    return MaterialPageRoute(builder: (BuildContext context) => builder!(context, this), settings: settings );
   }
 
   @override
