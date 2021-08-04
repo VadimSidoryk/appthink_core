@@ -8,7 +8,6 @@ import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:applithium_core_example/listing/model.dart';
 import 'package:flutter/cupertino.dart';
 
-
 abstract class ListingScreenEvents extends BaseListEvent {
   ListingScreenEvents._(String name) : super(name);
 
@@ -52,8 +51,9 @@ final DomainGraph<List<ListItemModel>, ListingState<ListItemModel>>
 
 ListingBloc<ListItemModel> provideListingBloc(
     BuildContext context, Presenters presenters) {
+  final path = ModalRoute.of(context)?.settings.name;
   return ListingBloc(
-      repository: context.get(),
+      repository: context.get(key: path ?? ""),
       presenters: presenters,
       load: listLoader,
       loadMore: loadMore,
