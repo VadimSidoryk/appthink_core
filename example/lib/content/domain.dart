@@ -52,8 +52,9 @@ final DomainGraph<ContentViewModel, ContentState<ContentViewModel>> contentGraph
 };
 
 ContentBloc<ContentViewModel> provideContentBloc(BuildContext context, Presenters presenters) {
+  final path = ModalRoute.of(context)?.settings.name;
   return ContentBloc(
-    repository: context.get(),
+    repository: context.get(key: path ?? ""),
     presenters: presenters,
     load: testLoad,
     customGraph: contentGraph

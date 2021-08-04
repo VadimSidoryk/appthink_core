@@ -5,13 +5,16 @@ import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:flutter/cupertino.dart';
 
-WidgetBuilderWithRouteResult presentationScope<M>(AplWidget<M, dynamic> Function(BuildContext) widgetProvider, { int ttl = 1000}) {
+WidgetBuilderWithRouteResult presentationScope<M>(
+    AplWidget<M, dynamic> Function(BuildContext, String) widgetProvider,
+    {int ttl = 1000}) {
   return (context, result) {
-    final presentationStore = Store()..add((provider) => AplRepository<M>(ttl), key: result.uri.toString());
+    final path = result.uri.toString();
+    final presentationStore = Store()
+      ..add((provider) => AplRepository<M>(ttl), key: path);
     return Scope(
-      parentContext: context,
-      builder: widgetProvider,
-      store: presentationStore
-    );
+        parentContext: context,
+        builder: (context) => widgetProvider.call(context, path),
+        store: presentationStore);
   };
 }

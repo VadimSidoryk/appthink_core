@@ -125,7 +125,7 @@ class _SplashScreen<D> extends StatelessWidget {
 
   Future<void> _setupInitFlow(BuildContext context) async {
     final config = await configLoader.call(context);
-    Navigator.push(
+    Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => nextScreenBuilder(context, config)));
