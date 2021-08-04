@@ -11,19 +11,28 @@ import 'package:flutter/widgets.dart';
 
 import 'content/presentation.dart';
 
+final appTitle = "Applithium Core Example";
+final splashTitle = "Splash...";
+
+final contentPath = "content";
+final listPath = "list";
+
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
+
+  Stream<Route>? routeObs;
+
   @override
   State<StatefulWidget> createState() {
-    return AplAppState<MyApp>(
+    final result = AplAppState<MyApp>(
         defaultConfig: AplConfig.getDefault(),
         splashBuilder: (config) => Scaffold(
-              body: Center(child: Text("Splash...")),
+              body: Center(child: Text(splashTitle)),
             ),
-        title: "Applithium Core Example",
+        title: appTitle,
         modules: {
           FirebaseModule()
         },
@@ -32,12 +41,14 @@ class MyApp extends StatefulWidget {
               builder: (context, result) => PickerScreen(),
               subRoutes: [
                 RouteDetails(
-                    matcher: Matcher.path("content"),
+                    matcher: Matcher.path(contentPath),
                     builder: presentationScope((context) => ContentScreen())),
                 RouteDetails(
-                    matcher: Matcher.path("list"),
+                    matcher: Matcher.path(listPath),
                     builder: presentationScope((context) => ListingScreen())),
               ])
         ]);
+    routeObs = result.routesObs;
+    return result;
   }
 }
