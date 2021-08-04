@@ -23,11 +23,11 @@ import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/resources/service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
-
   static Store _buildGlobalStore(Set<AplModule> modules) {
     final result = Store()..add((provider) => SharedPreferences.getInstance());
     modules.forEach((module) => module.injectToGlobal(result));
@@ -40,9 +40,9 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       ..add((provider) => EventTriggeredHandlerService(provider.get()))
       ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
       ..add((provider) => EventBus(listeners: {
-        provider.get<AnalyticsService>(),
-        TriggeredEventsHandlerAdapter(provider.get())
-      }))
+            provider.get<AnalyticsService>(),
+            TriggeredEventsHandlerAdapter(provider.get())
+          }))
       ..add((provider) => ResourceService())
       ..add((provider) => data.config);
 
@@ -62,6 +62,9 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule> modules;
   final List<RouteDetails> routes;
+
+  final _routesSubj = PublishSubject<Route>();
+  Stream<Route> get routesObs  => _routesSubj;
 
   AplAppState(
       {String? title,
@@ -85,7 +88,8 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
         parentContext: null,
         store: globalStore,
         builder: (context) => MaterialApp(
-                home: _SplashScreen<_AppInitialData>(
+            navigatorObservers: [_AppNavigatorObserver(_routesSubj)],
+            home: _SplashScreen<_AppInitialData>(
               builder: splashBuilder,
               configLoader: (context) async {
                 final provider = globalStore.getOrNull<ConfigProvider>();
@@ -102,7 +106,37 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                       initialData: initialData, routes: routes, title: title)),
             )));
   }
+}
 
+class _AppNavigatorObserver extends NavigatorObserver {
+
+  final Subject<Route> subject;
+
+  _AppNavigatorObserver(this.subject);
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    if (route is PageRoute) {
+      subject.add(route);
+    }
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    if (newRoute is PageRoute) {
+      subject.add(newRoute);
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    if (previousRoute is PageRoute && route is PageRoute) {
+      subject.add(previousRoute);
+    }
+  }
 }
 
 class _SplashScreen<D> extends StatelessWidget {
