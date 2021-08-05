@@ -23,38 +23,10 @@ import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/resources/service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
-  static Store _buildGlobalStore(Set<AplModule> modules) {
-    final result = Store()..add((provider) => SharedPreferences.getInstance());
-    modules.forEach((module) => module.injectToGlobal(result));
-    return result;
-  }
-
-  static Store _buildAppStore(
-      {required Set<AplModule> modules, required _AppInitialData data}) {
-    final store = Store()
-      ..add((provider) => EventTriggeredHandlerService(provider.get()))
-      ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
-      ..add((provider) => EventBus(listeners: {
-            provider.get<AnalyticsService>(),
-            TriggeredEventsHandlerAdapter(provider.get())
-          }))
-      ..add((provider) => ResourceService())
-      ..add((provider) => data.config);
-
-    store.add((provider) => UsageHistoryService(
-        preferencesProvider: provider.get(),
-        listener: SessionEventsAdapter(provider.get(), provider.get())));
-
-    modules.forEach((module) => module.injectToApp(store));
-
-    return store;
-  }
-
   final String title;
   @protected
   late Store globalStore;
@@ -62,12 +34,11 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final Widget Function(BuildContext) splashBuilder;
   final Set<AplModule> modules;
   final List<RouteDetails> routes;
-
-  final _routesSubj = PublishSubject<Route>();
-  Stream<Route> get routesObs  => _routesSubj;
+  final NavigatorObserver? navObserver;
 
   AplAppState(
       {String? title,
+      this.navObserver,
       required this.defaultConfig,
       required this.splashBuilder,
       Set<Analyst>? analysts,
@@ -88,7 +59,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
         parentContext: null,
         store: globalStore,
         builder: (context) => MaterialApp(
-            navigatorObservers: [_AppNavigatorObserver(_routesSubj)],
+            navigatorObservers: navObserver != null ? [navObserver!] : const [],
             home: _SplashScreen<_AppInitialData>(
               builder: splashBuilder,
               configLoader: (context) async {
@@ -96,7 +67,8 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                 final config = provider != null
                     ? (await provider.getApplicationConfig())
                     : defaultConfig;
-                final initialLink = await getInitialLink();
+                 final initialLink = await getInitialLink();
+                log("initial link = $initialLink");
                 return _AppInitialData(defaultConfig, config, initialLink);
               },
               nextScreenBuilder: (context, initialData) => Scope(
@@ -105,37 +77,6 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                   builder: (context) => _RealApplication(
                       initialData: initialData, routes: routes, title: title)),
             )));
-  }
-}
-
-class _AppNavigatorObserver extends NavigatorObserver {
-
-  final Subject<Route> subject;
-
-  _AppNavigatorObserver(this.subject);
-
-  @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPush(route, previousRoute);
-    if (route is PageRoute) {
-      subject.add(route);
-    }
-  }
-
-  @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    if (newRoute is PageRoute) {
-      subject.add(newRoute);
-    }
-  }
-
-  @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    super.didPop(route, previousRoute);
-    if (previousRoute is PageRoute && route is PageRoute) {
-      subject.add(previousRoute);
-    }
   }
 }
 
@@ -159,6 +100,7 @@ class _SplashScreen<D> extends StatelessWidget {
 
   Future<void> _setupInitFlow(BuildContext context) async {
     final config = await configLoader.call(context);
+    log("pushReplacement");
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -203,9 +145,11 @@ class _RealApplicationState extends State<_RealApplication> {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
     BlocSupervisor.listener = context.get<EventBus>().blocListener;
-    context.get<ResourceService>()
+    context
+        .get<ResourceService>()
         .init(context, widget.initialData.config.resources);
-    context.get<EventTriggeredHandlerService>()
+    context
+        .get<EventTriggeredHandlerService>()
         .setActionHandler(_processAction);
     _setupWidgetObservers();
     _handleIncomingLinks();
@@ -291,4 +235,31 @@ class _AppInitialData {
   final String? link;
 
   _AppInitialData(this.defaultConfig, this.config, this.link);
+}
+
+Store _buildGlobalStore(Set<AplModule> modules) {
+  final result = Store()..add((provider) => SharedPreferences.getInstance());
+  modules.forEach((module) => module.injectToGlobal(result));
+  return result;
+}
+
+Store _buildAppStore(
+    {required Set<AplModule> modules, required _AppInitialData data}) {
+  final store = Store()
+    ..add((provider) => EventTriggeredHandlerService(provider.get()))
+    ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
+    ..add((provider) => EventBus(listeners: {
+          provider.get<AnalyticsService>(),
+          TriggeredEventsHandlerAdapter(provider.get())
+        }))
+    ..add((provider) => ResourceService())
+    ..add((provider) => data.config);
+
+  store.add((provider) => UsageHistoryService(
+      preferencesProvider: provider.get(),
+      listener: SessionEventsAdapter(provider.get(), provider.get())));
+
+  modules.forEach((module) => module.injectToApp(store));
+
+  return store;
 }
