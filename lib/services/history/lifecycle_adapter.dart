@@ -10,7 +10,7 @@ class UsageWidgetStateAdapter extends WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    logMethod(methodName: "didChangeAppLifecycleState", params: [state]);
+    logMethod("didChangeAppLifecycleState", params: [state]);
     switch (state) {
       case AppLifecycleState.resumed:
         usageService.resumeSession();

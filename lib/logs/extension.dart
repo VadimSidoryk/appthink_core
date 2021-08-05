@@ -3,7 +3,7 @@ extension Loggable on Object {
         print("$this/Logs  : $message");
      }
 
-     void logMethod({Object? source, required String methodName, List<Object?> params = const []}) {
+     void logMethod(String methodName, {Object? source, List<Object?> params = const []}) {
         log("${source ?? this } : $methodName with params $params");
      }
 

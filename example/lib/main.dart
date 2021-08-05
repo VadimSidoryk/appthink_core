@@ -24,12 +24,14 @@ void main() {
 class MyApp extends StatefulWidget {
 
   final NavigatorObserver? observer;
+  final Future<String?> Function()? initialLinkProvider;
 
-  MyApp({this.observer});
+  MyApp({this.observer, this.initialLinkProvider});
 
   @override
   State<StatefulWidget> createState() {
     return AplAppState<MyApp>(
+      initialLinkProvider: initialLinkProvider,
       navObserver: observer,
         defaultConfig: AplConfig.getDefault(),
         splashBuilder: (config) => Scaffold(

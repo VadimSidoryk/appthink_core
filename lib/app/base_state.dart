@@ -35,16 +35,19 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final Set<AplModule> modules;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
+  final Future<String?> Function() _initialLinkProvider;
 
   AplAppState(
       {String? title,
       this.navObserver,
       required this.defaultConfig,
       required this.splashBuilder,
+      Future<String?> Function()? initialLinkProvider,
       Set<Analyst>? analysts,
       required this.routes,
       this.modules = const {}})
-      : this.title = title ?? "Applithium Based Application";
+      : this.title = title ?? "Applithium Based Application",
+        _initialLinkProvider = initialLinkProvider ?? getInitialLink;
 
   @override
   initState() {
@@ -67,7 +70,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                 final config = provider != null
                     ? (await provider.getApplicationConfig())
                     : defaultConfig;
-                 final initialLink = await getInitialLink();
+                final initialLink = await _initialLinkProvider.call();
                 log("initial link = $initialLink");
                 return _AppInitialData(defaultConfig, config, initialLink);
               },
@@ -179,7 +182,7 @@ class _RealApplicationState extends State<_RealApplication> {
   }
 
   void _setupWidgetObservers() {
-    logMethod(methodName: "setupWidgetObservers");
+    logMethod("setupWidgetObservers");
     if (_widgetObserver != null) {
       WidgetsBinding.instance?.removeObserver(_widgetObserver!);
     }
@@ -188,7 +191,7 @@ class _RealApplicationState extends State<_RealApplication> {
   }
 
   void _handleIncomingLinks() {
-    logMethod(methodName: "handleIncomingLinks");
+    logMethod("handleIncomingLinks");
     // It will handle app links while the app is already started - be it in
     // the foreground or in the background.
     _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {
@@ -206,7 +209,7 @@ class _RealApplicationState extends State<_RealApplication> {
   }
 
   void _processAction(AplAction action, Object? sender) async {
-    logMethod(methodName: "processAction", params: [action, sender]);
+    logMethod("processAction", params: [action, sender]);
     switch (action.type) {
       case AplActionType.ROUTE:
         _router.applyRoute(action.path);
