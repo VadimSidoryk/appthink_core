@@ -23,11 +23,14 @@ void main() {
 
 class MyApp extends StatefulWidget {
 
-  Stream<Route>? routeObs;
+  final NavigatorObserver? observer;
+
+  MyApp({this.observer});
 
   @override
   State<StatefulWidget> createState() {
-    final result = AplAppState<MyApp>(
+    return AplAppState<MyApp>(
+      navObserver: observer,
         defaultConfig: AplConfig.getDefault(),
         splashBuilder: (config) => Scaffold(
               body: Center(child: Text(splashTitle)),
@@ -48,7 +51,5 @@ class MyApp extends StatefulWidget {
                     builder: presentationScope((context) => ListingScreen())),
               ])
         ]);
-    routeObs = result.routesObs;
-    return result;
   }
 }
