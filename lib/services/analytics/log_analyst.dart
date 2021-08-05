@@ -9,11 +9,11 @@ class LogAnalyst extends Analyst {
 
   @override
   void setUserProperty(String name, value) {
-    logMethod(methodName: "setUserProperty", params: [name, value]);
+    logMethod("setUserProperty", params: [name, value]);
   }
 
   @override
   void onNewEvent(AplEvent event) {
-    logMethod(methodName: "trackEventWithParams", params: [event.name, event.params]);
+    logMethod("trackEventWithParams", params: [event.name, event.params]);
   }
 }

@@ -14,18 +14,18 @@ class AnalyticsService extends AplService<AnalyticsConfig>
   final List<Analyst> analysts = [];
 
   void addAnalyst(Analyst analyst) {
-    logMethod(methodName: "addAnalyst", params: [analyst]);
+    logMethod("addAnalyst", params: [analyst]);
     analysts.add(analyst);
   }
 
   void setUserProperty(String name, dynamic value) {
-    logMethod(methodName: "setUserProperty", params: [name, value]);
+    logMethod("setUserProperty", params: [name, value]);
     analysts.forEach((impl) => impl.setUserProperty(name, value));
   }
 
   @override
   void onNewEvent(AplEvent event) {
-    logMethod(methodName: "trackEventWithParams", params: [event]);
+    logMethod("trackEventWithParams", params: [event]);
     analysts.forEach((impl) => impl.onNewEvent(event));
   }
 
@@ -45,7 +45,7 @@ class AnalyticsService extends AplService<AnalyticsConfig>
 
   @override
   List<NavigatorObserver> get navigatorObservers {
-    logMethod(methodName: "navigatorObservers");
+    logMethod("navigatorObservers");
     return analysts
         .map((impl) => impl.navigatorObservers)
         .reduce((result, currentList) => result + currentList)
