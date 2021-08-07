@@ -53,23 +53,24 @@ void main() {
     expect(find.byType(PickerScreen), findsOneWidget);
   });
 
-  // testWidgets("start app with /content deeplink", (tester) async {
-  //   final MyApp app = MyApp(observer: mockObserver, initialLinkProvider: () async => "/content");
-  //   await tester.pumpWidget(app);
-  //   await untilCalled(mockObserver.didPush(any, any));
-  //   expect(find.text(splashTitle), findsOneWidget);
-  //   await tester.pump(new Duration(seconds: 2));
-  //   await tester.pumpWidget(app);
-  //   expect(find.byType(ContentScreen), findsOneWidget);
-  // });
-  //
-  // testWidgets("start app with /list deeplink", (tester) async {
-  //   final MyApp app = MyApp(observer: mockObserver, initialLinkProvider: () async => "/list");
-  //   await tester.pumpWidget(app);
-  //   await untilCalled(mockObserver.didPush(any, any));
-  //   expect(find.text(splashTitle), findsOneWidget);
-  //   await tester.pump(new Duration(seconds: 3));
-  //   await tester.pumpWidget(app);
-  //   expect(find.byType(ListingScreen), findsOneWidget);
-  // });
+  testWidgets("start app with /content deeplink", (tester) async {
+
+      final MyApp app = MyApp(
+          observer: mockObserver, initialLinkProvider: () async => "/content");
+      await tester.pumpWidget(app);
+      await untilCalled(mockObserver.didPush(any, any));
+      expect(find.text(splashTitle), findsOneWidget);
+      await tester.pumpAndSettle(new Duration(seconds: 5));
+      expect(find.byType(ContentScreen), findsOneWidget);
+
+  });
+
+  testWidgets("start app with /list deeplink", (tester) async {
+    final MyApp app = MyApp(observer: mockObserver, initialLinkProvider: () async => "/list");
+    await tester.pumpWidget(app);
+    await untilCalled(mockObserver.didPush(any, any));
+    expect(find.text(splashTitle), findsOneWidget);
+    await tester.pumpAndSettle(new Duration(seconds: 5));
+    expect(find.byType(ListingScreen), findsOneWidget);
+  });
 }
