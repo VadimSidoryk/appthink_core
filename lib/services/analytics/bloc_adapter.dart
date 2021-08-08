@@ -14,8 +14,7 @@ class BlocEventsAdapter extends BlocsListener {
 
   @override
   void onError(BaseBloc bloc, e) {
-    logMethod("onError", params: [bloc, e]);
-    logError(e);
+    logError("onError", ex: e);
   }
 
   @override
