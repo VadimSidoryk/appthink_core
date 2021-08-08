@@ -21,6 +21,7 @@ import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/resources/service.dart';
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -54,6 +55,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     log("initState");
     super.initState();
     globalStore = _buildGlobalStore(modules);
+    _plantCustomLogTree();
   }
 
   @override
@@ -80,6 +82,27 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                   builder: (context) => _RealApplication(
                       initialData: initialData, routes: routes, title: title)),
             )));
+  }
+
+
+  @override
+  void dispose() {
+    _unPlantCustomLogTree();
+    super.dispose();
+  }
+
+  void _plantCustomLogTree() {
+    final customTree = globalStore.getOrNull<LogTree>();
+    if(customTree != null) {
+      Fimber.plantTree(customTree);
+    }
+  }
+
+  void _unPlantCustomLogTree() {
+    final customTree = globalStore.getOrNull<LogTree>();
+    if(customTree != null) {
+      Fimber.unplantTree(customTree);
+    }
   }
 }
 
@@ -204,7 +227,7 @@ class _RealApplicationState extends State<_RealApplication> {
       }
     }, onError: (Object err) {
       if (!mounted) return;
-      logError(err);
+      logError("can't handle incoming link", ex: err);
     });
   }
 

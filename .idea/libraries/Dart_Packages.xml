@@ -16,13 +16,6 @@
             </list>
           </value>
         </entry>
-        <entry key="applithium_core">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/git/core-bf511fc126aa9c717d8fc7c7136f83b0cefdea1a/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="args">
           <value>
             <list>
@@ -121,13 +114,6 @@
             </list>
           </value>
         </entry>
-        <entry key="copy_with_extension">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.2/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="crypto">
           <value>
             <list>
@@ -168,6 +154,13 @@
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.2/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="fimber">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fimber-0.6.1/lib" />
             </list>
           </value>
         </entry>
@@ -217,6 +210,20 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.1.0/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="firebase_crashlytics">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_crashlytics-2.1.1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="firebase_crashlytics_platform_interface">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_crashlytics_platform_interface-3.1.0/lib" />
             </list>
           </value>
         </entry>
@@ -639,7 +646,6 @@
       </option>
     </properties>
     <CLASSES>
-      <root url="file://$USER_HOME$/.pub-cache/git/core-bf511fc126aa9c717d8fc7c7136f83b0cefdea1a/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-22.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.7.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/args-2.2.0/lib" />
@@ -656,7 +662,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/code_builder-4.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/convert-3.0.1/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dart_style-2.0.3/lib" />
@@ -664,6 +669,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/ffi-1.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/file-6.1.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fimber-0.6.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase-9.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_analytics-8.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_analytics_platform_interface-2.0.1/lib" />
@@ -671,6 +677,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core-1.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core_platform_interface-4.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core_web-1.1.0/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_crashlytics-2.1.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_crashlytics_platform_interface-3.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_messaging-10.0.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_messaging_platform_interface-3.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_messaging_web-2.0.3/lib" />

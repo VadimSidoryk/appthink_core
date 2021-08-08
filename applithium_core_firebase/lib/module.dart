@@ -6,7 +6,9 @@ import 'package:applithium_core/services/analytics/service.dart';
 import 'package:applithium_core/services/messaging/service.dart';
 import 'package:applithium_core_firebase/analytics.dart';
 import 'package:applithium_core_firebase/config.dart';
+import 'package:applithium_core_firebase/crashlytics_tree.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fimber/fimber.dart';
 
 import 'messaging.dart';
 
@@ -18,6 +20,7 @@ class FirebaseModule extends AplModule {
     store.add<ConfigProvider>((provider) => FirebaseConfigProvider(
       fetchTimeoutSec: 2
     ));
+    store.add<LogTree>((provider) => CrashlyticsTree());
   }
 
   @override

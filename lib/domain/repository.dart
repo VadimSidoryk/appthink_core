@@ -31,8 +31,8 @@ class AplRepository<T> {
       onNewData(data);
       completer.complete(true);
     }, onError: (error, stacktrace) {
-      logError(error);
-      completer.complete(false);
+          logError("applyInitial cause error", ex: error);
+          completer.complete(false);
     }, onCancel: () {
       completer.complete(false);
     });
@@ -53,7 +53,7 @@ class AplRepository<T> {
         onNewData(data);
         completer.complete(true);
       }, onError: (error, stacktrace) {
-        logError(error);
+        logError("apply cause error", ex: error);
         completer.complete(false);
       }, onCancel: () {
         completer.complete(false);
@@ -64,7 +64,7 @@ class AplRepository<T> {
           onNewData(data);
           completer.complete(true);
         }, onError: (error, stacktrace) {
-          logError(error);
+          logError("apply cause error", ex: error);
           completer.complete(false);
         }, onCancel: () {
           completer.complete(false);
