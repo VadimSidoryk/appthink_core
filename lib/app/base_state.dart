@@ -52,6 +52,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
   @override
   initState() {
+    Fimber.plantTree(DebugTree());
     log("initState");
     super.initState();
     globalStore = _buildGlobalStore(modules);
@@ -88,6 +89,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   @override
   void dispose() {
     _unPlantCustomLogTree();
+    Fimber.unplantTree(DebugTree());
     super.dispose();
   }
 
