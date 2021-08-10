@@ -20,7 +20,9 @@ import 'package:applithium_core/services/analytics/usage_adapter.dart';
 import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
-import 'package:applithium_core/services/resources/service.dart';
+import 'package:applithium_core/services/localization/delegate.dart';
+import 'package:applithium_core/services/localization/helper.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -174,9 +176,6 @@ class _RealApplicationState extends State<_RealApplication> {
     Scope.of(context)?.store.add((provider) => _router);
     BlocSupervisor.listener = context.get<EventBus>().blocListener;
     context
-        .get<ResourceService>()
-        .init(context, widget.initialData.config.resources);
-    context
         .get<EventTriggeredHandlerService>()
         .setActionHandler(_processAction);
     _setupWidgetObservers();
@@ -193,6 +192,11 @@ class _RealApplicationState extends State<_RealApplication> {
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
+      localizationsDelegates: [
+        AppLocalizationsDelegate(widget.initialData.config.localizations),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
     );
   }
 
@@ -280,7 +284,6 @@ Store _buildAppStore(
           provider.get<AnalyticsService>(),
           TriggeredEventsHandlerAdapter(provider.get())
         }))
-    ..add((provider) => ResourceService())
     ..add((provider) => data.config);
 
   store.add((provider) => UsageHistoryService(
