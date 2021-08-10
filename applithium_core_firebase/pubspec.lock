@@ -59,6 +59,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  copy_with_extension:
+    dependency: transitive
+    description:
+      name: copy_with_extension
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   fake_async:
     dependency: transitive
     description:
@@ -80,13 +87,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.1"
-  fimber:
-    dependency: transitive
-    description:
-      name: fimber
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.1"
   firebase:
     dependency: transitive
     description:
