@@ -3,11 +3,15 @@ import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
+
+const CONTENT_SCREEN_TITLE = "Content Screen";
+const LIST_SCREEN_TITLE = "List Screen";
 
 class PickerScreen extends StatelessWidget {
   static final items = [
-    _PickerItem("Content Screen", "/content"),
-    _PickerItem("List Screen", "/list")
+    _PickerItem(CONTENT_SCREEN_TITLE, "/content"),
+    _PickerItem(LIST_SCREEN_TITLE, "/list")
   ];
 
   @override
@@ -17,7 +21,7 @@ class PickerScreen extends StatelessWidget {
         body: ListView.builder(
             itemCount: items.length,
             itemBuilder: (context, pos) => GestureDetector(
-                  child: ListTile(title: Text(items[pos].title)),
+                  child: ListTile(title: Text(items[pos].title).tr(context)),
                   onTap: () =>
                       context.get<AplRouter>().applyRoute(items[pos].path),
                 )));

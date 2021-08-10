@@ -21,13 +21,13 @@ import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/localization/delegate.dart';
-import 'package:applithium_core/services/localization/helper.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
@@ -39,6 +39,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
+  final Locale? locale;
 
   AplAppState(
       {String? title,
@@ -48,6 +49,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       Future<String?> Function()? initialLinkProvider,
       Set<Analyst>? analysts,
       required this.routes,
+      this.locale,
       this.modules = const {}})
       : this.title = title ?? "Applithium Based Application",
         _initialLinkProvider = initialLinkProvider ?? getInitialLink;
@@ -83,10 +85,12 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                   parentContext: context,
                   store: _buildAppStore(modules: modules, data: initialData),
                   builder: (context) => _RealApplication(
-                      initialData: initialData, routes: routes, title: title)),
+                      locale: locale,
+                      initialData: initialData,
+                      routes: routes,
+                      title: title)),
             )));
   }
-
 
   @override
   void dispose() {
@@ -97,14 +101,14 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
   void _plantCustomLogTree() {
     final customTree = globalStore.getOrNull<LogTree>();
-    if(customTree != null) {
+    if (customTree != null) {
       Fimber.plantTree(customTree);
     }
   }
 
   void _unPlantCustomLogTree() {
     final customTree = globalStore.getOrNull<LogTree>();
-    if(customTree != null) {
+    if (customTree != null) {
       Fimber.unplantTree(customTree);
     }
   }
@@ -142,9 +146,11 @@ class _RealApplication extends StatefulWidget {
   final _AppInitialData initialData;
   final String title;
   final List<RouteDetails> routes;
+  final Locale? locale;
 
   const _RealApplication(
       {Key? key,
+      this.locale,
       required this.title,
       required this.initialData,
       required this.routes})
@@ -185,6 +191,11 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
+
+    final localizationConfig = widget.initialData.config.localizations;
+    final supportedLocales = localizationConfig.getSupportedLocaleCodes()
+    .map((item) => item.toLocale()).toList();
+
     return MaterialApp(
       title: widget.title,
       theme: context.getOrNull(),
@@ -192,8 +203,10 @@ class _RealApplicationState extends State<_RealApplication> {
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
+      locale: widget.locale,
+      supportedLocales: supportedLocales,
       localizationsDelegates: [
-        AppLocalizationsDelegate(widget.initialData.config.localizations),
+        AppLocalizationsDelegate(localizationConfig),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
