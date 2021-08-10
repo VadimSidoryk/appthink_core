@@ -1,5 +1,6 @@
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
+import 'package:applithium_core/services/localization/config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
@@ -25,7 +26,10 @@ class FirebaseConfigProvider extends ConfigProvider {
     await remoteConfig.setDefaults(defaults);
     RemoteConfigValue(null, ValueSource.valueStatic);
 
-    return AplConfig.getDefault();
+    return AplConfig(
+      messagingApiKey: "",
+      localizations: LocalizationConfig({})
+    );
 
   }
 

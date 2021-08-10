@@ -3,6 +3,7 @@ import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/router/matchers.dart';
 import 'package:applithium_core/router/route_details.dart';
+import 'package:applithium_core/services/localization/config.dart';
 import 'package:applithium_core_example/listing/presentation.dart';
 import 'package:applithium_core_example/picker/presentation.dart';
 import 'package:applithium_core_firebase/module.dart';
@@ -22,18 +23,25 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-
   final NavigatorObserver? observer;
   final Future<String?> Function()? initialLinkProvider;
+  final Locale? locale;
+  final AplConfig config;
 
-  MyApp({this.observer, this.initialLinkProvider});
+  MyApp(
+      {this.observer,
+      this.initialLinkProvider,
+      this.locale,
+      this.config = const AplConfig(
+          messagingApiKey: "", localizations: LocalizationConfig({}))});
 
   @override
   State<StatefulWidget> createState() {
     return AplAppState<MyApp>(
-      initialLinkProvider: initialLinkProvider,
-      navObserver: observer,
-        defaultConfig: AplConfig.getDefault(),
+        locale: locale,
+        initialLinkProvider: initialLinkProvider,
+        navObserver: observer,
+        defaultConfig: config,
         splashBuilder: (config) => Scaffold(
               body: Center(child: Text(splashTitle)),
             ),

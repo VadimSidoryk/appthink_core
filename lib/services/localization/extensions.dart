@@ -1,12 +1,12 @@
 import 'package:flutter/widgets.dart';
 
 import 'helper.dart';
+import 'package:applithium_core/logs/extension.dart';
 
 extension TranslatableText on Text {
   Text tr(BuildContext context) => Text(
       Localizations.of<LocalizationHelper>(context, LocalizationHelper)
-              ?.translate(data!) ??
-          "Can't find localization",
+              ?.translate(data!) ?? data!..logError("Can't find localization"),
       key: key,
       style: style,
       strutStyle: strutStyle,
@@ -19,4 +19,22 @@ extension TranslatableText on Text {
       maxLines: maxLines,
       semanticsLabel: semanticsLabel,
       textWidthBasis: textWidthBasis);
+}
+
+extension LocaleHelper on String {
+  Locale toLocale({String separator = '-'}) {
+    final localeList = split(separator);
+    switch (localeList.length) {
+      case 2:
+        return Locale(localeList.first, localeList.last);
+      case 3:
+        return Locale.fromSubtags(
+          languageCode: localeList.first,
+          scriptCode: localeList[1],
+          countryCode: localeList.last,
+        );
+      default:
+        return Locale(localeList.first);
+    }
+  }
 }
