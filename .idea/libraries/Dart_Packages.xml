@@ -20,7 +20,7 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/lib" />
-              <option value="$USER_HOME$/.pub-cache/git/core-bf511fc126aa9c717d8fc7c7136f83b0cefdea1a/lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-7dee1bd23d6bd81ef5a939e5bbf371c39e08367c/lib" />
             </list>
           </value>
         </entry>
@@ -126,13 +126,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/convert-3.0.1/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="copy_with_extension">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.2/lib" />
             </list>
           </value>
         </entry>
@@ -685,7 +678,7 @@
     <CLASSES>
       <root url="file://$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/applithium_core_firebase/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-bf511fc126aa9c717d8fc7c7136f83b0cefdea1a/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-7dee1bd23d6bd81ef5a939e5bbf371c39e08367c/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-22.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.7.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/args-2.2.0/lib" />
@@ -702,7 +695,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/code_builder-4.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/collection-1.15.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/convert-3.0.1/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/copy_with_extension-2.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dart_style-2.0.3/lib" />
