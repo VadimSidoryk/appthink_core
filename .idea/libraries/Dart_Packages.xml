@@ -20,7 +20,7 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/lib" />
-              <option value="$USER_HOME$/.pub-cache/git/core-7dee1bd23d6bd81ef5a939e5bbf371c39e08367c/lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-22e5a6681c4ef1d2b2368f652beb8ff69a537c33/lib" />
             </list>
           </value>
         </entry>
@@ -676,9 +676,9 @@
       </option>
     </properties>
     <CLASSES>
+      <root url="file://$USER_HOME$/.pub-cache/git/core-22e5a6681c4ef1d2b2368f652beb8ff69a537c33/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/applithium_core_firebase/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-7dee1bd23d6bd81ef5a939e5bbf371c39e08367c/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-22.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.7.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/args-2.2.0/lib" />

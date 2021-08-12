@@ -6,7 +6,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "7dee1bd23d6bd81ef5a939e5bbf371c39e08367c"
+      resolved-ref: "22e5a6681c4ef1d2b2368f652beb8ff69a537c33"
       url: "ssh://git@bitbucket.org/appthink/core.git"
     source: git
     version: "0.0.3"
