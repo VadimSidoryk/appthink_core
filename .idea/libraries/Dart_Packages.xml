@@ -19,7 +19,7 @@
         <entry key="applithium_core">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-37f6c18e99026bd63d7f9bc5567ffe30cfbe39aa/lib" />
               <option value="$USER_HOME$/.pub-cache/git/core-22e5a6681c4ef1d2b2368f652beb8ff69a537c33/lib" />
             </list>
           </value>
@@ -27,7 +27,7 @@
         <entry key="applithium_core_firebase">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/applithium_core_firebase/lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-37f6c18e99026bd63d7f9bc5567ffe30cfbe39aa/applithium_core_firebase/lib" />
             </list>
           </value>
         </entry>
@@ -301,7 +301,7 @@
         <entry key="flutter_local_notifications">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.1.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.1.1+1/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.0.0/lib" />
             </list>
           </value>
@@ -677,8 +677,8 @@
     </properties>
     <CLASSES>
       <root url="file://$USER_HOME$/.pub-cache/git/core-22e5a6681c4ef1d2b2368f652beb8ff69a537c33/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/applithium_core_firebase/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-6258a8379e506cd07fa39a5a5035ee36c5ae1910/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-37f6c18e99026bd63d7f9bc5567ffe30cfbe39aa/applithium_core_firebase/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-37f6c18e99026bd63d7f9bc5567ffe30cfbe39aa/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-22.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.7.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/args-2.2.0/lib" />
@@ -720,7 +720,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fixnum-1.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_bloc-7.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.0.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.1.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.1.1+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications_platform_interface-4.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fluttertoast-8.0.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/glob-2.0.1/lib" />
