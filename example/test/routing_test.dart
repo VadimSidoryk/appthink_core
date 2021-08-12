@@ -44,12 +44,12 @@ void main() {
   });
 
   testWidgets("start app without deeplink", (tester) async {
-    final MyApp app = MyApp(observer: mockObserver, initialLinkProvider: () async => null);
+    final MyApp app = MyApp(
+        observer: mockObserver, initialLinkProvider: () async => null);
     await tester.pumpWidget(app);
     await untilCalled(mockObserver.didPush(any, any));
     expect(find.text(splashTitle), findsOneWidget);
-    await tester.pump(new Duration(seconds: 3));
-    await tester.pumpWidget(app);
+    await tester.pumpAndSettle(new Duration(seconds: 3));
     expect(find.byType(PickerScreen), findsOneWidget);
   });
 
