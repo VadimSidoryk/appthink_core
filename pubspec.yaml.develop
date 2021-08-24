@@ -1,6 +1,6 @@
 name: applithium_core
 description: Applithium architecture core plugin
-version: 0.0.4
+version: 0.0.5
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -13,11 +13,11 @@ dependencies:
     sdk: flutter
 
   fluttertoast: ^8.0.8
-  flutter_bloc: ^7.1.0
+  flutter_bloc: ^7.2.0
   rxdart: ^0.27.1
   async: ^2.6.1
   http: ^0.13.3
-  shared_preferences: ^2.0.6
+  shared_preferences: ^2.0.7
   uni_links: ^0.5.1
   fimber: ^0.6.1
 
