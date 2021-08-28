@@ -1,9 +1,9 @@
 import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/src/widgets/navigator.dart';
-import 'package:applithium_core/logs/extension.dart';
 
 class FirebaseAnalyst extends Analyst {
 

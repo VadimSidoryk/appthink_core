@@ -1,9 +1,9 @@
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
 
 const CONTENT_SCREEN_TITLE = "Content Screen";
 const LIST_SCREEN_TITLE = "List Screen";

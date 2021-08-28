@@ -1,5 +1,4 @@
 import 'package:applithium_core/services/localization/config.dart';
-import 'package:flutter/rendering.dart';
 
 class AplConfig {
 

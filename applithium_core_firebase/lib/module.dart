@@ -7,8 +7,8 @@ import 'package:applithium_core/services/messaging/service.dart';
 import 'package:applithium_core_firebase/analytics.dart';
 import 'package:applithium_core_firebase/config.dart';
 import 'package:applithium_core_firebase/crashlytics_tree.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:fimber/fimber.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'messaging.dart';
 
