@@ -1,7 +1,7 @@
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 import 'helper.dart';
-import 'package:applithium_core/logs/extension.dart';
 
 extension TranslatableText on Text {
   Text tr(BuildContext context) => Text(

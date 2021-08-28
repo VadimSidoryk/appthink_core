@@ -21,13 +21,13 @@ import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/localization/delegate.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
