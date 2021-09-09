@@ -1,12 +1,10 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/listing/bloc.dart';
 import 'package:applithium_core/mocks/utils.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:applithium_core/usecases/list/remove_items.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:applithium_core_example/listing/model.dart';
-import 'package:flutter/cupertino.dart';
 
 abstract class ListingScreenEvents extends BaseListEvents {
   ListingScreenEvents._(String name) : super(name);
@@ -40,22 +38,12 @@ UseCase<List<ListItemModel>, List<ListItemModel>> removeItemsById(int id) {
 }
 
 final DomainGraph<List<ListItemModel>, ListingState<ListItemModel>>
-    listingGraph = (state, event) {
+    listingGraph = createListingGraph(listLoader, loadMore).plus((state, event) {
   if (event is _RemoveItem) {
     final id = event.id;
-    return DomainGraphEdge(sideEffect: removeItemsById(id));
+    return DomainGraphEdge(sideEffect: SideEffect.change(removeItemsById(id)));
   } else {
     return null;
   }
-};
+});
 
-ListingBloc<ListItemModel> provideListingBloc(
-    BuildContext context, Presenters presenters) {
-  final path = ModalRoute.of(context)?.settings.name;
-  return ListingBloc(
-      repository: context.get(key: path ?? ""),
-      presenters: presenters,
-      load: listLoader,
-      loadMore: loadMore,
-      customGraph: listingGraph);
-}

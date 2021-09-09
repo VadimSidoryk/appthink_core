@@ -62,9 +62,42 @@ abstract class BaseState<T> {
   BaseState withError(dynamic error);
 }
 
+abstract class SideEffect<M> {
+
+  Future<bool> apply(AplRepository<M> repo);
+
+  factory SideEffect.change(UseCase<M, M> changingUseCase) => Change._(changingUseCase);
+
+  factory SideEffect.get(UseCase<void, M> sourceUseCase) => Get._(sourceUseCase);
+}
+
+class Get<M> implements SideEffect<M> {
+  final UseCase<void, M> sourceUseCase;
+
+  Get._(this.sourceUseCase);
+
+  @override
+  Future<bool> apply(AplRepository<M> repo) {
+    return repo.applyInitial(sourceUseCase);
+  }
+}
+
+class Change<M> implements SideEffect<M> {
+
+  final UseCase<M, M> changingUseCase;
+
+  Change._(this.changingUseCase);
+
+  @override
+  Future<bool> apply(AplRepository<M> repo) {
+    return repo.apply(changingUseCase);
+  }
+}
+
+
 class DomainGraphEdge<M, S extends BaseState<M>> {
   final S? newState;
-  final UseCase<M, M>? sideEffect;
+  final SideEffect<M>? sideEffect;
   final S? Function(bool)? resultStateProvider;
 
   DomainGraphEdge({this.newState, this.sideEffect, this.resultStateProvider});
@@ -73,7 +106,14 @@ class DomainGraphEdge<M, S extends BaseState<M>> {
 typedef DomainGraph<M, S extends BaseState<M>> = DomainGraphEdge<M, S>?
     Function(S, BaseEvents);
 
-abstract class BaseBloc<M, S extends BaseState<M>>
+extension DomainGraphUtils<M, S extends BaseState<M>> on DomainGraph<M, S> {
+  DomainGraph<M,S> plus(DomainGraph<M, S> plusGraph) => (state, event) {
+    return this.call(state, event) ?? plusGraph.call(state, event);
+  };
+}
+
+
+class AplBloc<M, S extends BaseState<M>>
     extends Bloc<BaseEvents, S> {
   final AplRepository<M> repository;
   final Presenters presenters;
@@ -84,7 +124,7 @@ abstract class BaseBloc<M, S extends BaseState<M>>
   @protected
   S get currentState => state;
 
-  BaseBloc(
+  AplBloc(
       {required S initialState,
       required this.repository,
       required this.presenters,
@@ -128,7 +168,7 @@ abstract class BaseBloc<M, S extends BaseState<M>>
     }
 
     if (edge?.sideEffect != null) {
-      final sideEffectApplied = await repository.apply(edge!.sideEffect!);
+      final sideEffectApplied = await edge!.sideEffect!.apply(repository);
       final futureState = edge.resultStateProvider?.call(sideEffectApplied);
       if (futureState != null) {
         yield futureState;

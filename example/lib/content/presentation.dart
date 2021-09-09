@@ -8,14 +8,8 @@ import 'domain.dart';
 import 'model.dart';
 
 class ContentScreen
-    extends AplWidget<ContentViewModel, ContentState<ContentViewModel>> {
+    extends GraphBasedWidget<ContentViewModel, ContentState<ContentViewModel>> {
   ContentScreen() : super(createWidgetForState);
-
-  @override
-  BaseBloc<ContentViewModel, ContentState<ContentViewModel>> createBloc(
-      BuildContext context, Presenters presenters) {
-    return provideContentBloc(context, presenters);
-  }
 
   static Widget createWidgetForState(BuildContext context,
       ContentState<ContentViewModel> state, EventsHandler eventsHandler) {
@@ -70,5 +64,14 @@ class ContentScreen
       }
       return Scaffold(body: Center(child: Text("failed $error")));
     }
+  }
+
+  @override
+  DomainGraph<ContentViewModel, ContentState<ContentViewModel>>
+      get domainGraph => contentGraph;
+
+  @override
+  ContentState<ContentViewModel> getInitialState() {
+    return ContentState.initial();
   }
 }

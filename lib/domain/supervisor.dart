@@ -7,9 +7,9 @@ class BlocSupervisor {
 }
 
 abstract class BlocsListener {
-  void onNewEvent(BaseBloc bloc, AplEvent event);
+  void onNewEvent(AplBloc bloc, AplEvent event);
 
-  void onError(BaseBloc bloc, dynamic e);
+  void onError(AplBloc bloc, dynamic e);
 
-  void onNewState(BaseBloc bloc, BaseState state);
+  void onNewState(AplBloc bloc, BaseState state);
 }

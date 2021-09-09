@@ -1,4 +1,5 @@
 import 'package:applithium_core/domain/base_bloc.dart';
+import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/events/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,20 +10,21 @@ typedef WidgetForStateFactory<M, S extends BaseState<M>> = Widget Function(Build
 
 typedef EventsHandler = Function(AplEvent);
 
-abstract class AplWidget<M, S extends BaseState<M>> extends StatelessWidget {
+abstract class BaseWidget<M, S extends BaseState<M>> extends StatelessWidget {
 
-  late final BaseBloc<dynamic, S> _bloc;
+  late final Bloc<BaseEvents, S> _bloc;
   final WidgetForStateFactory<M, S> widgetForStateFactory;
 
-  AplWidget(this.widgetForStateFactory, {Key? key}) : super(key: key);
+  BaseWidget(this.widgetForStateFactory, {Key? key}) : super(key: key);
 
-  BaseBloc<dynamic, S> createBloc(BuildContext context, Presenters presenters);
+  @protected
+  Bloc<BaseEvents, S> createBloc(BuildContext context, Presenters presenters);
 
   @override
   Widget build(BuildContext context) {
     _bloc = createBloc(context, _buildPresenters(context));
     _bloc..add(BaseEvents.screenCreated());
-    return BlocBuilder<BaseBloc<dynamic, S>, S>(
+    return BlocBuilder<Bloc<BaseEvents, S>, S>(
         bloc: _bloc, builder: (context, state) => widgetForStateFactory.call(context, state, onNewEvent));
   }
 
@@ -61,5 +63,29 @@ abstract class AplWidget<M, S extends BaseState<M>> extends StatelessWidget {
         backgroundColor: Colors.red,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+}
+
+abstract class GraphBasedWidget<M, S extends BaseState<M>> extends BaseWidget<M, S> {
+
+  @protected
+  AplRepository<M> repository = AplRepository<M>(-1);
+
+  GraphBasedWidget(WidgetForStateFactory<M, S> widgetForStateFactory) : super(widgetForStateFactory);
+
+  @protected
+  S getInitialState();
+
+  @protected
+  DomainGraph<M, S> get domainGraph;
+
+  @protected
+  Bloc<BaseEvents, S> createBloc(BuildContext context, Presenters presenters) {
+    return AplBloc(
+        initialState: getInitialState(),
+        repository: repository,
+        presenters: presenters,
+        customGraph: domainGraph
+    );
   }
 }

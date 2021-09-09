@@ -90,7 +90,7 @@ class FormSendingFailed<M> extends FormState<M> {
   }
 }
 
-class FormBloc<M> extends BaseBloc<M, FormState<M>> {
+class FormBloc<M> extends AplBloc<M, FormState<M>> {
   final UseCase<void, M> load;
   final UseCase<M?, M> post;
 

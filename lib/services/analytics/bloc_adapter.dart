@@ -13,18 +13,18 @@ class BlocEventsAdapter extends BlocsListener {
   BlocEventsAdapter(this.eventBus);
 
   @override
-  void onError(BaseBloc bloc, e) {
+  void onError(AplBloc bloc, e) {
     logError("onError", ex: e);
   }
 
   @override
-  void onNewEvent(BaseBloc bloc, AplEvent event) {
+  void onNewEvent(AplBloc bloc, AplEvent event) {
     logMethod("onNewEvent", params: [bloc, event]);
-    eventBus.onNewEvent(event..params[KEY_SENDER] = bloc);
+    // eventBus.onNewEvent(event..params[KEY_SENDER] = bloc);
   }
 
   @override
-  void onNewState(BaseBloc bloc, BaseState state) {
+  void onNewState(AplBloc bloc, BaseState state) {
     logMethod("onNewState", params: [bloc, state]);
   }
 }

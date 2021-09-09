@@ -1,10 +1,7 @@
-import 'dart:async';
 
-import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
-import '../repository.dart';
 
 const STATE_CONTENT_INITIAL = "initial";
 const STATE_CONTENT_LOADING = "loading";
@@ -50,36 +47,15 @@ class ContentFailed<M> extends ContentState<M> {
   ContentFailed(this.error) : super._(tag: STATE_CONTENT_ERROR);
 }
 
-class ContentBloc<M> extends BaseBloc<M, ContentState<M>> {
-  final UseCase<void, M> load;
-
-  ContentBloc(
-      {required AplRepository<M> repository,
-      required Presenters presenters,
-      required this.load,
-      DomainGraph<M, ContentState<M>>? customGraph})
-      : super(
-            initialState: ContentState.initial(),
-            repository: repository,
-            presenters: presenters,
-            customGraph: customGraph);
-
-  @override
-  Stream<ContentState<M>> mapEventToStateImpl(BaseEvents event) async* {
-    yield* super.mapEventToStateImpl(event);
-
-    if (event is ScreenCreated) {
-      yield ContentLoading();
-      repository.applyInitial(load);
-    } else if (event is ScreenOpened) {
-      repository.apply(load);
-    } else if (event is UpdateRequested) {
-      yield ContentLoading();
-      final isUpdated =
-          await repository.apply(load, resetOperationsStack: true);
-      log("isUpdated: $isUpdated");
-    } else if (event is ModelUpdated<M>) {
-      yield ContentChanged(event.data);
-    }
+DomainGraph<M, ContentState<M>> createContentGraph<M> (UseCase<void, M> load) => (state, event) {
+  if (event is ScreenCreated) {
+    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.get(load));
+  } else if (event is ScreenOpened) {
+    return DomainGraphEdge(sideEffect: SideEffect.change(load));
+  } else if (event is UpdateRequested) {
+    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.change(load));
+  } else if (event is ModelUpdated<M>) {
+    return DomainGraphEdge(newState: ContentChanged(event.data));
   }
-}
+};
+
