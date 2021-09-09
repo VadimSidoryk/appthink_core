@@ -258,13 +258,13 @@ class _RealApplicationState extends State<_RealApplication> {
         break;
       case AplActionType.SHOW_DIALOG:
         if (sender != null) {
-          final senderBloc = sender as BaseBloc;
+          final senderBloc = sender as AplBloc;
           senderBloc.showDialog(action.path);
         }
         break;
       case AplActionType.SHOW_TOAST:
         if (sender != null) {
-          final senderBloc = sender as BaseBloc;
+          final senderBloc = sender as AplBloc;
           senderBloc.showToast(action.path);
         }
         break;

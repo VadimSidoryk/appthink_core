@@ -7,16 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class ListingScreen
-    extends AplWidget<List<ListItemModel>, ListingState<ListItemModel>> {
+    extends GraphBasedWidget<List<ListItemModel>, ListingState<ListItemModel>> {
   ListingScreen() : super(createWidgetForState);
 
   static int _scrollThreshold = 200;
-
-  @override
-  BaseBloc<dynamic, ListingState<ListItemModel>> createBloc(
-      BuildContext context, Presenters presenters) {
-    return provideListingBloc(context, presenters);
-  }
 
   static Widget createWidgetForState(BuildContext context,
       ListingState<ListItemModel> state, EventsHandler handler) {
@@ -44,5 +38,13 @@ class ListingScreen
           : "Undefined error";
       return Text("error $error");
     }
+  }
+
+  @override
+  DomainGraph<List<ListItemModel>, ListingState<ListItemModel>> get domainGraph => listingGraph;
+
+  @override
+  ListingState<ListItemModel> getInitialState() {
+    return ListingState.initial();
   }
 }

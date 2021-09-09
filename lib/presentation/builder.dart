@@ -6,7 +6,7 @@ import 'package:applithium_core/scopes/store.dart';
 import 'package:flutter/cupertino.dart';
 
 WidgetBuilderWithRouteResult presentationScope<M>(
-    AplWidget<M, dynamic> Function(BuildContext) widgetProvider,
+    BaseWidget<M, dynamic> Function(BuildContext) widgetProvider,
     {int ttl = 1000}) {
   return (context, result) {
     final path = result.uri.toString();

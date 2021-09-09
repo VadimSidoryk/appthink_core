@@ -1,12 +1,8 @@
-import 'dart:async';
 
 import 'package:applithium_core/domain/content/bloc.dart';
-import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/usecases/base.dart';
-import 'package:applithium_core/usecases/list/load_more.dart';
 
 import '../base_bloc.dart';
-import '../repository.dart';
 
 const STATE_LISTING_INITIAL_TAG = "list_initial";
 const STATE_LISTING_LOADING_TAG = "list_loading";
@@ -74,42 +70,21 @@ class ListPageLoading<M> extends ListingState<M> implements HasList<M> {
   ListPageLoading(this.list): super._(tag: STATE_LISTING_PAGE_LOADING, isPageLoading: true);
 }
 
-class ListingBloc<IM> extends BaseBloc<List<IM>, ListingState<IM>> {
-  final UseCase<void, List<IM>> load;
-  final UseCase<List<IM>, List<IM>> loadMore;
-
-  ListingBloc(
-      {required AplRepository<List<IM>> repository,
-      required Presenters presenters,
-      required this.load,
-      required this.loadMore,
-      DomainGraph<List<IM>, ListingState<IM>>? customGraph})
-      : super(
-            initialState: ListingState.initial(),
-            repository: repository,
-            presenters: presenters,
-            customGraph: customGraph);
-
-  @override
-  Stream<ListingState<IM>> mapEventToStateImpl(BaseEvents event) async* {
-    yield* super.mapEventToStateImpl(event);
-
-    if (event is ScreenCreated) {
-      yield ListLoading();
-      repository.applyInitial(load);
-    } else if (event is ScreenOpened) {
-      repository.apply(load);
-    } else if (event is UpdateRequested) {
-      yield ListLoading();
-      final isUpdated = await repository.apply(load);
-      log("isUpdated: $isUpdated");
-    } else if (event is ScrolledToEnd) {
-      if (!currentState.isPageLoading) {
-        yield ListPageLoading(repository.currentData!);
-        repository.apply(listLoadMoreItems(loadMore));
-      }
-    } else if (event is ModelUpdated) {
-      yield ListChanged(event.data);
+DomainGraph<List<IM>, ListingState<IM>> createListingGraph<IM>(UseCase<void, List<IM>> load, UseCase<List<IM>, List<IM>> loadMore) => (state, event) {
+  if (event is ScreenCreated) {
+    return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.get(load));
+  } else if (event is ScreenOpened) {
+    return DomainGraphEdge(sideEffect: SideEffect.change(load));
+  } else if (event is UpdateRequested) {
+    return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.change(load));
+  } else if (event is ScrolledToEnd) {
+    if (state is HasList<IM>) {
+      final list = (state as HasList<IM>).list;
+      return DomainGraphEdge(newState: ListPageLoading(list), sideEffect: SideEffect.change(loadMore));
     }
+  } else if (event is ModelUpdated) {
+    return DomainGraphEdge(newState: ListChanged(event.data));
   }
-}
+};
+
+
