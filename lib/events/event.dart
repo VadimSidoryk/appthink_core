@@ -34,14 +34,13 @@ abstract class AplEvent extends Trackable  {
   final String name;
 
   @override
-  Map<String, Object> get params;
+  final Map<String, Object> params;
 
-  AplEvent(this.name);
+  AplEvent(this.name, [Map<String, Object>? params]): params = params ?? {};
 
   factory AplEvent.sessionStarted(int sessionCount,  int daysFromFirstSession, int dayFromLastSession) =>
   SessionStarted._(sessionCount, daysFromFirstSession, dayFromLastSession);
 
-  @override
   Map<String, dynamic> asArgs() {
     return params..[EVENT_ARG_NAME] = name;
   }

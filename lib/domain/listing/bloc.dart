@@ -16,21 +16,18 @@ const STATE_LISTING_PAGE_LOADING = "list_page_loading";
 const STATE_LISTING_PAGE_LOADED = "list_page_loaded";
 const STATE_LISTING_PAGE_LOADING_FAILED = "list_page_loading_failed";
 
-abstract class BaseListEvent extends BaseEvents {
-  @override
-  Map<String, Object> get analyticParams => {};
-
-  BaseListEvent(String name) : super(name);
+abstract class BaseListEvents extends BaseEvents {
+  BaseListEvents(String name) : super(name);
 }
 
-class DisplayData<T> extends BaseListEvent {
+class DisplayData<T> extends BaseListEvents {
   final T data;
   final isEndReached;
 
   DisplayData(this.data, this.isEndReached) : super("data_updated");
 }
 
-class ScrolledToEnd extends BaseListEvent {
+class ScrolledToEnd extends BaseListEvents {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 

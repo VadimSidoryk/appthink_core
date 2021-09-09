@@ -8,7 +8,7 @@ import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:applithium_core_example/listing/model.dart';
 import 'package:flutter/cupertino.dart';
 
-abstract class ListingScreenEvents extends BaseListEvent {
+abstract class ListingScreenEvents extends BaseListEvents {
   ListingScreenEvents._(String name) : super(name);
 
   factory ListingScreenEvents.removeItem(int id) => _RemoveItem(id);

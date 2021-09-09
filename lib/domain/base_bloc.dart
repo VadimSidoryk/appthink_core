@@ -18,10 +18,7 @@ class Presenters {
 }
 
 abstract class BaseEvents extends AplEvent {
-  BaseEvents(String name) : super(name);
-
-  @override
-  Map<String, Object> get params => {};
+  BaseEvents(String name, [Map<String, Object>? params]) : super(name, params);
 
   factory BaseEvents.screenOpened(String name) => ScreenOpened._(name);
 
@@ -34,10 +31,7 @@ abstract class BaseEvents extends AplEvent {
 class ScreenOpened extends BaseEvents {
   final String screenName;
 
-  ScreenOpened._(this.screenName) : super("screen_opened");
-
-  @override
-  Map<String, Object> get params => {"screen_name": screenName};
+  ScreenOpened._(this.screenName) : super("screen_opened", {"screen_name": screenName});
 }
 
 class DialogClosed<VM, R> extends BaseEvents {
@@ -45,10 +39,7 @@ class DialogClosed<VM, R> extends BaseEvents {
   final R result;
 
   DialogClosed._(this.source, this.result)
-      : super(result != null ? "dialog_accepted" : "dialog_dismissed");
-
-  @override
-  Map<String, Object> get params => {"source": source.toString()};
+      : super(result != null ? "dialog_accepted" : "dialog_dismissed", {"source": source.toString()});
 }
 
 class ModelUpdated<VM> extends BaseEvents {
@@ -60,10 +51,7 @@ class ModelUpdated<VM> extends BaseEvents {
 class ScreenCreated extends BaseEvents {
   final String screenName;
 
-  @override
-  Map<String, Object> get params => {"screen_name": screenName};
-
-  ScreenCreated._(this.screenName) : super(EVENT_CREATED_NAME);
+  ScreenCreated._(this.screenName) : super(EVENT_CREATED_NAME, {"screen_name": screenName});
 }
 
 abstract class BaseState<T> {
