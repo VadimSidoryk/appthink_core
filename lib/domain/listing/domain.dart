@@ -1,5 +1,5 @@
 
-import 'package:applithium_core/domain/content/bloc.dart';
+import 'package:applithium_core/domain/content/domain.dart';
 import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
@@ -12,7 +12,7 @@ const STATE_LISTING_PAGE_LOADING = "list_page_loading";
 const STATE_LISTING_PAGE_LOADED = "list_page_loaded";
 const STATE_LISTING_PAGE_LOADING_FAILED = "list_page_loading_failed";
 
-abstract class BaseListEvents extends BaseEvents {
+abstract class BaseListEvents extends WidgetEvents {
   BaseListEvents(String name) : super(name);
 }
 
@@ -71,9 +71,9 @@ class ListPageLoading<M> extends ListingState<M> implements HasList<M> {
 }
 
 DomainGraph<List<IM>, ListingState<IM>> createListingGraph<IM>(UseCase<void, List<IM>> load, UseCase<List<IM>, List<IM>> loadMore) => (state, event) {
-  if (event is ScreenCreated) {
-    return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.get(load));
-  } else if (event is ScreenOpened) {
+  if (event is WidgetCreated) {
+    return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.init(load));
+  } else if (event is WidgetShown) {
     return DomainGraphEdge(sideEffect: SideEffect.change(load));
   } else if (event is UpdateRequested) {
     return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.change(load));

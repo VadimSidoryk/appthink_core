@@ -1,6 +1,6 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/supervisor.dart';
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 

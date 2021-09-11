@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/base.dart';

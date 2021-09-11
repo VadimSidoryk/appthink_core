@@ -1,5 +1,5 @@
-import 'package:applithium_core/events/action.dart';
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/events/system_events.dart';
+import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/json/condition.dart';
 import 'package:applithium_core/json/interpolation.dart';
 import 'package:applithium_core/services/analytics/bloc_adapter.dart';
@@ -11,7 +11,7 @@ import 'event_trigger.dart';
 
 const _countKey = "count";
 
-typedef ActionHandler = Function(AplAction action, Object? sender);
+typedef ActionHandler = Function(SystemEvent action, Object? sender);
 
 class EventTriggeredHandlerService  extends AplService {
 
