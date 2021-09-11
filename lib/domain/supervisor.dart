@@ -1,4 +1,4 @@
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/events/base_event.dart';
 
 import 'base_bloc.dart';
 

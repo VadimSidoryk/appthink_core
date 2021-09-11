@@ -1,6 +1,7 @@
 import 'package:applithium_core/domain/base_bloc.dart';
-import 'package:applithium_core/domain/listing/bloc.dart';
-import 'package:applithium_core/presentation/base.dart';
+import 'package:applithium_core/domain/listing/domain.dart';
+import 'package:applithium_core/events/events_listener.dart';
+import 'package:applithium_core/presentation/graph_based.dart';
 import 'package:applithium_core_example/listing/domain.dart';
 import 'package:applithium_core_example/listing/model.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class ListingScreen
   static int _scrollThreshold = 200;
 
   static Widget createWidgetForState(BuildContext context,
-      ListingState<ListItemModel> state, EventsHandler handler) {
+      ListingState<ListItemModel> state, EventsListener handler) {
     if (state is ListLoading) {
       return Center(child: CircularProgressIndicator());
     } else if (state is HasList<ListItemModel>) {
@@ -22,7 +23,7 @@ class ListingScreen
         final maxScroll = scrollController.position.maxScrollExtent;
         final currentScroll = scrollController.position.pixels;
         if (maxScroll - currentScroll <= _scrollThreshold) {
-          handler.call(ScrolledToEnd());
+          handler.onNewEvent(ScrolledToEnd());
         }
       });
       final list = (state as HasList<ListItemModel>).list;

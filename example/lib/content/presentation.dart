@@ -1,6 +1,7 @@
 import 'package:applithium_core/domain/base_bloc.dart';
-import 'package:applithium_core/domain/content/bloc.dart';
-import 'package:applithium_core/presentation/base.dart';
+import 'package:applithium_core/domain/content/domain.dart';
+import 'package:applithium_core/events/events_listener.dart';
+import 'package:applithium_core/presentation/graph_based.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class ContentScreen
   ContentScreen() : super(createWidgetForState);
 
   static Widget createWidgetForState(BuildContext context,
-      ContentState<ContentViewModel> state, EventsHandler eventsHandler) {
+      ContentState<ContentViewModel> state, EventsListener eventsHandler) {
     if (state is ContentLoading) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     } else if (state is ContentChanged) {
@@ -35,14 +36,14 @@ class ContentScreen
                       child: ElevatedButton(
                           child: Text("remove"),
                           onPressed: () => eventsHandler
-                              .call(ContentScreenEvents.likeRemoved())),
+                              .onNewEvent(ContentScreenEvents.likeRemoved())),
                     ),
                     Container(
                         padding: EdgeInsets.all(5),
                         child: ElevatedButton(
                             child: Text("add"),
                             onPressed: () => eventsHandler
-                                .call(ContentScreenEvents.likeAdded()))),
+                                .onNewEvent(ContentScreenEvents.likeAdded()))),
                   ],
                 )),
             Padding(
@@ -50,7 +51,7 @@ class ContentScreen
                 child: ElevatedButton(
                   child: Text("Force update"),
                   onPressed: () =>
-                      eventsHandler.call(ContentScreenEvents.forceUpdate()),
+                      eventsHandler.onNewEvent(ContentScreenEvents.forceUpdate()),
                 ))
           ],
         ),

@@ -8,7 +8,7 @@ const STATE_CONTENT_LOADING = "loading";
 const STATE_CONTENT_ERROR = "failed";
 const STATE_CONTENT_LOADED = "loaded";
 
-abstract class BaseContentEvents extends BaseEvents {
+abstract class BaseContentEvents extends WidgetEvents {
   BaseContentEvents(String name) : super(name);
 }
 
@@ -48,9 +48,9 @@ class ContentFailed<M> extends ContentState<M> {
 }
 
 DomainGraph<M, ContentState<M>> createContentGraph<M> (UseCase<void, M> load) => (state, event) {
-  if (event is ScreenCreated) {
-    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.get(load));
-  } else if (event is ScreenOpened) {
+  if (event is WidgetCreated) {
+    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.init(load));
+  } else if (event is WidgetShown) {
     return DomainGraphEdge(sideEffect: SideEffect.change(load));
   } else if (event is UpdateRequested) {
     return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.change(load));

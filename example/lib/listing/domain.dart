@@ -1,5 +1,5 @@
 import 'package:applithium_core/domain/base_bloc.dart';
-import 'package:applithium_core/domain/listing/bloc.dart';
+import 'package:applithium_core/domain/listing/domain.dart';
 import 'package:applithium_core/mocks/utils.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:applithium_core/usecases/list/remove_items.dart';

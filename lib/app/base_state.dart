@@ -4,7 +4,7 @@ import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/supervisor.dart';
-import 'package:applithium_core/events/action.dart';
+import 'package:applithium_core/events/system_events.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
@@ -250,7 +250,7 @@ class _RealApplicationState extends State<_RealApplication> {
     });
   }
 
-  void _processAction(AplAction action, Object? sender) async {
+  void _processAction(SystemEvent action, Object? sender) async {
     logMethod("processAction", params: [action, sender]);
     switch (action.type) {
       case AplActionType.ROUTE:
@@ -259,13 +259,13 @@ class _RealApplicationState extends State<_RealApplication> {
       case AplActionType.SHOW_DIALOG:
         if (sender != null) {
           final senderBloc = sender as AplBloc;
-          senderBloc.showDialog(action.path);
+          // senderBloc.showDialog(action.path);
         }
         break;
       case AplActionType.SHOW_TOAST:
         if (sender != null) {
           final senderBloc = sender as AplBloc;
-          senderBloc.showToast(action.path);
+          // senderBloc.showToast(action.path);
         }
         break;
       default:

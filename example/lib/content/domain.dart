@@ -1,5 +1,5 @@
 import 'package:applithium_core/domain/base_bloc.dart';
-import 'package:applithium_core/domain/content/bloc.dart';
+import 'package:applithium_core/domain/content/domain.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 
 import 'model.dart';

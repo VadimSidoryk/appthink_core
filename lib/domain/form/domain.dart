@@ -13,7 +13,7 @@ const STATE_FORM_SENDING = "form_sending";
 const STATE_FORM_SENT = "form_sent";
 const STATE_FORM_SENDING_ERROR = "form_sending_error";
 
-abstract class FormEvents extends BaseEvents {
+abstract class FormEvents extends WidgetEvents {
   FormEvents(String name) : super(name);
 
   factory FormEvents.presetRequestUpdate() => _PresetUpdateRequested._();
@@ -96,24 +96,22 @@ class FormBloc<M> extends AplBloc<M, FormState<M>> {
 
   FormBloc(
       {required AplRepository<M> repository,
-      required Presenters presenters,
       required this.load,
       required this.post,
       DomainGraph<M, FormState<M>>? customGraph})
       : super(
             initialState: FormState.initial(),
             repository: repository,
-            presenters: presenters,
             customGraph: customGraph);
 
   @override
-  Stream<FormState<M>> mapEventToStateImpl(BaseEvents event) async* {
+  Stream<FormState<M>> mapEventToStateImpl(WidgetEvents event) async* {
     yield* super.mapEventToStateImpl(event);
 
-    if (event is ScreenCreated) {
+    if (event is WidgetCreated) {
       yield FormLoading();
       repository.applyInitial(load);
-    } else if (event is ScreenOpened) {
+    } else if (event is WidgetShown) {
       repository.apply(load);
     } else if (event is _PresetUpdateRequested) {
       yield FormLoading();

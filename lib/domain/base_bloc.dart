@@ -2,56 +2,41 @@ import 'dart:async';
 
 import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/domain/supervisor.dart';
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:applithium_core/logs/extension.dart';
 
 typedef DialogPresenter = Future<dynamic> Function(String);
 typedef ToastPresenter = void Function(String);
 
-class Presenters {
-  final DialogPresenter dialogPresenter;
-  final ToastPresenter toastPresenter;
+abstract class WidgetEvents extends AplEvent {
+  WidgetEvents(String name, [Map<String, Object>? params]) : super(name, params);
 
-  Presenters({required this.dialogPresenter, required this.toastPresenter});
+  factory WidgetEvents.widgetShown(String name) => WidgetShown._(name);
+
+  factory WidgetEvents.widgetCreated() => WidgetCreated._("undefined");
 }
 
-abstract class BaseEvents extends AplEvent {
-  BaseEvents(String name, [Map<String, Object>? params]) : super(name, params);
-
-  factory BaseEvents.screenOpened(String name) => ScreenOpened._(name);
-
-  factory BaseEvents.dialogClosed(source, result) =>
-      DialogClosed._(source, result);
-
-  factory BaseEvents.screenCreated() => ScreenCreated._("undefined");
-}
-
-class ScreenOpened extends BaseEvents {
+class WidgetShown extends WidgetEvents {
   final String screenName;
 
-  ScreenOpened._(this.screenName) : super("screen_opened", {"screen_name": screenName});
+  WidgetShown._(this.screenName)
+      : super("screen_opened", {"screen_name": screenName});
 }
 
-class DialogClosed<VM, R> extends BaseEvents {
-  final VM source;
-  final R result;
-
-  DialogClosed._(this.source, this.result)
-      : super(result != null ? "dialog_accepted" : "dialog_dismissed", {"source": source.toString()});
-}
-
-class ModelUpdated<VM> extends BaseEvents {
+class ModelUpdated<VM> extends WidgetEvents {
   final VM data;
 
   ModelUpdated._(this.data) : super("data_updated");
 }
 
-class ScreenCreated extends BaseEvents {
+class WidgetCreated extends WidgetEvents {
   final String screenName;
 
-  ScreenCreated._(this.screenName) : super(EVENT_CREATED_NAME, {"screen_name": screenName});
+  WidgetCreated._(this.screenName)
+      : super(EVENT_CREATED_NAME, {"screen_name": screenName});
 }
 
 abstract class BaseState<T> {
@@ -63,18 +48,22 @@ abstract class BaseState<T> {
 }
 
 abstract class SideEffect<M> {
-
   Future<bool> apply(AplRepository<M> repo);
 
-  factory SideEffect.change(UseCase<M, M> changingUseCase) => Change._(changingUseCase);
+  factory SideEffect.change(UseCase<M, M> changingUseCase) =>
+      Change._(changingUseCase);
 
-  factory SideEffect.get(UseCase<void, M> sourceUseCase) => Get._(sourceUseCase);
+  factory SideEffect.init(UseCase<void, M> sourceUseCase) =>
+      Init._(sourceUseCase);
+
+  factory SideEffect.send(UseCase<M, void> sendingUseCase) =>
+      Send._(sendingUseCase);
 }
 
-class Get<M> implements SideEffect<M> {
+class Init<M> implements SideEffect<M> {
   final UseCase<void, M> sourceUseCase;
 
-  Get._(this.sourceUseCase);
+  Init._(this.sourceUseCase);
 
   @override
   Future<bool> apply(AplRepository<M> repo) {
@@ -83,7 +72,6 @@ class Get<M> implements SideEffect<M> {
 }
 
 class Change<M> implements SideEffect<M> {
-
   final UseCase<M, M> changingUseCase;
 
   Change._(this.changingUseCase);
@@ -94,6 +82,27 @@ class Change<M> implements SideEffect<M> {
   }
 }
 
+class Send<M> implements SideEffect<M> {
+  final UseCase<M, void> sendingUseCase;
+
+  Send._(this.sendingUseCase);
+
+  @override
+  Future<bool> apply(AplRepository<M> repo) async {
+    final data = repo.currentData;
+    if (data == null) {
+      return false;
+    } else {
+      try {
+        await sendingUseCase.call(data);
+        return true;
+      } catch (e) {
+        logError("can't sending data", ex: e);
+        return false;
+      }
+    }
+  }
+}
 
 class DomainGraphEdge<M, S extends BaseState<M>> {
   final S? newState;
@@ -104,19 +113,16 @@ class DomainGraphEdge<M, S extends BaseState<M>> {
 }
 
 typedef DomainGraph<M, S extends BaseState<M>> = DomainGraphEdge<M, S>?
-    Function(S, BaseEvents);
+    Function(S, WidgetEvents);
 
 extension DomainGraphUtils<M, S extends BaseState<M>> on DomainGraph<M, S> {
-  DomainGraph<M,S> plus(DomainGraph<M, S> plusGraph) => (state, event) {
-    return this.call(state, event) ?? plusGraph.call(state, event);
-  };
+  DomainGraph<M, S> plus(DomainGraph<M, S> plusGraph) => (state, event) {
+        return this.call(state, event) ?? plusGraph.call(state, event);
+      };
 }
 
-
-class AplBloc<M, S extends BaseState<M>>
-    extends Bloc<BaseEvents, S> {
+class AplBloc<M, S extends BaseState<M>> extends Bloc<WidgetEvents, S> {
   final AplRepository<M> repository;
-  final Presenters presenters;
   final DomainGraph<M, S>? customGraph;
 
   StreamSubscription? _subscription;
@@ -124,28 +130,15 @@ class AplBloc<M, S extends BaseState<M>>
   @protected
   S get currentState => state;
 
-  AplBloc(
-      {required S initialState,
-      required this.repository,
-      required this.presenters,
-      this.customGraph})
+  AplBloc({required S initialState, required this.repository, this.customGraph})
       : super(initialState) {
     _subscription = repository.updatesStream.listen((data) {
       add(ModelUpdated._(data));
     });
   }
 
-  void showDialog(String path) async {
-    final result = await presenters.dialogPresenter.call(path);
-    add(DialogClosed._(path, result));
-  }
-
-  void showToast(String path) {
-    presenters.toastPresenter.call(path);
-  }
-
   @override
-  Stream<S> mapEventToState(BaseEvents event) async* {
+  Stream<S> mapEventToState(WidgetEvents event) async* {
     try {
       BlocSupervisor.listener?.onNewEvent(this, event);
 
@@ -161,17 +154,20 @@ class AplBloc<M, S extends BaseState<M>>
     }
   }
 
-  Stream<S> mapEventToStateImpl(BaseEvents event) async* {
+  Stream<S> mapEventToStateImpl(WidgetEvents event) async* {
     final edge = customGraph?.call(currentState, event);
-    if (edge?.newState != null) {
-      yield edge!.newState!;
-    }
 
-    if (edge?.sideEffect != null) {
-      final sideEffectApplied = await edge!.sideEffect!.apply(repository);
-      final futureState = edge.resultStateProvider?.call(sideEffectApplied);
-      if (futureState != null) {
-        yield futureState;
+    if (edge != null) {
+      if (edge.newState != null) {
+        yield edge.newState!;
+      }
+
+      if (edge.sideEffect != null) {
+        final sideEffectApplied = await edge!.sideEffect!.apply(repository);
+        final futureState = edge.resultStateProvider?.call(sideEffectApplied);
+        if (futureState != null) {
+          yield futureState;
+        }
       }
     }
   }
