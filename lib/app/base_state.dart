@@ -179,8 +179,13 @@ class _RealApplicationState extends State<_RealApplication> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Scope.of(context)?.store.add((provider) => _router);
-    BlocSupervisor.listener = context.get<EventBus>().blocListener;
+    Scope
+        .of(context)
+        ?.store
+        .add((provider) => _router);
+    BlocSupervisor.listener = context
+        .get<EventBus>()
+        .blocListener;
     context
         .get<EventTriggeredHandlerService>()
         .setActionHandler(_processAction);
@@ -191,10 +196,9 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
-
     final localizationConfig = widget.initialData.config.localizations;
     final supportedLocales = localizationConfig.getSupportedLocaleCodes()
-    .map((item) => item.toLocale()).toList();
+        .map((item) => item.toLocale()).toList();
 
     return MaterialApp(
       title: widget.title,
@@ -202,7 +206,9 @@ class _RealApplicationState extends State<_RealApplication> {
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: context.get<EventBus>().navigatorObservers,
+      navigatorObservers: context
+          .get<EventBus>()
+          .navigatorObservers,
       locale: widget.locale,
       supportedLocales: supportedLocales,
       localizationsDelegates: [
@@ -248,29 +254,6 @@ class _RealApplicationState extends State<_RealApplication> {
       if (!mounted) return;
       logError("can't handle incoming link", ex: err);
     });
-  }
-
-  void _processAction(SystemEvent action, Object? sender) async {
-    logMethod("processAction", params: [action, sender]);
-    switch (action.type) {
-      case AplActionType.ROUTE:
-        _router.applyRoute(action.path);
-        break;
-      case AplActionType.SHOW_DIALOG:
-        if (sender != null) {
-          final senderBloc = sender as AplBloc;
-          // senderBloc.showDialog(action.path);
-        }
-        break;
-      case AplActionType.SHOW_TOAST:
-        if (sender != null) {
-          final senderBloc = sender as AplBloc;
-          // senderBloc.showToast(action.path);
-        }
-        break;
-      default:
-        break;
-    }
   }
 }
 

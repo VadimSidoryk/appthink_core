@@ -4,7 +4,6 @@ import 'package:applithium_core/events/events_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 
 typedef WidgetForStateFactory<M, S extends BaseState<M>> = Widget Function(
     BuildContext, S, EventsListener);
@@ -22,7 +21,6 @@ abstract class BaseWidget<M, S extends BaseState<M>> extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    _eventListenerProvider = () => context.getOrNull<EventsListener>();
     _bloc = createBloc(context);
     _bloc..add(WidgetEvents.widgetCreated());
     return BlocBuilder<Bloc<WidgetEvents, S>, S>(
@@ -35,8 +33,6 @@ abstract class BaseWidget<M, S extends BaseState<M>> extends StatelessWidget
   void onNewEvent(AplEvent event) {
     if (event is WidgetEvents) {
       _bloc.add(event);
-    } else {
-      _eventListenerProvider.call()?.onNewEvent(event);
     }
   }
 }
