@@ -1,4 +1,3 @@
-import 'package:applithium_core/events/system_events.dart';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/json/condition.dart';
 import 'package:applithium_core/json/interpolation.dart';
@@ -7,11 +6,12 @@ import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'action.dart';
 import 'event_trigger.dart';
 
 const _countKey = "count";
 
-typedef ActionHandler = Function(SystemEvent action, Object? sender);
+typedef ActionHandler = Function(SystemAction action, Object? sender);
 
 class EventTriggeredHandlerService  extends AplService {
 
@@ -27,7 +27,7 @@ class EventTriggeredHandlerService  extends AplService {
     _actionsHandler = handler;
   }
 
-  void handleEvent(AplEvent event) async {
+  void handleEvent(AppEvent event) async {
     final key = "${event.name}.$_countKey";
     final count = ((await _preferencesProvider).getInt(key) ?? 0) + 1;
     (await _preferencesProvider).setInt(key, count);

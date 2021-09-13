@@ -14,7 +14,7 @@ class EventBus {
 
   List<NavigatorObserver> get navigatorObservers {
     return listeners
-        .map((impl) => impl.navigatorObserver)
+        .map((impl) => impl.navigatorObservers)
         .reduce((result, currentList) => result + currentList)
         .toList();
   }
@@ -23,7 +23,7 @@ class EventBus {
     return BlocEventsAdapter(this);
   }
 
-  void onNewEvent(AplEvent event) {
+  void onNewEvent(AppEvent event) {
     log("onNewEvent ${event.name} params: ${event.params}");
     listeners.forEach((impl) => impl.onNewEvent(event));
   }

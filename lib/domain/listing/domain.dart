@@ -1,5 +1,6 @@
 
 import 'package:applithium_core/domain/content/domain.dart';
+import 'package:applithium_core/unions/union_4.dart';
 import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
@@ -27,7 +28,7 @@ class ScrolledToEnd extends BaseListEvents {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 
-class ListingState<M> extends BaseState<List<M>> {
+class ListingState<M> extends BaseState<List<M>> with Union4<ListLoadingFailed, ListLoading, ListChanged, ListPageLoading> {
   final bool isPageLoading;
 
   ListingState._(

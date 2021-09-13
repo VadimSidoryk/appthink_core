@@ -10,11 +10,10 @@ typedef WidgetForStateFactory<M, S extends BaseState<M>> = Widget Function(
 
 abstract class BaseWidget<M, S extends BaseState<M>> extends StatelessWidget
     implements EventsListener {
-  late final EventsListener? Function() _eventListenerProvider;
   late final Bloc<WidgetEvents, S> _bloc;
-  final WidgetForStateFactory<M, S> widgetForStateFactory;
+  final WidgetForStateFactory<M, S> _widgetForStateFactory;
 
-  BaseWidget(this.widgetForStateFactory, {Key? key}) : super(key: key);
+  BaseWidget(this._widgetForStateFactory, {Key? key}) : super(key: key);
 
   @protected
   Bloc<WidgetEvents, S> createBloc(BuildContext context);
@@ -26,11 +25,11 @@ abstract class BaseWidget<M, S extends BaseState<M>> extends StatelessWidget
     return BlocBuilder<Bloc<WidgetEvents, S>, S>(
         bloc: _bloc,
         builder: (context, state) =>
-            widgetForStateFactory.call(context, state, this));
+            _widgetForStateFactory.call(context, state, this));
   }
 
   @override
-  void onNewEvent(AplEvent event) {
+  void onNewEvent(AppEvent event) {
     if (event is WidgetEvents) {
       _bloc.add(event);
     }

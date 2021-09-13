@@ -1,10 +1,12 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/content/domain.dart';
+import 'package:applithium_core/unions/union_3.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 
 import 'model.dart';
 
-abstract class ContentScreenEvents extends BaseContentEvents {
+abstract class ContentScreenEvents extends BaseContentEvents
+    with Union3<_LikeAdded, _LikeRemoved, _ForceUpdate> {
   ContentScreenEvents(String name) : super(name);
 
   factory ContentScreenEvents.likeAdded() => _LikeAdded();
@@ -38,11 +40,13 @@ Future<ContentViewModel> removeLike(ContentViewModel model) async =>
 
 final DomainGraph<ContentViewModel, ContentState<ContentViewModel>>
     contentGraph = createContentGraph(testLoad).plus((state, event) {
-  if (event is _LikeAdded) {
-    return DomainGraphEdge(sideEffect: SideEffect.change(addLike));
-  } else if (event is _LikeRemoved) {
-    return DomainGraphEdge(sideEffect: SideEffect.change(removeLike));
-  } else if (event is _ForceUpdate) {
-    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.change(testLoad));
+  if (event is ContentScreenEvents) {
+    return event.fold(
+        (likeAdded) => DomainGraphEdge(sideEffect: SideEffect.change(addLike)),
+        (likeRemoved) =>
+            DomainGraphEdge(sideEffect: SideEffect.change(removeLike)),
+        (forceUpdate) => DomainGraphEdge(
+            newState: ContentLoading(),
+            sideEffect: SideEffect.change(testLoad)));
   }
 });

@@ -1,12 +1,14 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/listing/domain.dart';
 import 'package:applithium_core/mocks/utils.dart';
+import 'package:applithium_core/unions/union_2.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:applithium_core/usecases/list/remove_items.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:applithium_core_example/listing/model.dart';
 
-abstract class ListingScreenEvents extends BaseListEvents {
+abstract class ListingScreenEvents extends BaseListEvents
+    with Union2<_RemoveItem, _AddItem> {
   ListingScreenEvents._(String name) : super(name);
 
   factory ListingScreenEvents.removeItem(int id) => _RemoveItem(id);
@@ -16,6 +18,10 @@ class _RemoveItem extends ListingScreenEvents {
   final int id;
 
   _RemoveItem(this.id) : super._("remove_item");
+}
+
+class _AddItem extends ListingScreenEvents {
+  _AddItem() : super._("add_item");
 }
 
 final listLoader = value(
@@ -38,12 +44,12 @@ UseCase<List<ListItemModel>, List<ListItemModel>> removeItemsById(int id) {
 }
 
 final DomainGraph<List<ListItemModel>, ListingState<ListItemModel>>
-    listingGraph = createListingGraph(listLoader, loadMore).plus((state, event) {
-  if (event is _RemoveItem) {
-    final id = event.id;
-    return DomainGraphEdge(sideEffect: SideEffect.change(removeItemsById(id)));
-  } else {
-    return null;
+    listingGraph =
+    createListingGraph(listLoader, loadMore).plus((state, event) {
+  if (event is ListingScreenEvents) {
+    return event.fold(
+        (removeItem) => DomainGraphEdge(
+            sideEffect: SideEffect.change(removeItemsById(removeItem.id))),
+        (addItem) => DomainGraphEdge());
   }
 });
-
