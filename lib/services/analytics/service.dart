@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/events_listener.dart';
+import 'package:applithium_core/events/system_listener.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +11,7 @@ import 'analyst.dart';
 import 'config.dart';
 
 class AnalyticsService extends AplService<AnalyticsConfig>
-    implements EventsListener {
+    implements SystemListener {
   final List<Analyst> analysts = [];
 
   void addAnalyst(Analyst analyst) {
@@ -24,7 +25,7 @@ class AnalyticsService extends AplService<AnalyticsConfig>
   }
 
   @override
-  void onNewEvent(AplEvent event) {
+  void onNewEvent(AppEvent event) {
     logMethod("trackEventWithParams", params: [event]);
     analysts.forEach((impl) => impl.onNewEvent(event));
   }

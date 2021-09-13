@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
-import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/supervisor.dart';
-import 'package:applithium_core/events/system_events.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
@@ -17,6 +15,7 @@ import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/services/analytics/service.dart';
 import 'package:applithium_core/services/analytics/usage_adapter.dart';
+import 'package:applithium_core/services/events/action.dart';
 import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
@@ -192,6 +191,10 @@ class _RealApplicationState extends State<_RealApplication> {
     _setupWidgetObservers();
     _handleIncomingLinks();
     context.get<UsageHistoryService>().openSession();
+  }
+
+  void _processAction(SystemAction action, Object? sender) {
+    log("_processAction");
   }
 
   @override

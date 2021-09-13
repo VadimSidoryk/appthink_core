@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/base_event.dart';
+import 'package:applithium_core/unions/union_3.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +12,7 @@ import 'package:applithium_core/logs/extension.dart';
 typedef DialogPresenter = Future<dynamic> Function(String);
 typedef ToastPresenter = void Function(String);
 
-abstract class WidgetEvents extends AplEvent {
+abstract class WidgetEvents extends AppEvent {
   WidgetEvents(String name, [Map<String, Object>? params]) : super(name, params);
 
   factory WidgetEvents.widgetShown(String name) => WidgetShown._(name);
@@ -47,7 +48,7 @@ abstract class BaseState<T> {
   BaseState withError(dynamic error);
 }
 
-abstract class SideEffect<M> {
+abstract class SideEffect<M> with Union3<Init, Change, Send> {
   Future<bool> apply(AplRepository<M> repo);
 
   factory SideEffect.change(UseCase<M, M> changingUseCase) =>
@@ -58,12 +59,15 @@ abstract class SideEffect<M> {
 
   factory SideEffect.send(UseCase<M, void> sendingUseCase) =>
       Send._(sendingUseCase);
+
+  SideEffect._();
+
 }
 
-class Init<M> implements SideEffect<M> {
+class Init<M> extends SideEffect<M> {
   final UseCase<void, M> sourceUseCase;
 
-  Init._(this.sourceUseCase);
+  Init._(this.sourceUseCase): super._();
 
   @override
   Future<bool> apply(AplRepository<M> repo) {
@@ -71,10 +75,10 @@ class Init<M> implements SideEffect<M> {
   }
 }
 
-class Change<M> implements SideEffect<M> {
+class Change<M> extends SideEffect<M> {
   final UseCase<M, M> changingUseCase;
 
-  Change._(this.changingUseCase);
+  Change._(this.changingUseCase): super._();
 
   @override
   Future<bool> apply(AplRepository<M> repo) {
@@ -82,10 +86,10 @@ class Change<M> implements SideEffect<M> {
   }
 }
 
-class Send<M> implements SideEffect<M> {
+class Send<M> extends SideEffect<M> {
   final UseCase<M, void> sendingUseCase;
 
-  Send._(this.sendingUseCase);
+  Send._(this.sendingUseCase): super._();
 
   @override
   Future<bool> apply(AplRepository<M> repo) async {
@@ -163,7 +167,7 @@ class AplBloc<M, S extends BaseState<M>> extends Bloc<WidgetEvents, S> {
       }
 
       if (edge.sideEffect != null) {
-        final sideEffectApplied = await edge!.sideEffect!.apply(repository);
+        final sideEffectApplied = await edge.sideEffect!.apply(repository);
         final futureState = edge.resultStateProvider?.call(sideEffectApplied);
         if (futureState != null) {
           yield futureState;

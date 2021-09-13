@@ -13,7 +13,7 @@ class LogAnalyst extends Analyst {
   }
 
   @override
-  void onNewEvent(AplEvent event) {
+  void onNewEvent(AppEvent event) {
     logMethod("trackEventWithParams", params: [event.name, event.params]);
   }
 }

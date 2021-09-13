@@ -1,11 +1,12 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/events_listener.dart';
+import 'package:applithium_core/events/system_listener.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'service.dart';
 
-class TriggeredEventsHandlerAdapter extends EventsListener {
+class TriggeredEventsHandlerAdapter extends SystemListener {
   final EventTriggeredHandlerService _service;
 
   TriggeredEventsHandlerAdapter(this._service);
@@ -15,7 +16,7 @@ class TriggeredEventsHandlerAdapter extends EventsListener {
       [_NavigatorEventsObserver(_service)];
 
   @override
-  void onNewEvent(AplEvent event) async {
+  void onNewEvent(AppEvent event) async {
     _service.handleEvent(event);
   }
 }
