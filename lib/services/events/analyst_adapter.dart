@@ -1,6 +1,5 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/events/system_listener.dart';
 import 'package:flutter/cupertino.dart';
 

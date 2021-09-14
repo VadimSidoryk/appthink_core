@@ -5,8 +5,6 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/analytics/bloc_adapter.dart';
 import 'package:flutter/widgets.dart';
 
-import 'events_listener.dart';
-
 class EventBus {
   final Set<SystemListener> listeners;
 

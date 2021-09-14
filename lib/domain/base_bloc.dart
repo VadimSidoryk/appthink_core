@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/base_event.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/unions/union_3.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:applithium_core/logs/extension.dart';
 
 typedef DialogPresenter = Future<dynamic> Function(String);
 typedef ToastPresenter = void Function(String);
@@ -51,11 +51,11 @@ abstract class BaseState<T> {
 abstract class SideEffect<M> with Union3<Init, Change, Send> {
   Future<bool> apply(AplRepository<M> repo);
 
-  factory SideEffect.change(UseCase<M, M> changingUseCase) =>
-      Change._(changingUseCase);
-
   factory SideEffect.init(UseCase<void, M> sourceUseCase) =>
       Init._(sourceUseCase);
+
+  factory SideEffect.change(UseCase<M, M> changingUseCase) =>
+      Change._(changingUseCase);
 
   factory SideEffect.send(UseCase<M, void> sendingUseCase) =>
       Send._(sendingUseCase);
