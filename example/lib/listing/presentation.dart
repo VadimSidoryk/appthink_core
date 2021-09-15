@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class ListingScreen
-    extends GraphBasedWidget<List<ListItemModel>, ListingState<ListItemModel>> {
+    extends GraphBasedWidget<List<ListItemModel>, ListingScreenState<ListItemModel>> {
   ListingScreen() : super(createWidgetForState);
 
   static int _scrollThreshold = 200;
 
   static Widget createWidgetForState(BuildContext context,
-      ListingState<ListItemModel> state, EventsListener handler) {
+      ListingScreenState<ListItemModel> state, EventsListener handler) {
     if (state is ListLoading) {
       return Center(child: CircularProgressIndicator());
     } else if (state is HasList<ListItemModel>) {
@@ -42,10 +42,10 @@ class ListingScreen
   }
 
   @override
-  DomainGraph<List<ListItemModel>, ListingState<ListItemModel>> get domainGraph => listingGraph;
+  DomainGraph<List<ListItemModel>, ListingScreenState<ListItemModel>> get domainGraph => listingGraph;
 
   @override
-  ListingState<ListItemModel> getInitialState() {
-    return ListingState.initial();
+  ListingScreenState<ListItemModel> getInitialState() {
+    return ListingScreenState.initial();
   }
 }

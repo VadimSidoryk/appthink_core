@@ -9,15 +9,15 @@ import 'domain.dart';
 import 'model.dart';
 
 class ContentScreen
-    extends GraphBasedWidget<ContentViewModel, ContentState<ContentViewModel>> {
+    extends GraphBasedWidget<ContentViewModel, ContentScreenState<ContentViewModel>> {
   ContentScreen() : super(createWidgetForState);
 
   static Widget createWidgetForState(BuildContext context,
-      ContentState<ContentViewModel> state, EventsListener eventsHandler) {
+      ContentScreenState<ContentViewModel> state, EventsListener eventsHandler) {
     if (state is ContentLoading) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
-    } else if (state is ContentChanged) {
-      final model = (state as ContentChanged<ContentViewModel>).data;
+    } else if (state is DisplayContent) {
+      final model = (state as DisplayContent<ContentViewModel>).data;
       return Scaffold(
           body: Center(
         child: Column(
@@ -58,8 +58,8 @@ class ContentScreen
       ));
     } else {
       final error;
-      if (state is ContentFailed) {
-        error = (state as ContentFailed).error;
+      if (state is ContentLoadFailed) {
+        error = (state as ContentLoadFailed).error;
       } else {
         error = "Undefined";
       }
@@ -68,11 +68,11 @@ class ContentScreen
   }
 
   @override
-  DomainGraph<ContentViewModel, ContentState<ContentViewModel>>
+  DomainGraph<ContentViewModel, ContentScreenState<ContentViewModel>>
       get domainGraph => contentGraph;
 
   @override
-  ContentState<ContentViewModel> getInitialState() {
-    return ContentState.initial();
+  ContentScreenState<ContentViewModel> getInitialState() {
+    return ContentScreenState.initial();
   }
 }

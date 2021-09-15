@@ -38,7 +38,7 @@ Future<ContentViewModel> addLike(ContentViewModel model) async =>
 Future<ContentViewModel> removeLike(ContentViewModel model) async =>
     model.copyWith(likes: model.likes - 1);
 
-final DomainGraph<ContentViewModel, ContentState<ContentViewModel>>
+final DomainGraph<ContentViewModel, ContentScreenState<ContentViewModel>>
     contentGraph = createContentGraph(testLoad).plus((state, event) {
   if (event is ContentScreenEvents) {
     return event.fold(

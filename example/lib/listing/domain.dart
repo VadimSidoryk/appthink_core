@@ -43,7 +43,7 @@ UseCase<List<ListItemModel>, List<ListItemModel>> removeItemsById(int id) {
   return removeItems((item) => item.id == id);
 }
 
-final DomainGraph<List<ListItemModel>, ListingState<ListItemModel>>
+final DomainGraph<List<ListItemModel>, ListingScreenState<ListItemModel>>
     listingGraph =
     createListingGraph(listLoader, loadMore).plus((state, event) {
   if (event is ListingScreenEvents) {

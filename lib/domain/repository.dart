@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:applithium_core/either/either.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/unions/union_3.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
@@ -9,8 +11,6 @@ import 'package:rxdart/rxdart.dart';
 class AplRepository<T> {
   @protected
   final data = BehaviorSubject<T>();
-
-  T? get currentData => data.hasValue ? data.value : null;
 
   Stream<T> get updatesStream => data.stream;
 
@@ -22,27 +22,35 @@ class AplRepository<T> {
 
   AplRepository(this.timeToLiveMillis);
 
-  Future<bool> applyInitial(UseCase<void, T> sourceOperation) async {
-    final completer = Completer<bool>();
+  Future<Either<bool>> _loadWith(UseCase<void, T> useCase) async {
+    final completer = Completer<Either<bool>>();
 
     await _cancelableOperation?.cancel();
     _cancelableOperation =
-        CancelableOperation.fromFuture(sourceOperation.call(null)).then((data) {
+        CancelableOperation.fromFuture(useCase.call(null)).then((data) {
       onNewData(data);
-      completer.complete(true);
+      completer.complete(Either.withValue(true));
     }, onError: (error, stacktrace) {
           logError("applyInitial cause error", ex: error);
-          completer.complete(false);
+          completer.complete(Either.withError(error));
     }, onCancel: () {
-      completer.complete(false);
+      completer.complete(Either.withValue(false));
     });
 
     return completer.future.whenComplete(() => _cancelableOperation = null);
   }
 
-  Future<bool> apply(UseCase<T, T> operation,
+  Future<Either<bool>> _loadIfOutdatedWith(UseCase<void, T> useCase) {
+    if(isOutdated) {
+      return _loadWith(useCase);
+    } else {
+      return Future.value(Either.withValue(false));
+    }
+  }
+
+  Future<Either<bool>> _changeWith(UseCase<T, T> operation,
       {resetOperationsStack = false}) async {
-    final completer = Completer<bool>();
+    final completer = Completer<Either<bool>>();
 
     if (resetOperationsStack || _cancelableOperation == null) {
       await _cancelableOperation?.cancel();
@@ -51,23 +59,23 @@ class AplRepository<T> {
           CancelableOperation.fromFuture(operation.call(dataValue)).then(
               (data) {
         onNewData(data);
-        completer.complete(true);
+        completer.complete(Either.withValue(true));
       }, onError: (error, stacktrace) {
         logError("apply cause error", ex: error);
-        completer.complete(false);
+        completer.complete(Either.withError(error));
       }, onCancel: () {
-        completer.complete(false);
+        completer.complete(Either.withValue(false));
       });
     } else {
       _cancelableOperation = _cancelableOperation!.then((data) {
         CancelableOperation.fromFuture(operation.call(data)).then((data) {
           onNewData(data);
-          completer.complete(true);
+          completer.complete(Either.withValue(true));
         }, onError: (error, stacktrace) {
           logError("apply cause error", ex: error);
-          completer.complete(false);
+          completer.complete(Either.withError(error));
         }, onCancel: () {
-          completer.complete(false);
+          completer.complete(Either.withValue(false));
         });
       });
     }
@@ -85,11 +93,70 @@ class AplRepository<T> {
   }
 
   @protected
-  void onNewData(T value) {
+  void onNewData(T value) async {
     data.sink.add(value);
   }
 
   void close() {
     data.close();
+  }
+}
+
+abstract class SideEffect<M> with Union3<Init, Change, Send> {
+  Future<Either<bool>> apply(AplRepository<M> repo);
+
+  factory SideEffect.init(UseCase<void, M> sourceUseCase) =>
+      Init._(sourceUseCase);
+
+  factory SideEffect.change(UseCase<M, M> changingUseCase) =>
+      Change._(changingUseCase);
+
+  factory SideEffect.send(UseCase<M, void> sendingUseCase) =>
+      Send._(sendingUseCase);
+
+  SideEffect._();
+
+}
+
+class Init<M> extends SideEffect<M> {
+  final UseCase<void, M> sourceUseCase;
+
+  Init._(this.sourceUseCase): super._();
+
+  @override
+  Future<Either<bool>> apply(AplRepository<M> repo) {
+    return repo._loadWith(sourceUseCase);
+  }
+}
+
+class Change<M> extends SideEffect<M> {
+  final UseCase<M, M> changingUseCase;
+
+  Change._(this.changingUseCase): super._();
+
+  @override
+  Future<Either<bool>> apply(AplRepository<M> repo) {
+    return repo._changeWith(changingUseCase);
+  }
+}
+
+class Send<M> extends SideEffect<M> {
+  final UseCase<M, void> sendingUseCase;
+
+  Send._(this.sendingUseCase): super._();
+
+  @override
+  Future<Either<bool>> apply(AplRepository<M> repo) async {
+    final data = await repo.updatesStream.first;
+    if (data == null) {
+      return Either.withValue(false);
+    } else {
+      try {
+        await sendingUseCase.call(data);
+        return Either.withValue(true);
+      } catch (e) {
+        return Either.withError(e);
+      }
+    }
   }
 }

@@ -1,4 +1,5 @@
-
+import 'package:applithium_core/domain/repository.dart';
+import 'package:applithium_core/unions/union_4.dart';
 import 'package:applithium_core/usecases/base.dart';
 
 import '../base_bloc.dart';
@@ -6,6 +7,7 @@ import '../base_bloc.dart';
 const STATE_CONTENT_INITIAL = "initial";
 const STATE_CONTENT_LOADING = "loading";
 const STATE_CONTENT_ERROR = "failed";
+const STATE_CONTENT_UPDATING = "updating";
 const STATE_CONTENT_LOADED = "loaded";
 
 abstract class BaseContentEvents extends WidgetEvents {
@@ -22,40 +24,64 @@ class DisplayData<M> extends BaseContentEvents {
   DisplayData(this.data) : super("data_updated");
 }
 
-class ContentState<M> extends BaseState<M> {
-  ContentState._({required String tag}) : super(tag);
+abstract class ContentScreenState<M> extends BaseState<M>
+    with Union4<ContentLoading<M>, ContentLoadFailed<M>, DisplayContent<M>, ContentUpdating<M>> {
+  ContentScreenState._(String tag) : super(tag);
 
-  factory ContentState.initial() => ContentState._(tag: STATE_CONTENT_INITIAL);
+  factory ContentScreenState.initial() => ContentLoading._();
 
   @override
-  ContentState withError(dynamic error) => ContentFailed(error);
+  ContentScreenState<M> withError(dynamic error) => ContentLoadFailed._(error);
 }
 
-class ContentLoading<M> extends ContentState<M> {
-  ContentLoading() : super._(tag: STATE_CONTENT_LOADING);
+class ContentLoading<M> extends ContentScreenState<M> {
+  ContentLoading._() : super._(STATE_CONTENT_LOADING);
+
+  ContentScreenState<M> withData(M data) => DisplayContent._(data);
 }
 
-class ContentChanged<M> extends ContentState<M> {
-  final M data;
-
-  ContentChanged(this.data) : super._(tag: STATE_CONTENT_LOADED);
-}
-
-class ContentFailed<M> extends ContentState<M> {
+class ContentLoadFailed<M> extends ContentScreenState<M> {
   final dynamic error;
 
-  ContentFailed(this.error) : super._(tag: STATE_CONTENT_ERROR);
+  ContentLoadFailed._(this.error) : super._(STATE_CONTENT_ERROR);
 }
 
-DomainGraph<M, ContentState<M>> createContentGraph<M> (UseCase<void, M> load) => (state, event) {
-  if (event is WidgetCreated) {
-    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.init(load));
-  } else if (event is WidgetShown) {
-    return DomainGraphEdge(sideEffect: SideEffect.change(load));
-  } else if (event is UpdateRequested) {
-    return DomainGraphEdge(newState: ContentLoading(), sideEffect: SideEffect.change(load));
-  } else if (event is ModelUpdated<M>) {
-    return DomainGraphEdge(newState: ContentChanged(event.data));
-  }
-};
+abstract class HasContent<M> extends ContentScreenState<M> {
+  final M data;
+  final bool isUpdating;
 
+  ContentScreenState<M> forceUpdate() => ContentLoading._();
+
+  HasContent._({required this.data, required this.isUpdating, required String tag}): super._(tag);
+}
+
+class DisplayContent<M> extends HasContent<M> {
+  DisplayContent._(M data) : super._(data: data, isUpdating: false, tag: STATE_CONTENT_LOADED);
+
+  ContentScreenState<M> update() => ContentUpdating._(this.data);
+}
+
+class ContentUpdating<M> extends HasContent<M> {
+  ContentUpdating._(M data): super._(data: data, isUpdating: true, tag: STATE_CONTENT_UPDATING);
+  ContentScreenState<M> updated(M data) => DisplayContent._(data);
+}
+
+abstract class ContentUseCases<M> {
+  Future<M> load();
+  Future<M> update();
+}
+
+
+DomainGraph<M, ContentScreenState<M>> createContentGraph<M>(ContentUseCases<M> useCases) => (state, event) {
+  if(event is ModelUpdated) {
+    return DomainGraphEdge(nextStateProvider: ());
+  }
+      return state.fold(
+          (loading) => DomainGraphEdge(
+              sideEffect: SideEffect.init(load),
+              nextStateProvider: (result) => result.fold(
+                  (data) => loading.withData(data),
+                  (failure) => loading.withError(failure))),
+          (displayContent) => event,
+          (failure) => null);
+    };

@@ -1,4 +1,3 @@
-
 import 'package:applithium_core/domain/content/domain.dart';
 import 'package:applithium_core/unions/union_4.dart';
 import 'package:applithium_core/usecases/base.dart';
@@ -28,64 +27,77 @@ class ScrolledToEnd extends BaseListEvents {
   ScrolledToEnd() : super("scrolled_to_end");
 }
 
-class ListingState<M> extends BaseState<List<M>> with Union4<ListLoadingFailed, ListLoading, ListChanged, ListPageLoading> {
-  final bool isPageLoading;
+abstract class ListingScreenState<IM> extends BaseState<List<IM>>
+    with Union4<ListLoading, DisplayList, ListPageLoading, ListLoadingFailed> {
+  ListingScreenState(String tag) : super(tag);
 
-  ListingState._(
-      {required String tag,
-      List<M>? value,
-      dialogModel,
-      this.isPageLoading = false})
-      : super(tag);
-
-  factory ListingState.initial() =>
-      ListingState._(tag: STATE_LISTING_INITIAL_TAG);
+  factory ListingScreenState.initial() => ListLoading._();
 
   @override
-  BaseState withError(error) => ListLoadingFailed(error);
+  BaseState withError(error) => ListLoadingFailed._(error);
 }
 
-class ListLoadingFailed<M> extends ListingState<M> {
+class ListLoadingFailed<IM> extends ListingScreenState<IM> {
   final dynamic error;
-  ListLoadingFailed(this.error) : super._(tag: STATE_LISTING_LOADING_FAILED_TAG);
+
+  ListLoadingFailed._(this.error) : super(STATE_LISTING_LOADING_FAILED_TAG);
 }
 
-class ListLoading<M> extends ListingState<M> {
-  ListLoading(): super._(tag: STATE_LISTING_LOADING_TAG);
+class ListLoading<IM> extends ListingScreenState<IM> {
+  ListLoading._() : super(STATE_LISTING_LOADING_TAG);
+
+  ListingScreenState<IM> withData(List<IM> list) => DisplayList._(list);
 }
 
-abstract class HasList<M> {
-  List<M> get list;
+abstract class HasList<IM> extends ListingScreenState<IM> {
+  final List<IM> list;
+  final bool isPageLoading;
+
+  HasList(
+      {required this.list, required this.isPageLoading, required String tag})
+      : super(tag);
+
+  ListingScreenState<IM> forceUpdate() => ListLoading._();
 }
 
-class ListChanged<M> extends ListingState<M> implements HasList<M> {
+class DisplayList<IM> extends HasList<IM> {
+  DisplayList._(List<IM> list)
+      : super(list: list, isPageLoading: false, tag: STATE_LISTING_LOADED_TAG);
 
-  final List<M> list;
-
-  ListChanged(this.list) : super._(tag: STATE_LISTING_LOADED_TAG);
+  HasList<IM> pageLoading() => ListPageLoading._(list);
 }
 
-class ListPageLoading<M> extends ListingState<M> implements HasList<M> {
-  final List<M> list;
-
-  ListPageLoading(this.list): super._(tag: STATE_LISTING_PAGE_LOADING, isPageLoading: true);
+class ListPageLoading<IM> extends HasList<IM> {
+  ListPageLoading._(List<IM> list)
+      : super(list: list, isPageLoading: true, tag: STATE_LISTING_PAGE_LOADING);
 }
 
-DomainGraph<List<IM>, ListingState<IM>> createListingGraph<IM>(UseCase<void, List<IM>> load, UseCase<List<IM>, List<IM>> loadMore) => (state, event) {
-  if (event is WidgetCreated) {
-    return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.init(load));
-  } else if (event is WidgetShown) {
-    return DomainGraphEdge(sideEffect: SideEffect.change(load));
-  } else if (event is UpdateRequested) {
-    return DomainGraphEdge(newState: ListLoading(), sideEffect: SideEffect.change(load));
-  } else if (event is ScrolledToEnd) {
-    if (state is HasList<IM>) {
-      final list = (state as HasList<IM>).list;
-      return DomainGraphEdge(newState: ListPageLoading(list), sideEffect: SideEffect.change(loadMore));
-    }
-  } else if (event is ModelUpdated) {
-    return DomainGraphEdge(newState: ListChanged(event.data));
-  }
-};
+DomainGraph<List<IM>, ListingScreenState<IM>> createListingGraph<IM>(
+        UseCase<void, List<IM>> load, UseCase<List<IM>, List<IM>> loadMore) =>
+    (state, event) {
 
-
+  state.fold(
+      (listLoading) => event.fold
+      (displayList) => event,
+      (pageLoading) => event
+        (failed) =>
+  );
+      if (event is WidgetCreated) {
+        return DomainGraphEdge(
+            newState: ListLoading(), sideEffect: SideEffect.init(load));
+      } else if (event is WidgetShown) {
+        return DomainGraphEdge(sideEffect: SideEffect.change(load));
+      } else if (event is UpdateRequested) {
+        return DomainGraphEdge(
+            newState: ListLoading(), sideEffect: SideEffect.change(load));
+      } else if (event is ScrolledToEnd) {
+        if (state is HasList<IM>) {
+          final list = (state as HasList<IM>).list;
+          return DomainGraphEdge(
+              newState: ListPageLoading(list),
+              sideEffect: SideEffect.change(loadMore));
+        }
+      } else if (event is ModelUpdated) {
+        return DomainGraphEdge(newState: DisplayList(event.data));
+      }
+    };
