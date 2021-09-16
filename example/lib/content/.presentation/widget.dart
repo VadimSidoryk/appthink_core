@@ -1,16 +1,20 @@
 import 'package:applithium_core/domain/base_bloc.dart';
 import 'package:applithium_core/domain/content/events.dart';
 import 'package:applithium_core/events/events_listener.dart';
-import 'package:applithium_core/presentation/graph_based.dart';
+import 'package:applithium_core/.presentation/graph_based.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'domain.dart';
-import 'model.dart';
+import '../.domain/model.dart';
+import '../.domain/use_cases.dart';
+import 'graph.dart';
 
 class ContentScreen
-    extends GraphBasedWidget<ContentViewModel, ContentScreenState<ContentViewModel>> {
-  ContentScreen() : super(createWidgetForState);
+    extends BaseWidget<ContentViewModel, ContentScreenState<ContentViewModel>> {
+
+  final ContentScreenUseCases useCases;
+
+  ContentScreen({required this.useCases}) : super(createWidgetForState);
 
   static Widget createWidgetForState(BuildContext context,
       ContentScreenState<ContentViewModel> state, EventsListener eventsHandler) {
@@ -69,7 +73,7 @@ class ContentScreen
 
   @override
   DomainGraph<ContentViewModel, ContentScreenState<ContentViewModel>>
-      get domainGraph => contentGraph;
+      get domainGraph => createContentScreenGraph(useCases);
 
   @override
   ContentScreenState<ContentViewModel> getInitialState() {

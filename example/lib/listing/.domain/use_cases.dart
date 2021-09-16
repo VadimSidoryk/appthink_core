@@ -1,0 +1,3 @@
+class ExampleListingUseCases extends ListingUseCases<> {
+
+}

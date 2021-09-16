@@ -1,6 +1,6 @@
 
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core_example/content/presentation.dart';
+import 'package:applithium_core_example/content/.presentation/widget.dart';
 import 'package:applithium_core_example/listing/presentation.dart';
 import 'package:applithium_core_example/main.dart';
 import 'package:applithium_core_example/picker/presentation.dart';

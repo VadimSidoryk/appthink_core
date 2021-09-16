@@ -1,16 +1,12 @@
 import 'package:applithium_core/app/base_state.dart';
 import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/presentation/builder.dart';
 import 'package:applithium_core/router/matchers.dart';
 import 'package:applithium_core/router/route_details.dart';
 import 'package:applithium_core/services/localization/config.dart';
-import 'package:applithium_core_example/listing/presentation.dart';
 import 'package:applithium_core_example/picker/presentation.dart';
 import 'package:applithium_core_firebase/module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import 'content/presentation.dart';
 
 final appTitle = "Applithium Core Example";
 final splashTitle = "Splash...";
@@ -55,7 +51,7 @@ class MyApp extends StatefulWidget {
               subRoutes: [
                 RouteDetails(
                     matcher: Matcher.path(contentPath),
-                    builder: presentationScope((context) => ContentScreen())),
+                    builder: (context) => ExampleContentScreen())),
                 RouteDetails(
                     matcher: Matcher.path(listPath),
                     builder: presentationScope((context) => ListingScreen())),
