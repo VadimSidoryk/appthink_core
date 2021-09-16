@@ -1,6 +1,6 @@
 import 'package:applithium_core/events/base_event.dart';
 
-import 'base_bloc.dart';
+import '../presentation/base_bloc.dart';
 
 class BlocSupervisor {
   static BlocsListener? listener;

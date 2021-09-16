@@ -39,7 +39,6 @@ class AplRepository<T> {
 
     return completer.future.whenComplete(() => _cancelableOperation = null);
   }
-
   Future<Either<bool>> _loadIfOutdatedWith(UseCase<void, T> useCase) {
     if(isOutdated) {
       return _loadWith(useCase);

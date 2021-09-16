@@ -1,4 +1,4 @@
-import 'package:applithium_core/domain/base_bloc.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/system_listener.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,7 +29,7 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   void didPop(Route newRoute, Route? previousRoute) {
     if (previousRoute is PageRoute && newRoute is PageRoute) {
       final name = newRoute.settings.name ?? "undefined";
-      _service.handleEvent(WidgetEvents.widgetShown(name));
+      _service.handleEvent(BaseWidgetEvents.widgetShown(name));
     }
   }
 
@@ -37,7 +37,7 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   void didPush(Route route, Route? previousRoute) {
     if (route is PageRoute) {
       final name = route.settings.name ?? "undefined";
-      _service.handleEvent(WidgetEvents.widgetShown(name));
+      _service.handleEvent(BaseWidgetEvents.widgetShown(name));
     }
   }
 
@@ -45,7 +45,7 @@ class _NavigatorEventsObserver extends NavigatorObserver {
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     if (newRoute is PageRoute) {
       final name = newRoute.settings.name ?? "undefined";
-      _service.handleEvent(WidgetEvents.widgetShown(name));
+      _service.handleEvent(BaseWidgetEvents.widgetShown(name));
     }
   }
 }

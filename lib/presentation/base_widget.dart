@@ -1,4 +1,4 @@
-import 'package:applithium_core/domain/base_bloc.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:flutter/material.dart';

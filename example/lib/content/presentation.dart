@@ -1,5 +1,5 @@
 import 'package:applithium_core/domain/base_bloc.dart';
-import 'package:applithium_core/domain/content/domain.dart';
+import 'package:applithium_core/domain/content/events.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/presentation/graph_based.dart';
 import 'package:flutter/cupertino.dart';

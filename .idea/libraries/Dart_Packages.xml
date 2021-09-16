@@ -19,7 +19,15 @@
         <entry key="applithium_core">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/git/core-0aa6aa174af5108edb87d284f7e5d4ffd929fed9/lib" />
               <option value="$USER_HOME$/.pub-cache/git/core-453f1975f4fb4524135417be0e2e437429ac9f84/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="applithium_core_firebase">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/git/core-0aa6aa174af5108edb87d284f7e5d4ffd929fed9/applithium_core_firebase/lib" />
             </list>
           </value>
         </entry>
@@ -670,6 +678,8 @@
       </option>
     </properties>
     <CLASSES>
+      <root url="file://$USER_HOME$/.pub-cache/git/core-0aa6aa174af5108edb87d284f7e5d4ffd929fed9/applithium_core_firebase/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-0aa6aa174af5108edb87d284f7e5d4ffd929fed9/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-453f1975f4fb4524135417be0e2e437429ac9f84/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-22.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-1.7.1/lib" />
