@@ -4,8 +4,6 @@ import 'package:applithium_core/usecases/list/remove_items.dart';
 import 'package:applithium_core/usecases/mocks/value.dart';
 import 'package:applithium_core_example/listing/model.dart';
 
-
-
 final listLoader = value(
     value: MockUtils.generateItems(
         20, (index) => ListItemModel(index, "$index title", "$index subtitle")),
@@ -22,7 +20,7 @@ final UseCase<List<ListItemModel>, List<ListItemModel>> loadMore =
 };
 
 UseCase<List<ListItemModel>, List<ListItemModel>> removeItemsById(int id) {
-  return removeItems((item) => item.id == id);
+  return listRemoveItems((item) => item.id == id);
 }
 
 final DomainGraph<List<ListItemModel>, ListingScreenState<ListItemModel>>
