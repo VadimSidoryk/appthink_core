@@ -18,6 +18,10 @@ class AplRouter {
     return result.build();
   }
 
+  void back([dynamic result]) {
+    navigationKey.currentState?.pop(result);
+  }
+
   void applyRoute(String path) {
     navigationKey.currentState?.pushNamed(path);
   }

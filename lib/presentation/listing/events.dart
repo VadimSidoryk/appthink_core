@@ -3,7 +3,7 @@ import 'package:applithium_core/unions/union_3.dart';
 
 import '../base_bloc.dart';
 
-abstract class BaseListEvents extends WidgetEvents with Union3<DisplayData, ScrolledToEnd, ReloadList> {
+abstract class BaseListEvents extends WidgetEvents {
   BaseListEvents(String name) : super(name);
 }
 

@@ -1,7 +1,7 @@
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/services/localization/config.dart';
 import 'package:applithium_core_example/main.dart';
-import 'package:applithium_core_example/picker/presentation.dart';
+import 'package:applithium_core_example/picker/widget.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 

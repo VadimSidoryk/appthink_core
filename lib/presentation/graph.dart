@@ -1,65 +1,37 @@
-
 import 'package:applithium_core/domain/repository.dart';
 
 import 'base_bloc.dart';
 
-class DomainGraphEdge<M, S extends BaseState<M>> {
-  final S? nextState;
+
+class DomainGraphEdge<M, S1 extends BaseState<M>, S2 extends BaseState<M>> {
+  final S1? nextState;
   final SideEffect<M>? sideEffect;
-  final S Function()? resultStateOnSuccess;
-  final S Function()? resultStateOnCancel;
-  final S Function(dynamic)? resultStateOnError;
+  final S2 Function(S1)? resultStateOnSuccess;
+  final S2 Function(S1)? resultStateOnCancel;
+  final S2 Function(S1, dynamic)? resultStateOnError;
 
-  DomainGraphEdge._({this.nextState,
-    this.sideEffect,
-    this.resultStateOnSuccess,
-    this.resultStateOnCancel,
-    this.resultStateOnError});
+  DomainGraphEdge._(
+      {this.nextState,
+      this.sideEffect,
+      this.resultStateOnSuccess,
+      this.resultStateOnCancel,
+      this.resultStateOnError});
 
-  factory DomainGraphEdge.toState(S nextState) =>
-      DomainGraphEdge._(nextState: nextState);
-
-  factory DomainGraphEdge.withSideEffect(SideEffect<M>? sideEffect,
-      {S Function()? onSuccess,
-        S Function()? onCancel,
-        S Function(dynamic)? onError}) =>
-      DomainGraphEdge._(
-          sideEffect: sideEffect,
-          resultStateOnSuccess: onSuccess,
-          resultStateOnCancel: onCancel,
-          resultStateOnError: onError);
+  factory DomainGraphEdge.toState<M, S2>(S2 state) {
+    return DomainGraphEdge<M, dynamic, S2>._(nextState: state);
+  }
 }
 
-typedef DomainGraph<E extends WidgetEvents, M, S extends BaseState<M>>
-= DomainGraphEdge<M, S>? Function(S, E);
+typedef DomainGraph<M, S extends BaseState<M>> = DomainGraphEdge<M, S>?
+    Function(S, WidgetEvents);
 
-DomainGraph<WidgetEvents,
-    M,
-    S> combine2<E1 extends WidgetEvents, E2 extends WidgetEvents, M, S extends BaseState<
-    M>>(DomainGraph<E1, M, S> first, DomainGraph<E2, M, S> second) =>
-        (state, event) {
-      if (event is E1) {
-        return first.call(state, event);
-      } else if (event is E2) {
+DomainGraph<M, S> combine2<M, S extends BaseState<M>>(
+        DomainGraph<M, S> first, DomainGraph<M, S> second) =>
+    (state, event) {
+      final result = first.call(state, event);
+      if (result == null) {
         return second.call(state, event);
       } else {
-        return null;
-      }
-    };
-
-DomainGraph<WidgetEvents,
-    M,
-    S> combine3<E1 extends WidgetEvents, E2 extends WidgetEvents, E3 extends WidgetEvents, M, S extends BaseState<
-    M>>(DomainGraph<E1, M, S> first, DomainGraph<E2, M, S> second,
-    DomainGraph<E3, M, S> third) =>
-        (state, event) {
-      if (event is E1) {
-        return first.call(state, event);
-      } else if (event is E2) {
-        return second.call(state, event);
-      } else if (event is E3) {
-        return third.call(state, event);
-      } else {
-        return null;
+        return result;
       }
     };

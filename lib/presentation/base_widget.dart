@@ -20,7 +20,7 @@ abstract class BaseWidget<M, S extends BaseState<M>> extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    _bloc = createBloc(context);
+    _bloc = createBloc(context)..add(BaseWidgetEvents.widgetCreated(this));
     return BlocBuilder<Bloc<WidgetEvents, S>, S>(
         bloc: _bloc,
         builder: (context, state) => _widgetForStateFactory.call(context, state, this));

@@ -1,4 +1,4 @@
-import 'package:applithium_core/events/event.dart';
+import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -19,7 +19,7 @@ class FirebaseAnalyst extends Analyst {
   }
 
   @override
-  void onNewEvent(AplEvent event) {
+  void onNewEvent(AppEvent event) {
     logMethod("onNewEvent", params: [event]);
     _analytics.logEvent(name: event.name, parameters: event.params);
   }

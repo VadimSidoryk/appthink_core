@@ -1,15 +1,25 @@
 import 'package:applithium_core/domain/content/use_cases.dart';
 import 'package:applithium_core/domain/repository.dart';
+import 'package:applithium_core/presentation/base_bloc.dart';
 import 'package:applithium_core/presentation/content/states.dart';
 import '../graph.dart';
 import 'events.dart';
 
-DomainGraph<BaseContentEvents, M, ContentScreenState<M>> createContentGraph<M>(
+DomainGraph<M, ContentScreenState<M>> createContentGraph<M>(
         ContentUseCases<M> useCases) =>
     (state, event) {
+      if (event is WidgetCreatedEvent) {
+        DomainGraphEdge(nextState: state.loading());
+        return DomainGraphEdge.toState(ContentScreenState.initial());
+      }
       if (event is DisplayData) {
         return DomainGraphEdge.toState(state.withData(event.data));
-      } else {
+      } else if (event is BaseContentEvents) {
+        return event.fold(
+            (ReloadRequested) => state.fold(),
+            (UpdateRequested) =>,
+            (DisplayData) =>
+        );
         return state.fold(
             (ContentLoadingState<M> loading) => DomainGraphEdge.withSideEffect(
                 SideEffect.init(useCases.load),

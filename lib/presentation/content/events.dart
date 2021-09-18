@@ -1,8 +1,6 @@
-import 'package:applithium_core/unions/union_3.dart';
 import '../base_bloc.dart';
 
-abstract class BaseContentEvents extends WidgetEvents
-    with Union3<ReloadRequested, UpdateRequested, DisplayData> {
+abstract class BaseContentEvents extends WidgetEvents {
   BaseContentEvents._(String name) : super(name);
 }
 

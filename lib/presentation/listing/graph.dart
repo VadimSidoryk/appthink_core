@@ -6,12 +6,12 @@ import 'package:applithium_core/presentation/listing/states.dart';
 
 import '../graph.dart';
 
-DomainGraph<BaseListEvents, M, ListingScreenState<IM, M>>
+DomainGraph<M, ListingScreenState<IM, M>>
     createListingGraph<IM, M extends WithList<IM>>(ListingUseCases useCases) =>
         (state, event) {
           if (event is DisplayData<M>) {
             return DomainGraphEdge.toState(state.withData(event.data));
-          } else {
+          } else if(event is BaseListEvents) {
             state.fold(
                 (ListLoadingState loadingState) => DomainGraphEdge.withSideEffect(
                     SideEffect.init(useCases.load),

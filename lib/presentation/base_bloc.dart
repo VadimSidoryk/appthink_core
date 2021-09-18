@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/unions/union_3.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,19 +14,24 @@ abstract class WidgetEvents extends AppEvent {
       : super(name, params);
 }
 
-class BaseWidgetEvents<M> extends WidgetEvents with Union3<WidgetCreatedEvent, WidgetShownEvent, RepositoryUpdatedEvent> {
-  BaseWidgetEvents._(String name, [Map<String, Object>? params]) : super(name, params);
+class BaseWidgetEvents<M> extends WidgetEvents {
+  BaseWidgetEvents._(String name, [Map<String, Object>? params])
+      : super(name, params);
+
+  factory BaseWidgetEvents.widgetCreated(Widget widget) =>
+      WidgetCreatedEvent._(widget);
 
   factory BaseWidgetEvents.widgetShown(String name) => WidgetShownEvent._(name);
 
-  factory BaseWidgetEvents.repositoryUpdated(M data) => RepositoryUpdatedEvent._(data);
+  factory BaseWidgetEvents.repositoryUpdated(M data) =>
+      RepositoryUpdatedEvent._(data);
 }
 
 class WidgetCreatedEvent<M> extends BaseWidgetEvents<M> {
-  final String screenName;
+  final Widget widget;
 
-  WidgetCreatedEvent._(this.screenName)
-      : super._("widget_created", {"screen_name": screenName});
+  WidgetCreatedEvent._(this.widget)
+      : super._("widget_created", {"screen_name": widget.toString()});
 }
 
 class WidgetShownEvent<M> extends BaseWidgetEvents<M> {
@@ -55,9 +59,10 @@ abstract class BaseState<M> {
 }
 
 
-class AplBloc<E extends WidgetEvents, M, S extends BaseState<M>> extends Bloc<WidgetEvents, S> {
+class AplBloc<E extends WidgetEvents, M, S extends BaseState<M>>
+    extends Bloc<WidgetEvents, S> {
   final AplRepository<M> repository;
-  final DomainGraph<E, M, S> domainGraph;
+  final DomainGraph<M, S> domainGraph;
 
   StreamSubscription? _subscription;
 
@@ -79,7 +84,7 @@ class AplBloc<E extends WidgetEvents, M, S extends BaseState<M>> extends Bloc<Wi
       BlocSupervisor.listener?.onNewEvent(this, event);
 
       final stateProvider;
-      if(event is E) {
+      if (event is E) {
         stateProvider = useDomainGraph(event);
       } else {
         stateProvider = handleBaseEvents(event);
@@ -111,7 +116,9 @@ class AplBloc<E extends WidgetEvents, M, S extends BaseState<M>> extends Bloc<Wi
     if (edge != null) {
       if (edge.nextState != null) {
         yield edge.nextState!;
-      } else if (edge.sideEffect != null) {
+      }
+
+      if (edge.sideEffect != null) {
         final sideEffectApplied = await edge.sideEffect!.apply(repository);
         sideEffectApplied.forEach((applied) async* {
           if (applied && edge.resultStateOnSuccess != null) {
