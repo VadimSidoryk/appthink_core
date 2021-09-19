@@ -33,25 +33,25 @@ class ContentLoadFailedState<M> extends ContentScreenState<M> {
   ContentScreenState<M> reload() => ContentLoadingState._();
 }
 
-abstract class _HasContent<M> extends ContentScreenState<M> {
+abstract class HasContent<M> extends ContentScreenState<M> {
   final M data;
   final bool isUpdating;
 
   ContentScreenState<M> reload() => ContentLoadingState._();
 
-  _HasContent._(
+  HasContent._(
       {required this.data, required this.isUpdating, required String tag})
       : super._(tag);
 }
 
-class DisplayContentState<M> extends _HasContent<M> {
+class DisplayContentState<M> extends HasContent<M> {
   DisplayContentState._(M data)
       : super._(data: data, isUpdating: false, tag: STATE_CONTENT_LOADED);
 
   ContentScreenState<M> update() => ContentUpdatingState._(this.data);
 }
 
-class ContentUpdatingState<M> extends _HasContent<M> {
+class ContentUpdatingState<M> extends HasContent<M> {
   ContentUpdatingState._(M data)
       : super._(data: data, isUpdating: true, tag: STATE_CONTENT_UPDATING);
 }

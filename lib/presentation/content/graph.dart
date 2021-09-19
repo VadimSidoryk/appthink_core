@@ -8,38 +8,36 @@ import 'events.dart';
 DomainGraph<M, ContentScreenState<M>> createContentGraph<M>(
         ContentUseCases<M> useCases) =>
     (state, event) {
+      final loadData =
+          DomainGraphEdge<M, ContentScreenState<M>, ContentScreenState<M>>(
+              nextState: ContentScreenState.initial(),
+              sideEffect: SideEffect.init(useCases.load),
+              resultStateOnError: (error) => state.withError(error));
       if (event is WidgetCreatedEvent) {
-        DomainGraphEdge(nextState: state.loading());
-        return DomainGraphEdge.toState(ContentScreenState.initial());
-      }
-      if (event is DisplayData) {
-        return DomainGraphEdge.toState(state.withData(event.data));
+        return loadData;
+      } else if (event is WidgetShownEvent) {
+        if (state is DisplayContentState) {
+          return DomainGraphEdge(
+              nextState: (state as DisplayContentState<M>).update(),
+              sideEffect: SideEffect.change(useCases.update));
+        }
+      } else if (event is DisplayData) {
+        return DomainGraphEdge(nextState: state.withData(event.data));
       } else if (event is BaseContentEvents) {
-        return event.fold(
-            (ReloadRequested) => state.fold(),
-            (UpdateRequested) =>,
-            (DisplayData) =>
-        );
-        return state.fold(
-            (ContentLoadingState<M> loading) => DomainGraphEdge.withSideEffect(
-                SideEffect.init(useCases.load),
-                onError: (failure) => loading.withError(failure)),
-            (ContentLoadFailedState<M> failure) => event.fold(
-                (ReloadRequested reload) =>
-                    DomainGraphEdge.toState(failure.reload()),
-                (UpdateRequested updateRequested) => DomainGraphEdge.toState(
-                    state.withError("Can't update from error state")),
-                (DisplayData displayData) => null),
-            (DisplayContentState<M> displayContent) => event.fold(
-                (ReloadRequested reload) =>
-                    DomainGraphEdge.toState(displayContent.reload()),
-                (UpdateRequested updateRequested) =>
-                    DomainGraphEdge.toState(displayContent.update()),
-                (DisplayData displayData) => null),
-            (ContentUpdatingState<M> updating) => event.fold(
-                (ReloadRequested reload) =>
-                    DomainGraphEdge.toState(updating.reload()),
-                (UpdateRequested updateRequested) => null,
-                (DisplayData displayData) => null));
+        if (event is ReloadRequested) {
+          return state.fold(
+              (ContentLoadingState<M> _) => null,
+              (ContentLoadFailedState<M> _) => loadData,
+              (DisplayContentState<M> _) => loadData,
+              (ContentUpdatingState<M> _) => loadData);
+        } else if (event is UpdateRequested) {
+          return state.fold(
+              (ContentLoadingState<M> _) => null,
+              (ContentLoadFailedState<M> _) => null,
+              (DisplayContentState<M> displayState) => DomainGraphEdge(
+                  nextState: displayState.update(),
+                  sideEffect: SideEffect.change(useCases.update)),
+              (ContentUpdatingState<M> _) => null);
+        }
       }
     };

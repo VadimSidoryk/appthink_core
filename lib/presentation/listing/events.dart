@@ -1,5 +1,4 @@
 import 'package:applithium_core/domain/listing/model.dart';
-import 'package:applithium_core/unions/union_3.dart';
 
 import '../base_bloc.dart';
 
