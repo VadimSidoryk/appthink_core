@@ -1,6 +1,4 @@
 import 'package:applithium_core/domain/listing/model.dart';
-import 'package:applithium_core/unions/union_5.dart';
-import 'package:applithium_core/unions/union_6.dart';
 
 import '../base_bloc.dart';
 
@@ -13,9 +11,7 @@ const STATE_LISTING_EMPTY = "list_empty";
 const STATE_LIST_UPDATING = "list_updating";
 
 abstract class ListingScreenState<IM, M extends WithList<IM>>
-    extends BaseState<M>
-    with Union6<ListLoadingState<IM, M>, DisplayListState<IM, M>, ListPageLoadingState<IM, M>,
-            ListLoadingFailedState<IM, M>, ListEmptyState<IM, M>, ListUpdatingState<IM, M>> {
+    extends BaseState<M> {
   ListingScreenState(String tag) : super(tag);
 
   factory ListingScreenState.initial() => ListLoadingState._();
@@ -47,16 +43,16 @@ class ListLoadingState<IM, M extends WithList<IM>>
   ListLoadingState._() : super(STATE_LISTING_LOADING_TAG);
 }
 
-abstract class _HasData<IM, M extends WithList<IM>>
+abstract class HasItems<IM, M extends WithList<IM>>
     extends ListingScreenState<IM, M> {
   final M data;
 
-  _HasData({required this.data, required String tag}) : super(tag);
+  HasItems({required this.data, required String tag}) : super(tag);
 
   ListingScreenState<IM, M> reload() => ListLoadingState._();
 }
 
-class DisplayListState<IM, M extends WithList<IM>> extends _HasData<IM, M> {
+class DisplayListState<IM, M extends WithList<IM>> extends HasItems<IM, M> {
   DisplayListState._(M data) : super(data: data, tag: STATE_LISTING_LOADED_TAG);
 
   ListingScreenState<IM, M> pageLoading() => ListPageLoadingState._(data);
@@ -64,19 +60,19 @@ class DisplayListState<IM, M extends WithList<IM>> extends _HasData<IM, M> {
   ListingScreenState<IM, M> update() => ListUpdatingState._(data);
 }
 
-class ListPageLoadingState<IM, M extends WithList<IM>> extends _HasData<IM, M> {
+class ListPageLoadingState<IM, M extends WithList<IM>> extends HasItems<IM, M> {
   ListPageLoadingState._(M data)
       : super(data: data, tag: STATE_LISTING_PAGE_LOADING);
 
   ListingScreenState<IM, M> update() => ListUpdatingState._(data);
 }
 
-class ListEmptyState<IM, M extends WithList<IM>> extends _HasData<IM, M> {
+class ListEmptyState<IM, M extends WithList<IM>> extends HasItems<IM, M> {
   ListEmptyState._(M data) : super(data: data, tag: STATE_LISTING_EMPTY);
 
   ListingScreenState<IM, M> update() => ListUpdatingState._(data);
 }
 
-class ListUpdatingState<IM, M extends WithList<IM>> extends _HasData<IM, M> {
+class ListUpdatingState<IM, M extends WithList<IM>> extends HasItems<IM, M> {
   ListUpdatingState._(M data) : super(data: data, tag: STATE_LIST_UPDATING);
 }

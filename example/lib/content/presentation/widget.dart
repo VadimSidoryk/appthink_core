@@ -12,6 +12,7 @@ import 'package:applithium_core_example/content/presentation/graph.dart';
 import 'package:bloc/src/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/widgets.dart';
 
 import 'events.dart';
 
@@ -28,38 +29,44 @@ class ExampleContentScreen extends BaseWidget<ExampleContentModel,
           color: Colors.black,
           onPressed: backClicked,
         )),
-        body: Center(
-            child: state.fold(
-                (ContentLoadingState _) => CircularProgressIndicator(),
-                (ContentLoadFailedState failed) => Column(
-                      children: [
-                        Text("Failed, ${failed.error}"),
-                        OutlinedButton(
-                          child: Text("Reload"),
-                          onPressed: () =>
-                              listener.onNewEvent(ReloadRequested()),
-                        )
-                      ],
-                    ),
-                (DisplayContentState<ExampleContentModel> state) => Column(
-                      children: [
-                        Text(state.data.title),
-                        Text(state.data.description),
-                        Row(
-                          children: [
-                            OutlinedButton(
-                                child: Text("+"),
-                                onPressed: () =>
-                                    listener.onNewEvent(AddLike())),
-                            OutlinedButton(
-                                child: Text("-"),
-                                onPressed: () =>
-                                    listener.onNewEvent(RemoveLike()))
-                          ],
-                        )
-                      ],
-                    ),
-                (ContentUpdatingState _) => CircularProgressIndicator())));
+        body: Center(child: _createBody(state, listener)));
+  }
+
+  static Widget _createBody(
+      ContentScreenState<ExampleContentModel> state, EventsListener listener) {
+    if (state is ContentLoadingState<ExampleContentModel>) {
+      return CircularProgressIndicator();
+    } else if (state is ContentLoadFailedState<ExampleContentModel>) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Failed, ${state.error}"),
+          OutlinedButton(
+            child: Text("Reload"),
+            onPressed: () => listener.onNewEvent(ReloadRequested()),
+          )
+        ],
+      );
+    } else {
+      state as HasContent<ExampleContentModel>;
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(state.data.title),
+          Text(state.data.description),
+          Row(
+            children: [
+              OutlinedButton(
+                  child: Text("+"),
+                  onPressed: () => listener.onNewEvent(AddLike())),
+              OutlinedButton(
+                  child: Text("-"),
+                  onPressed: () => listener.onNewEvent(RemoveLike()))
+            ],
+          )
+        ],
+      );
+    }
   }
 
   final Function() backClicked;
@@ -73,7 +80,7 @@ class ExampleContentScreen extends BaseWidget<ExampleContentModel,
       BuildContext context) {
     return AplBloc(
         initialState: ContentScreenState.initial(),
-        repository: AplRepository(-1),
+        repository: AplRepository<ExampleContentModel>(-1),
         domainGraph: combine2(
             createContentGraph(useCases), createExampleContentGraph(useCases)));
   }

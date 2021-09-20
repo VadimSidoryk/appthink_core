@@ -1,7 +1,6 @@
 import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/unions/union_2.dart';
 
-abstract class ExampleContentEvents extends WidgetEvents with Union2<AddLike, RemoveLike> {
+abstract class ExampleContentEvents extends WidgetEvents {
   ExampleContentEvents._(String name) : super(name);
 }
 
