@@ -83,14 +83,7 @@ class AplBloc<E extends WidgetEvents, M, S extends BaseState<M>>
     try {
       BlocSupervisor.listener?.onNewEvent(this, event);
 
-      final stateProvider;
-      if (event is E) {
-        stateProvider = useDomainGraph(event);
-      } else {
-        stateProvider = handleBaseEvents(event);
-      }
-
-      yield* stateProvider.map((data) {
+      yield* useDomainGraph(event).map((data) {
         BlocSupervisor.listener?.onNewState(this, data);
         return data;
       }).handleError((e) {
@@ -103,14 +96,7 @@ class AplBloc<E extends WidgetEvents, M, S extends BaseState<M>>
   }
 
   @protected
-  Stream<BaseState<M>> handleBaseEvents(WidgetEvents event) async* {
-    if (event is RepositoryUpdatedEvent<M>) {
-      yield state.withData(event.data);
-    }
-  }
-
-  @protected
-  Stream<S> useDomainGraph(E event) async* {
+  Stream<S> useDomainGraph(WidgetEvents event) async* {
     final edge = domainGraph.call(currentState, event);
 
     if (edge != null) {

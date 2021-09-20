@@ -8,6 +8,10 @@ import 'events.dart';
 DomainGraph<M, ContentScreenState<M>> createContentGraph<M>(
         ContentUseCases<M> useCases) =>
     (state, event) {
+      if(event is RepositoryUpdatedEvent<M>) {
+        return DomainGraphEdge(nextState: state.withData(event.data));
+      }
+
       final loadData =
           DomainGraphEdge<M, ContentScreenState<M>, ContentScreenState<M>>(
               nextState: ContentScreenState.initial(),
@@ -25,19 +29,23 @@ DomainGraph<M, ContentScreenState<M>> createContentGraph<M>(
         return DomainGraphEdge(nextState: state.withData(event.data));
       } else if (event is BaseContentEvents) {
         if (event is ReloadRequested) {
-          return state.fold(
-              (ContentLoadingState<M> _) => null,
-              (ContentLoadFailedState<M> _) => loadData,
-              (DisplayContentState<M> _) => loadData,
-              (ContentUpdatingState<M> _) => loadData);
+          if (state is ContentLoadFailedState<M>) {
+            return loadData;
+          } else if (state is DisplayContentState<M>) {
+            return loadData;
+          } else if (state is ContentUpdatingState<M>) {
+            return loadData;
+          } else {
+            return null;
+          }
         } else if (event is UpdateRequested) {
-          return state.fold(
-              (ContentLoadingState<M> _) => null,
-              (ContentLoadFailedState<M> _) => null,
-              (DisplayContentState<M> displayState) => DomainGraphEdge(
-                  nextState: displayState.update(),
-                  sideEffect: SideEffect.change(useCases.update)),
-              (ContentUpdatingState<M> _) => null);
+          if (state is DisplayContentState<M>) {
+            return DomainGraphEdge(
+                nextState: state.update(),
+                sideEffect: SideEffect.change(useCases.update));
+          } else {
+            return null;
+          }
         }
       }
     };

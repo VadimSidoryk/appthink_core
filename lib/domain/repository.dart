@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:applithium_core/either/either.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/unions/union_3.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
@@ -101,7 +100,7 @@ class AplRepository<T> {
   }
 }
 
-abstract class SideEffect<M> with Union3<Init, Change, Send> {
+abstract class SideEffect<M>  {
   Future<Either<bool>> apply(AplRepository<M> repo);
 
   factory SideEffect.init(UseCase<void, M> sourceUseCase) =>

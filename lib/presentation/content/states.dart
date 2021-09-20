@@ -1,4 +1,3 @@
-import 'package:applithium_core/unions/union_4.dart';
 import '../base_bloc.dart';
 
 const STATE_CONTENT_INITIAL = "initial";
@@ -7,10 +6,7 @@ const STATE_CONTENT_ERROR = "failed";
 const STATE_CONTENT_UPDATING = "updating";
 const STATE_CONTENT_LOADED = "loaded";
 
-abstract class ContentScreenState<M> extends BaseState<M>
-    with
-        Union4<ContentLoadingState<M>, ContentLoadFailedState<M>, DisplayContentState<M>,
-            ContentUpdatingState<M>> {
+abstract class ContentScreenState<M> extends BaseState<M> {
   ContentScreenState._(String tag) : super(tag);
 
   factory ContentScreenState.initial() => ContentLoadingState._();
