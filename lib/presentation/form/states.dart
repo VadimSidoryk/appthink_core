@@ -1,4 +1,4 @@
-import '../base_bloc.dart';
+import '../states.dart';
 
 const STATE_FORM_INITIAL = "form_initial";
 const STATE_FORM_LOADING = "form_loading";

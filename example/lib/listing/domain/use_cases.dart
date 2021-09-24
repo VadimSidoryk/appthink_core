@@ -3,20 +3,20 @@ import 'package:applithium_core/usecases/mocks/value.dart';
 
 import 'model.dart';
 
-final ListingModel _testModel = ListingModel(
+final ExampleListingModel _testModel = ExampleListingModel(
   [
-    ItemModel(1, "First"),
-    ItemModel(2, "Second"),
-    ItemModel(3, "Third"),
-    ItemModel(4, "Fourth"),
-    ItemModel(5, "Fifth"),
-    ItemModel(6, "Sixth"),
-    ItemModel(7, "Seventh"),
-    ItemModel(8, "Eighth"),
+    ExampleItemModel(1, "First"),
+    ExampleItemModel(2, "Second"),
+    ExampleItemModel(3, "Third"),
+    ExampleItemModel(4, "Fourth"),
+    ExampleItemModel(5, "Fifth"),
+    ExampleItemModel(6, "Sixth"),
+    ExampleItemModel(7, "Seventh"),
+    ExampleItemModel(8, "Eighth"),
   ]
 );
 
-final testListingUseCases = ListingUseCases<ItemModel, ListingModel>(
+final testListingUseCases = ListingUseCases<ExampleItemModel, ExampleListingModel>(
   load: value(value: _testModel, delayMillis: 2000),
   update: value(value: _testModel, delayMillis: 2000),
   loadMore: value(value: _testModel, delayMillis: 2000)

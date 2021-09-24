@@ -1,38 +1,51 @@
-import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/events/events_listener.dart';
-import 'package:applithium_core/presentation/base_bloc.dart';
-import 'package:applithium_core/presentation/base_widget.dart';
+import 'package:applithium_core/presentation/base_state.dart';
 import 'package:applithium_core/presentation/content/events.dart';
-import 'package:applithium_core/presentation/content/graph.dart';
 import 'package:applithium_core/presentation/content/states.dart';
-import 'package:applithium_core/presentation/graph.dart';
+import 'package:applithium_core/presentation/events.dart';
 import 'package:applithium_core_example/content/domain/model.dart';
 import 'package:applithium_core_example/content/domain/use_cases.dart';
-import 'package:applithium_core_example/content/presentation/graph.dart';
+import 'package:applithium_core_example/content/presentation/bloc.dart';
+import 'package:applithium_core_example/content/presentation/events.dart';
 import 'package:bloc/src/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/widgets.dart';
 
-import 'events.dart';
 
-class ExampleContentScreen extends BaseWidget<ExampleContentModel,
-    ContentScreenState<ExampleContentModel>> {
-  static Widget _createWidget(
-      BuildContext context,
-      ContentScreenState<ExampleContentModel> state,
-      EventsListener listener,
-      Function() backClicked) {
+class ExampleContentScreen extends StatefulWidget {
+
+  final Function() backClicked;
+  final ExampleContentUseCases useCases;
+
+  const ExampleContentScreen({Key? key, required this.backClicked, required this.useCases}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ExampleContentState();
+  }
+}
+
+class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentScreenState<ExampleContentModel>> {
+
+  @override
+  Bloc<WidgetEvents, ContentScreenState<ExampleContentModel>> createBloc(BuildContext context) {
+    return ExampleContentBloc(widget.useCases);
+  }
+
+  @override
+  Widget createWidgetForState(state, EventsListener listener) {
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
-          color: Colors.black,
-          onPressed: backClicked,
-        )),
+              color: Colors.black,
+              onPressed: widget.backClicked.call(),
+            )),
         body: Center(child: _createBody(state, listener)));
   }
 
-  static Widget _createBody(
+
+  Widget _createBody(
       ContentScreenState<ExampleContentModel> state, EventsListener listener) {
     if (state is ContentLoadingState<ExampleContentModel>) {
       return CircularProgressIndicator();
@@ -43,7 +56,7 @@ class ExampleContentScreen extends BaseWidget<ExampleContentModel,
           Text("Failed, ${state.error}"),
           OutlinedButton(
             child: Text("Reload"),
-            onPressed: () => listener.onNewEvent(ReloadRequested()),
+            onPressed: () => listener.onNewEvent(BaseContentEvents.reload()),
           )
         ],
       );
@@ -58,10 +71,10 @@ class ExampleContentScreen extends BaseWidget<ExampleContentModel,
             children: [
               OutlinedButton(
                   child: Text("+"),
-                  onPressed: () => listener.onNewEvent(AddLike())),
+                  onPressed: () => listener.onNewEvent(ExampleContentEvents.addLike())),
               OutlinedButton(
                   child: Text("-"),
-                  onPressed: () => listener.onNewEvent(RemoveLike()))
+                  onPressed: () => listener.onNewEvent(ExampleContentEvents.removeLike()))
             ],
           )
         ],
@@ -69,19 +82,5 @@ class ExampleContentScreen extends BaseWidget<ExampleContentModel,
     }
   }
 
-  final Function() backClicked;
-  final ExampleContentUseCases useCases;
 
-  ExampleContentScreen({required this.backClicked, required this.useCases})
-      : super((c, s, l) => _createWidget(c, s, l, backClicked));
-
-  @override
-  Bloc<WidgetEvents, ContentScreenState<ExampleContentModel>> createBloc(
-      BuildContext context) {
-    return AplBloc(
-        initialState: ContentScreenState.initial(),
-        repository: AplRepository<ExampleContentModel>(-1),
-        domainGraph: combine2(
-            createContentGraph(useCases), createExampleContentGraph(useCases)));
-  }
 }

@@ -104,13 +104,13 @@ abstract class SideEffect<M>  {
   Future<Either<bool>> apply(AplRepository<M> repo);
 
   factory SideEffect.init(UseCase<void, M> sourceUseCase) =>
-      Init._(sourceUseCase);
+      Init<M>._(sourceUseCase);
 
   factory SideEffect.change(UseCase<M, M> changingUseCase) =>
-      Change._(changingUseCase);
+      Change<M>._(changingUseCase);
 
-  factory SideEffect.send(UseCase<M, void> sendingUseCase) =>
-      Send._(sendingUseCase);
+  factory SideEffect.post(UseCase<M, void> sendingUseCase) =>
+      Send<M>._(sendingUseCase);
 
   SideEffect._();
 

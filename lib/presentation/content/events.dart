@@ -1,20 +1,19 @@
-import '../base_bloc.dart';
+import '../events.dart';
 
 abstract class BaseContentEvents extends WidgetEvents {
   BaseContentEvents._(String name) : super(name);
+
+  factory BaseContentEvents.reload() => ContentReloadRequested._();
+
+  factory BaseContentEvents.update() => ContentUpdateRequested._();
 }
 
-class ReloadRequested extends BaseContentEvents {
-  ReloadRequested() : super._("reload_requested");
+class ContentReloadRequested extends BaseContentEvents {
+  ContentReloadRequested._() : super._("content_reload");
 }
 
-class UpdateRequested extends BaseContentEvents {
-  UpdateRequested() : super._("screen_update");
+class ContentUpdateRequested extends BaseContentEvents {
+  ContentUpdateRequested._() : super._("content_update");
 }
 
-class DisplayData<M> extends BaseContentEvents {
-  final M data;
-
-  DisplayData(this.data) : super._("data_updated");
-}
 

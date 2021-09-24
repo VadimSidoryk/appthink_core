@@ -1,6 +1,6 @@
 import 'package:applithium_core/domain/listing/model.dart';
 
-import '../base_bloc.dart';
+import '../states.dart';
 
 const STATE_LISTING_LOADING_TAG = "list_loading";
 const STATE_LISTING_LOADING_FAILED_TAG = "list_loading_failed";

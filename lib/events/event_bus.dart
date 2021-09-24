@@ -1,8 +1,6 @@
-import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/system_listener.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/analytics/bloc_adapter.dart';
 import 'package:flutter/widgets.dart';
 
 class EventBus {
@@ -15,10 +13,6 @@ class EventBus {
         .map((impl) => impl.navigatorObservers)
         .reduce((result, currentList) => result + currentList)
         .toList();
-  }
-
-  BlocsListener get blocListener {
-    return BlocEventsAdapter(this);
   }
 
   void onNewEvent(AppEvent event) {

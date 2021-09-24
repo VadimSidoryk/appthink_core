@@ -1,4 +1,4 @@
-import '../base_bloc.dart';
+import '../states.dart';
 
 const STATE_CONTENT_INITIAL = "initial";
 const STATE_CONTENT_LOADING = "loading";

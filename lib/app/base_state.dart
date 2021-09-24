@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
-import 'package:applithium_core/domain/supervisor.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
@@ -182,9 +181,6 @@ class _RealApplicationState extends State<_RealApplication> {
         .of(context)
         ?.store
         .add((provider) => _router);
-    BlocSupervisor.listener = context
-        .get<EventBus>()
-        .blocListener;
     context
         .get<EventTriggeredHandlerService>()
         .setActionHandler(_processAction);

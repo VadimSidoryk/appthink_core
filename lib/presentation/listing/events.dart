@@ -1,22 +1,23 @@
-import 'package:applithium_core/domain/listing/model.dart';
-
-import '../base_bloc.dart';
+import '../events.dart';
 
 abstract class BaseListEvents extends WidgetEvents {
-  BaseListEvents(String name) : super(name);
+  BaseListEvents._(String name) : super(name);
+
+  factory BaseListEvents.scrolledToEnd() => ListScrolledToEnd._();
+
+  factory BaseListEvents.reload() => ListReloadRequested._();
+
+  factory BaseListEvents.update() => ListUpdateRequested._();
 }
 
-class DisplayData<T extends WithList> extends BaseListEvents {
-  final T data;
-  final isEndReached;
-
-  DisplayData(this.data, this.isEndReached) : super("data_updated");
+class ListScrolledToEnd extends BaseListEvents {
+  ListScrolledToEnd._() : super._("scrolled_to_end");
 }
 
-class ScrolledToEnd extends BaseListEvents {
-  ScrolledToEnd._() : super("scrolled_to_end");
+class ListUpdateRequested extends BaseListEvents {
+  ListUpdateRequested._() : super._("update_list");
 }
 
-class ReloadList extends BaseListEvents {
-   ReloadList._(): super("reload_list");
+class ListReloadRequested extends BaseListEvents {
+  ListReloadRequested._() : super._("reload_list");
 }

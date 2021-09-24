@@ -1,7 +1,6 @@
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/json/condition.dart';
 import 'package:applithium_core/json/interpolation.dart';
-import 'package:applithium_core/services/analytics/bloc_adapter.dart';
 import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,7 +45,7 @@ class EventTriggeredHandlerService  extends AplService {
           }
 
           if (isHandled) {
-            _actionsHandler?.call(trigger.action, event.params[KEY_SENDER]);
+            _actionsHandler?.call(trigger.action, event.params["sender"]);
             return;
           }
         }

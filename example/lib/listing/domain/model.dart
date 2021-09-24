@@ -1,14 +1,14 @@
 import 'package:applithium_core/domain/listing/model.dart';
 
-class ItemModel {
+class ExampleItemModel {
   final int id;
   final String title;
 
-  ItemModel(this.id, this.title);
+  ExampleItemModel(this.id, this.title);
 }
 
-class ListingModel extends WithList<ItemModel> {
-  final List<ItemModel> items;
+class ExampleListingModel extends WithList<ExampleItemModel> {
+  final List<ExampleItemModel> items;
 
-  ListingModel(this.items);
+  ExampleListingModel(this.items);
 }
