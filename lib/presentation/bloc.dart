@@ -17,8 +17,9 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
       : repository = repositoryValue ?? AplRepository<M>(-1),
         super(initialState) {
     _subscription = this.repository.updatesStream.listen((data) {
-      add(RepositoryUpdatedEvent._(data));
+      add(BaseWidgetEvents.repositoryUpdated(data));
     });
+    on<RepositoryUpdatedEvent>((event, emit) => emit(state.withData(event.data) as S));
   }
 
   @protected
@@ -39,7 +40,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
       FutureOr<S> Function(dynamic)? onError,
       FutureOr<S> Function()? onCancel}) {
     final initialState = state;
-    _withSideEffectIml(
+    _withSideEffectIml<E>(
         stateFilter: (state) => state is S1,
         waitingStateProvider: waitingStateProvider != null
             ? (state) => waitingStateProvider.call(state as S1)
@@ -55,7 +56,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
       required UseCase<M, void> poster,
       required FutureOr<S> Function(bool) onResult,
       required FutureOr<S> Function(dynamic) onError}) {
-    _withSideEffectIml(
+    _withSideEffectIml<E>(
         waitingStateProvider: (state) => waitingState,
         effect: SideEffect.post(poster),
         onSuccess: () => onResult.call(true),
