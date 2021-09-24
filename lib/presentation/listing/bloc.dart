@@ -22,7 +22,7 @@ class ListingBloc<IM, M extends WithList<IM>> extends BlocWithRepository<M, List
         waitingState: ListingScreenState.initial(),
         source: useCases.load,
         onError: (error) => state.withError(error));
-    updateOn<WidgetShownEvent, DisplayListState<IM, M>>(
+    updateOn<ListUpdateRequested, DisplayListState<IM, M>>(
         waitingStateProvider: (state) => state.update(),
         updater: useCases.update);
     updateOn<ListScrolledToEnd, DisplayListState<IM, M>>(

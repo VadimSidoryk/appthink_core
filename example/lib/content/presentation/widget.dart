@@ -1,5 +1,5 @@
 import 'package:applithium_core/events/events_listener.dart';
-import 'package:applithium_core/presentation/base_state.dart';
+import 'package:applithium_core/presentation/widget_state.dart';
 import 'package:applithium_core/presentation/content/events.dart';
 import 'package:applithium_core/presentation/content/states.dart';
 import 'package:applithium_core/presentation/events.dart';
@@ -39,7 +39,7 @@ class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentSc
         appBar: AppBar(
             leading: BackButton(
               color: Colors.black,
-              onPressed: widget.backClicked.call(),
+              onPressed: widget.backClicked,
             )),
         body: Center(child: _createBody(state, listener)));
   }
@@ -66,8 +66,9 @@ class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentSc
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(state.data.title),
-          Text(state.data.description),
+          Text(state.data.likes.toString()),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               OutlinedButton(
                   child: Text("+"),

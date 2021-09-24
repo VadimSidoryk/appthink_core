@@ -13,6 +13,13 @@ abstract class StateWithBloc<W extends StatefulWidget, S extends BaseState> exte
     implements EventsListener {
   late final Bloc<WidgetEvents, S> _bloc;
 
+  @override
+  void initState() {
+    _bloc = createBloc(context)
+      ..add(BaseWidgetEvents.widgetCreated(widget));
+    super.initState();
+  }
+
   @protected
   Bloc<WidgetEvents, S> createBloc(BuildContext context);
 
@@ -21,7 +28,6 @@ abstract class StateWithBloc<W extends StatefulWidget, S extends BaseState> exte
 
   @override
   Widget build(BuildContext context) {
-    _bloc = createBloc(context)..add(BaseWidgetEvents.widgetCreated(widget));
     return BlocConsumer<Bloc<WidgetEvents, S>, S>(
       bloc: _bloc,
       builder: (context, state) => createWidgetForState(state, this),
