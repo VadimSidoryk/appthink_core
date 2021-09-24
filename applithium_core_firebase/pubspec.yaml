@@ -19,7 +19,9 @@ dependencies:
   firebase_crashlytics: ^2.1.1
 
   applithium_core:
-    path: ../
+    git:
+      url: ssh://git@bitbucket.org/appthink/core.git
+      ref: master
 
 dev_dependencies:
   flutter_test:
