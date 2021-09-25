@@ -4,15 +4,27 @@ import '../events.dart';
 abstract class FormEvents extends WidgetEvents {
   FormEvents(String name) : super(name);
 
-  factory FormEvents.presetRequestUpdate() => _PresetUpdateRequested._();
+  factory FormEvents.requestReload() => FormReloadRequested._();
 
-  factory FormEvents.sendForm() => _SendForm._();
+  factory FormEvents.requestUpdate() => FormReloadRequested._();
+
+  factory FormEvents.postForm() => PostForm._();
+
+  factory FormEvents.formChanged() => FormChanged._();
 }
 
-class _PresetUpdateRequested extends FormEvents {
-  _PresetUpdateRequested._() : super("preset_update_requested");
+class FormReloadRequested extends FormEvents {
+  FormReloadRequested._() : super("form_reload_requested");
 }
 
-class _SendForm extends FormEvents {
-  _SendForm._() : super("send_form");
+class FormUpdateRequested extends FormEvents {
+  FormUpdateRequested._() : super("form_update_requested");
+}
+
+class FormChanged extends FormEvents {
+  FormChanged._(): super("form_changed");
+}
+
+class PostForm extends FormEvents {
+  PostForm._() : super("post_form");
 }
