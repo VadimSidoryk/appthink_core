@@ -1,8 +1,8 @@
 import 'package:applithium_core/events/events_listener.dart';
-import 'package:applithium_core/presentation/widget_state.dart';
 import 'package:applithium_core/presentation/content/events.dart';
 import 'package:applithium_core/presentation/content/states.dart';
 import 'package:applithium_core/presentation/events.dart';
+import 'package:applithium_core/presentation/widget_state.dart';
 import 'package:applithium_core_example/content/domain/model.dart';
 import 'package:applithium_core_example/content/domain/use_cases.dart';
 import 'package:applithium_core_example/content/presentation/bloc.dart';

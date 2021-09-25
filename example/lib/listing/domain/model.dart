@@ -1,3 +1,4 @@
+
 import 'package:applithium_core/domain/listing/model.dart';
 
 class ExampleItemModel {
@@ -7,7 +8,7 @@ class ExampleItemModel {
   ExampleItemModel(this.id, this.title);
 }
 
-class ExampleListingModel extends WithList<ExampleItemModel> {
+class ExampleListingModel extends BaseListModel<ExampleItemModel> {
   final List<ExampleItemModel> items;
 
   ExampleListingModel(this.items);

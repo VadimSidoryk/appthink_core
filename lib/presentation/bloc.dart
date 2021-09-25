@@ -19,7 +19,8 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
     _subscription = this.repository.updatesStream.listen((data) {
       add(BaseWidgetEvents.repositoryUpdated(data));
     });
-    on<RepositoryUpdatedEvent>((event, emit) => emit(state.withData(event.data) as S));
+    on<RepositoryUpdatedEvent>(
+        (event, emit) => emit(state.withData(event.data) as S));
   }
 
   @protected
@@ -51,16 +52,22 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
   }
 
   @protected
-  void postOn<E extends WidgetEvents>(
-      {required S waitingState,
-      required UseCase<M, void> poster,
-      required FutureOr<S> Function(bool) onResult,
+  void postOn<E extends WidgetEvents, S1 extends S, S2 extends S>(
+      {required S2 Function(S1) waitingStateProvider,
+      required UseCase<M, bool> poster,
+      required FutureOr<S> Function(S2) onSuccess,
       required FutureOr<S> Function(dynamic) onError}) {
+    late final waitingState;
+
     _withSideEffectIml<E>(
-        waitingStateProvider: (state) => waitingState,
+        stateFilter: (state) => state is S1,
+        waitingStateProvider: (state) {
+          waitingState = waitingStateProvider.call(state as S1);
+          return waitingState;
+        },
         effect: SideEffect.post(poster),
-        onSuccess: () => onResult.call(true),
-        onCancel: () => onResult.call(false),
+        onSuccess: () => onSuccess.call(waitingState),
+        onCancel: () => onError.call("Poster returns false"),
         onError: onError);
   }
 

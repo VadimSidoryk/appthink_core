@@ -11,7 +11,7 @@ abstract class ContentScreenState<M> extends BaseState<M> {
 
   factory ContentScreenState.initial() => ContentLoadingState._();
 
-  ContentScreenState<M> withData(M data) => DisplayContentState._(data);
+  ContentScreenState<M> withData(M data) => ContentDisplayingState._(data);
 
   @override
   ContentScreenState<M> withError(dynamic error) => ContentLoadFailedState._(error);
@@ -40,11 +40,11 @@ abstract class HasContent<M> extends ContentScreenState<M> {
       : super._(tag);
 }
 
-class DisplayContentState<M> extends HasContent<M> {
-  DisplayContentState._(M data)
+class ContentDisplayingState<M> extends HasContent<M> {
+  ContentDisplayingState._(M data)
       : super._(data: data, isUpdating: false, tag: STATE_CONTENT_LOADED);
 
-  ContentScreenState<M> update() => ContentUpdatingState._(this.data);
+  HasContent<M> update() => ContentUpdatingState._(this.data);
 }
 
 class ContentUpdatingState<M> extends HasContent<M> {

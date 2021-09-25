@@ -31,7 +31,7 @@ class _ExampleListingState extends StateWithBloc<ExampleListingScreen, ListingSc
     } else if (state is ListLoadingFailedState) {
     return Scaffold(body: Center(child: Text("Error")));
     } else {
-    final hasItems = state as HasItems<ExampleItemModel, ExampleListingModel>;
+    final hasItems = state as HasList<ExampleItemModel, ExampleListingModel>;
     return Scaffold(
     body: Center(
     child: ListView.builder(

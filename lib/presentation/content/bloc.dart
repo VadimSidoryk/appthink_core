@@ -14,14 +14,14 @@ class ContentBloc<M> extends BlocWithRepository<M, ContentScreenState<M>> {
         waitingState: ContentScreenState.initial(),
         source: useCases.load,
         onError: (error) => state.withError(error));
-    updateOn<WidgetShownEvent, DisplayContentState<M>>(
+    updateOn<WidgetShownEvent, ContentDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
         updater: useCases.update);
     loadOn<ContentReloadRequested>(
         waitingState: ContentScreenState.initial(),
         source: useCases.load,
         onError: (error) => state.withError(error));
-    updateOn<ContentUpdateRequested, DisplayContentState<M>>(
+    updateOn<ContentUpdateRequested, ContentDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
         updater: useCases.update);
   }

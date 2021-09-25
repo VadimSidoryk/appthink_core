@@ -109,8 +109,8 @@ abstract class SideEffect<M>  {
   factory SideEffect.change(UseCase<M, M> changingUseCase) =>
       Change<M>._(changingUseCase);
 
-  factory SideEffect.post(UseCase<M, void> sendingUseCase) =>
-      Send<M>._(sendingUseCase);
+  factory SideEffect.post(UseCase<M, bool> sendingUseCase) =>
+      Post<M>._(sendingUseCase);
 
   SideEffect._();
 
@@ -138,20 +138,20 @@ class Change<M> extends SideEffect<M> {
   }
 }
 
-class Send<M> extends SideEffect<M> {
-  final UseCase<M, void> sendingUseCase;
+class Post<M> extends SideEffect<M> {
+  final UseCase<M, bool> sendingUseCase;
 
-  Send._(this.sendingUseCase): super._();
+  Post._(this.sendingUseCase): super._();
 
   @override
   Future<Either<bool>> apply(AplRepository<M> repo) async {
     final data = await repo.updatesStream.first;
     if (data == null) {
-      return Either.withValue(false);
+      return Either.withError("Can't get value from repository");
     } else {
       try {
-        await sendingUseCase.call(data);
-        return Either.withValue(true);
+        final result = await sendingUseCase.call(data);
+        return Either.withValue(result);
       } catch (e) {
         return Either.withError(e);
       }

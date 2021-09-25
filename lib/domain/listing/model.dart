@@ -1,3 +1,3 @@
-abstract class WithList<IM> {
+abstract class BaseListModel<IM> {
   List<IM> get items;
 }
