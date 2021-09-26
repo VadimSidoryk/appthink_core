@@ -28,7 +28,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
       {required S waitingState,
       required UseCase<void, M> source,
       required FutureOr<S> Function(dynamic) onError}) {
-    _withSideEffectIml<E>(
+    sideEffectIml<E>(
         waitingStateProvider: (state) => waitingState,
         effect: SideEffect.init(source),
         onError: onError);
@@ -41,7 +41,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
       FutureOr<S> Function(dynamic)? onError,
       FutureOr<S> Function()? onCancel}) {
     final initialState = state;
-    _withSideEffectIml<E>(
+    sideEffectIml<E>(
         stateFilter: (state) => state is S1,
         waitingStateProvider: waitingStateProvider != null
             ? (state) => waitingStateProvider.call(state as S1)
@@ -52,26 +52,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
   }
 
   @protected
-  void postOn<E extends WidgetEvents, S1 extends S, S2 extends S>(
-      {required S2 Function(S1) waitingStateProvider,
-      required UseCase<M, bool> poster,
-      required FutureOr<S> Function(S2) onSuccess,
-      required FutureOr<S> Function(dynamic) onError}) {
-    late final waitingState;
-
-    _withSideEffectIml<E>(
-        stateFilter: (state) => state is S1,
-        waitingStateProvider: (state) {
-          waitingState = waitingStateProvider.call(state as S1);
-          return waitingState;
-        },
-        effect: SideEffect.post(poster),
-        onSuccess: () => onSuccess.call(waitingState),
-        onCancel: () => onError.call("Poster returns false"),
-        onError: onError);
-  }
-
-  void _withSideEffectIml<E extends WidgetEvents>(
+  void sideEffectIml<E extends WidgetEvents>(
       {bool Function(S)? stateFilter,
       S Function(S)? waitingStateProvider,
       required SideEffect<M> effect,
@@ -88,21 +69,21 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
       }
 
       final effectResult = await effect.apply(repository);
-      effectResult.forEach((value) async {
-        if (value) {
-          if (onSuccess != null) {
-            emit(await onSuccess.call());
-          }
-        } else {
-          if (onCancel != null) {
-            emit(await onCancel.call());
-          }
+      if (effectResult.value != null) {
+        if (effectResult.value! && onSuccess != null) {
+          final resultState = await onSuccess.call();
+          emit(resultState);
+        } else if (!effectResult.value! && onCancel != null) {
+          final cancelState = await onCancel.call();
+          emit(cancelState);
         }
-      }, (error) async {
+      } else {
         if (onError != null) {
-          emit(await onError.call(error));
+          final errorState =
+              await onError.call(effectResult.exception ?? "Unknown exception");
+          emit(errorState);
         }
-      });
+      }
     });
   }
 

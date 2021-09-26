@@ -1,7 +1,7 @@
 import 'package:applithium_core/app/base_state.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/services/localization/config.dart';
-import 'package:applithium_core_example/application.dart';
+import 'package:applithium_core_example/app_graph.dart';
 import 'package:applithium_core_firebase/module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -41,6 +41,6 @@ class MyApp extends StatefulWidget {
             ),
         title: appTitle,
         modules: {FirebaseModule()},
-        routes: appStructure);
+        routes: testStructure);
   }
 }

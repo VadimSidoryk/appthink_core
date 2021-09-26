@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:applithium_core/domain/form/model.dart';
 import 'package:applithium_core/domain/form/use_cases.dart';
 import 'package:applithium_core/domain/repository.dart';
 import 'package:applithium_core/presentation/bloc.dart';
 import 'package:applithium_core/presentation/form/events.dart';
 import 'package:applithium_core/presentation/form/states.dart';
+import 'package:applithium_core/usecases/base.dart';
+import 'package:flutter/foundation.dart';
 
 import '../events.dart';
 
@@ -26,12 +30,18 @@ class FormBloc<M extends BaseFormModel> extends BlocWithRepository<M, FormScreen
     updateOn<FormUpdateRequested, FormDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
         updater: useCases.update);
-    postOn<PostForm, FormDisplayingState<M>, FormPostingState<M>>(
-      waitingStateProvider: (state) => state.post(),
-      poster: useCases.post,
-      onSuccess: (state) => state.posted(),
-      onError: (error) => state.withError(error)
-    );
+    postOn<PostForm>(useCases.post);
+  }
+
+  @protected
+  void postOn<E extends WidgetEvents>(UseCase<M, bool> poster) {
+    sideEffectIml<E>(
+        stateFilter: (state) => state is FormDisplayingState<M>,
+        waitingStateProvider: (state) => (state as FormDisplayingState<M>).post(),
+        effect: SideEffect.post(poster),
+        onSuccess: () => (state as FormPostingState<M>).posted(),
+        onCancel: () => (state as FormPostingState<M>).failed("Poster returned false"),
+        onError: (error) => (state as FormPostingState<M>).failed(error));
   }
 
 }
