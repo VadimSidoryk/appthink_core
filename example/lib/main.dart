@@ -41,6 +41,6 @@ class MyApp extends StatefulWidget {
             ),
         title: appTitle,
         modules: {FirebaseModule()},
-        routes: testStructure);
+        routes: mainAppGraph);
   }
 }

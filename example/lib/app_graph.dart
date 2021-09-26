@@ -9,7 +9,7 @@ import 'package:applithium_core/scopes/extensions.dart';
 import 'content/domain/use_cases.dart';
 import 'content/presentation/widget.dart';
 
-final mainStructure = [
+final mainAppGraph = [
   RouteDetails(
       builder: (context, result) => PickerScreen(
           itemClicked: (item) =>
@@ -29,7 +29,7 @@ final mainStructure = [
       ]),
 ];
 
-final testStructure = [
+final testAppGraph = [
   RouteDetails(
       builder: (context, result) => ExampleContentScreen(
             useCases: errorUseCases,
