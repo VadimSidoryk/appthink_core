@@ -52,6 +52,10 @@ class AplRepository<T> {
 
     if (resetOperationsStack || _cancelableOperation == null) {
       await _cancelableOperation?.cancel();
+      if(!data.hasValue) {
+        return Either.withValue(false);
+      }
+
       final dataValue = data.value!;
       _cancelableOperation =
           CancelableOperation.fromFuture(operation.call(dataValue)).then(
