@@ -26,18 +26,18 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
   @protected
   void loadOn<E extends WidgetEvents>(
       {required S waitingState,
-      required UseCase<void, M> source,
+      required UseCase<void, M> Function(E) sourceProvider,
       required FutureOr<S> Function(dynamic) onError}) {
     sideEffectIml<E>(
         waitingStateProvider: (state) => waitingState,
-        effect: SideEffect.init(source),
+        effectProvider: (event) => SideEffect.init(sourceProvider.call(event)),
         onError: onError);
   }
 
   @protected
   void updateOn<E extends WidgetEvents, S1 extends S>(
       {S Function(S1)? waitingStateProvider,
-      required UseCase<M, M> updater,
+      required UseCase<M, M> Function(E) updaterProvider,
       FutureOr<S> Function(dynamic)? onError,
       FutureOr<S> Function()? onCancel}) {
     final initialState = state;
@@ -46,7 +46,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
         waitingStateProvider: waitingStateProvider != null
             ? (state) => waitingStateProvider.call(state as S1)
             : null,
-        effect: SideEffect.change(updater),
+        effectProvider: (event) => SideEffect.change(updaterProvider.call(event)),
         onError: onError ?? (error) => initialState,
         onCancel: onCancel ?? () => initialState);
   }
@@ -55,7 +55,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
   void sideEffectIml<E extends WidgetEvents>(
       {bool Function(S)? stateFilter,
       S Function(S)? waitingStateProvider,
-      required SideEffect<M> effect,
+      required SideEffect<M> Function(E) effectProvider,
       FutureOr<S> Function()? onSuccess,
       FutureOr<S> Function()? onCancel,
       FutureOr<S> Function(dynamic)? onError}) {
@@ -68,7 +68,7 @@ abstract class BlocWithRepository<M, S extends BaseState<M>>
         emit(waitingStateProvider.call(state));
       }
 
-      final effectResult = await effect.apply(repository);
+      final effectResult = await effectProvider(event).apply(repository);
       if (effectResult.value != null) {
         if (effectResult.value! && onSuccess != null) {
           final resultState = await onSuccess.call();

@@ -13,21 +13,21 @@ class ListingBloc<IM, M extends BaseListModel<IM>> extends BlocWithRepository<M,
   ListingBloc(this.useCases, {AplRepository<M>? repository}): super(ListingScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: ListingScreenState.initial(),
-        source: useCases.load,
+        sourceProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
     updateOn<WidgetShownEvent, ListDisplayingState<IM, M>>(
         waitingStateProvider: (state) => state.update(),
-        updater: useCases.update);
+        updaterProvider: (event) => useCases.update);
     loadOn<ListReloadRequested>(
         waitingState: ListingScreenState.initial(),
-        source: useCases.load,
+        sourceProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
     updateOn<ListUpdateRequested, ListDisplayingState<IM, M>>(
         waitingStateProvider: (state) => state.update(),
-        updater: useCases.update);
+        updaterProvider: (event) => useCases.update);
     updateOn<ListScrolledToEnd, ListDisplayingState<IM, M>>(
       waitingStateProvider: (state) => state.pageLoading(),
-      updater: useCases.loadMore
+        updaterProvider: (event) => useCases.loadMore
     );
   }
 }

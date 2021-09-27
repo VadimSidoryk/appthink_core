@@ -18,18 +18,18 @@ class FormBloc<M extends BaseFormModel> extends BlocWithRepository<M, FormScreen
   FormBloc(this.useCases, {AplRepository<M>? repository}) : super(FormScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: FormScreenState.initial(),
-        source: useCases.load,
+        sourceProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
     updateOn<WidgetShownEvent, FormDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
-        updater: useCases.update);
+        updaterProvider: (event) => useCases.update);
     loadOn<FormReloadRequested>(
         waitingState: FormScreenState.initial(),
-        source: useCases.load,
+        sourceProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
     updateOn<FormUpdateRequested, FormDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
-        updater: useCases.update);
+        updaterProvider: (event) =>  useCases.update);
     postOn<PostForm>(useCases.post);
   }
 
@@ -38,7 +38,7 @@ class FormBloc<M extends BaseFormModel> extends BlocWithRepository<M, FormScreen
     sideEffectIml<E>(
         stateFilter: (state) => state is FormDisplayingState<M>,
         waitingStateProvider: (state) => (state as FormDisplayingState<M>).post(),
-        effect: SideEffect.post(poster),
+        effectProvider: (event) => SideEffect.post(poster),
         onSuccess: () => (state as FormPostingState<M>).posted(),
         onCancel: () => (state as FormPostingState<M>).failed("Poster returned false"),
         onError: (error) => (state as FormPostingState<M>).failed(error));

@@ -12,17 +12,17 @@ class ContentBloc<M> extends BlocWithRepository<M, ContentScreenState<M>> {
       : super(ContentScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: ContentScreenState.initial(),
-        source: useCases.load,
+        sourceProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
     updateOn<WidgetShownEvent, ContentDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
-        updater: useCases.update);
+        updaterProvider: (event) => useCases.update);
     loadOn<ContentReloadRequested>(
         waitingState: ContentScreenState.initial(),
-        source: useCases.load,
+        sourceProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
     updateOn<ContentUpdateRequested, ContentDisplayingState<M>>(
         waitingStateProvider: (state) => state.update(),
-        updater: useCases.update);
+        updaterProvider: (event) => useCases.update);
   }
 }
