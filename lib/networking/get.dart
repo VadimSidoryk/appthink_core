@@ -10,7 +10,7 @@ Future<Either<O>> httpGet<I, O>({
   Map<String, String>? headers,
   Map<String, String>? params,
   required O Function(dynamic) builder}) async {
-    final response;
+    final Response response;
     final paramsString;
     final uri;
     try {
@@ -27,11 +27,11 @@ Future<Either<O>> httpGet<I, O>({
     }
 
     if (response.statusCode != 200) {
-      return Either.withError(RemoteServerError(uri, response.statusCode, response.bodyJson));
+      return Either.withError(RemoteServerError(uri, response.statusCode, response.body));
     }
 
-    final data = json.decode(response.bodyJson);
     try {
+      final data = json.decode(response.body);
       final result = builder.call(data);
       return Either.withValue(result);
     } catch (e){
