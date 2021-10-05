@@ -32,7 +32,8 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   @protected
   late Store globalStore;
   final AplConfig defaultConfig;
-  final Widget Function(BuildContext) splashBuilder;
+  final WidgetBuilder splashBuilder;
+  final PageRoute Function(WidgetBuilder)? splashRouteBuilder;
   final Set<AplModule> modules;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
@@ -44,6 +45,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       this.navObserver,
       required this.defaultConfig,
       required this.splashBuilder,
+      this.splashRouteBuilder,
       Future<String?> Function()? initialLinkProvider,
       Set<Analyst>? analysts,
       required this.routes,
@@ -70,6 +72,8 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
             navigatorObservers: navObserver != null ? [navObserver!] : const [],
             home: _SplashScreen<_AppInitialData>(
               builder: splashBuilder,
+              routeBuilder: splashRouteBuilder ??
+                  (builder) => MaterialPageRoute(builder: builder),
               configLoader: (context) async {
                 final provider = globalStore.getOrNull<ConfigProvider>();
                 final config = provider != null
@@ -113,13 +117,15 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 }
 
 class _SplashScreen<D> extends StatelessWidget {
-  final Widget Function(BuildContext) builder;
+  final WidgetBuilder builder;
+  final PageRoute Function(WidgetBuilder) routeBuilder;
   final Widget Function(BuildContext, D) nextScreenBuilder;
   final Future<D> Function(BuildContext) configLoader;
 
   const _SplashScreen(
       {Key? key,
       required this.builder,
+      required this.routeBuilder,
       required this.configLoader,
       required this.nextScreenBuilder})
       : super(key: key);
@@ -133,10 +139,8 @@ class _SplashScreen<D> extends StatelessWidget {
   Future<void> _setupInitFlow(BuildContext context) async {
     final config = await configLoader.call(context);
     log("pushReplacement");
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => nextScreenBuilder(context, config)));
+    Navigator.pushReplacement(context,
+        routeBuilder.call((context) => nextScreenBuilder(context, config)));
   }
 }
 
@@ -177,10 +181,7 @@ class _RealApplicationState extends State<_RealApplication> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Scope
-        .of(context)
-        ?.store
-        .add((provider) => _router);
+    Scope.of(context)?.store.add((provider) => _router);
     context
         .get<EventTriggeredHandlerService>()
         .setActionHandler(_processAction);
@@ -196,8 +197,10 @@ class _RealApplicationState extends State<_RealApplication> {
   @override
   Widget build(BuildContext context) {
     final localizationConfig = widget.initialData.config.localizations;
-    final supportedLocales = localizationConfig.getSupportedLocaleCodes()
-        .map((item) => item.toLocale()).toList();
+    final supportedLocales = localizationConfig
+        .getSupportedLocaleCodes()
+        .map((item) => item.toLocale())
+        .toList();
 
     return MaterialApp(
       title: widget.title,
@@ -205,9 +208,7 @@ class _RealApplicationState extends State<_RealApplication> {
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: context
-          .get<EventBus>()
-          .navigatorObservers,
+      navigatorObservers: context.get<EventBus>().navigatorObservers,
       locale: widget.locale,
       supportedLocales: supportedLocales,
       localizationsDelegates: [

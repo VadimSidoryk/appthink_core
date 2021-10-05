@@ -24,13 +24,13 @@ abstract class StateWithBloc<W extends StatefulWidget, S extends BaseState> exte
   Bloc<WidgetEvents, S> createBloc(BuildContext context);
 
   @protected
-  Widget createWidgetForState(S state, EventsListener listener);
+  Widget createWidgetForState(S state);
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<Bloc<WidgetEvents, S>, S>(
       bloc: _bloc,
-      builder: (context, state) => createWidgetForState(state, this),
+      builder: (context, state) => createWidgetForState(state),
       listener: (context, state) {
       },
     );
