@@ -79,7 +79,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                     : defaultConfig;
                 final initialLink = await _initialLinkProvider.call();
                 log("initial link = $initialLink");
-                return _AppInitialData(defaultConfig, config, initialLink);
+                return _AppInitialData(config, initialLink);
               },
               nextScreenBuilder: (context, initialData) => Scope(
                   parentContext: context,
@@ -256,11 +256,10 @@ class _RealApplicationState extends State<_RealApplication> {
 }
 
 class _AppInitialData {
-  final AplConfig defaultConfig;
   final AplConfig config;
   final String? link;
 
-  _AppInitialData(this.defaultConfig, this.config, this.link);
+  _AppInitialData(this.config, this.link);
 }
 
 Store _buildGlobalStore(Set<AplModule> modules) {
