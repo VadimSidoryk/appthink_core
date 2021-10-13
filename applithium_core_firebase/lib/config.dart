@@ -1,7 +1,6 @@
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/localization/config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
@@ -28,14 +27,34 @@ class FirebaseConfigProvider extends ConfigProvider {
     // await remoteConfig.setDefaults(defaults);
     await remoteConfig.fetchAndActivate();
     RemoteConfigValue(null, ValueSource.valueStatic);
-    final testValue = remoteConfig.getString("test_value");
-    log("remoteConfig = $testValue");
+    return FirebaseAplConfigAdapter(remoteConfig);
+  }
+}
 
-    return AplConfig(
-      messagingApiKey: "",
-      localizations: LocalizationConfig({})
-    );
+class FirebaseAplConfigAdapter extends AplConfig {
 
+  final RemoteConfig configImpl;
+
+  FirebaseAplConfigAdapter(this.configImpl);
+
+  @override
+  bool getBool(String key) {
+    return configImpl.getBool(key);
+  }
+
+  @override
+  double getDouble(String key) {
+    return configImpl.getDouble(key);
+  }
+
+  @override
+  int getInt(String key) {
+    return configImpl.getInt(key);
+  }
+
+  @override
+  String getString(String key) {
+    return configImpl.getString(key);
   }
 
 }

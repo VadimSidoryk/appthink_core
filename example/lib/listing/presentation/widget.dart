@@ -25,7 +25,7 @@ class ExampleListingScreen extends StatefulWidget {
 class _ExampleListingState extends StateWithBloc<ExampleListingScreen, ListingScreenState<ExampleItemModel, ExampleListingModel>> {
 
   @override
-  Widget createWidgetForState(ListingScreenState<ExampleItemModel, ExampleListingModel> state, EventsListener listener) {
+  Widget createWidgetForState(ListingScreenState<ExampleItemModel, ExampleListingModel> state) {
     if (state is ListLoadingState) {
     return Scaffold(body: Center(child: CircularProgressIndicator()));
     } else if (state is ListLoadingFailedState) {

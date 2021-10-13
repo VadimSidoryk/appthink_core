@@ -26,8 +26,7 @@ class MyApp extends StatefulWidget {
       {this.observer,
       this.initialLinkProvider,
       this.locale,
-      this.config = const AplConfig(
-          messagingApiKey: "", localizations: LocalizationConfig({}))});
+      this.config = const DefaultConfig()});
 
   @override
   State<StatefulWidget> createState() {

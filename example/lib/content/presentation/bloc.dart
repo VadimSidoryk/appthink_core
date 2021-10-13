@@ -8,10 +8,10 @@ class ExampleContentBloc extends ContentBloc<ExampleContentModel> {
   final ExampleContentUseCases useCases;
   ExampleContentBloc(this.useCases) : super(useCases) {
     updateOn<AddLike, HasContent<ExampleContentModel>>(
-      updater: useCases.addLike
+       updaterProvider: (event) => useCases.addLike
     );
     updateOn<RemoveLike, HasContent<ExampleContentModel>>(
-      updater: useCases.removeLike
+        updaterProvider: (event) => useCases.removeLike
     );
   }
 

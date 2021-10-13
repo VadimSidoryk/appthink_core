@@ -34,14 +34,14 @@ class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentSc
   }
 
   @override
-  Widget createWidgetForState(state, EventsListener listener) {
+  Widget createWidgetForState(state) {
     return Scaffold(
         appBar: AppBar(
             leading: BackButton(
               color: Colors.black,
               onPressed: widget.backClicked,
             )),
-        body: Center(child: _createBody(state, listener)));
+        body: Center(child: _createBody(state, this)));
   }
 
 

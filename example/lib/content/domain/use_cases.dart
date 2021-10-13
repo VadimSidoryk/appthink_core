@@ -1,7 +1,6 @@
 import 'package:applithium_core/domain/content/use_cases.dart';
 import 'package:applithium_core/usecases/base.dart';
-import 'package:applithium_core/usecases/mocks/error.dart';
-import 'package:applithium_core/usecases/mocks/value.dart';
+import 'package:applithium_core/usecases/mocks.dart';
 import 'package:applithium_core_example/content/domain/model.dart';
 
 class ExampleContentUseCases extends ContentUseCases<ExampleContentModel> {
