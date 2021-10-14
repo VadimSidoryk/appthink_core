@@ -18,7 +18,6 @@ class FirebaseConfigProvider extends ConfigProvider {
   @override
   Future<AplConfig> getApplicationConfig() async {
     logMethod("getApplicationConfig");
-    await Firebase.initializeApp();
     final RemoteConfig remoteConfig = RemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: Duration(seconds: fetchTimeoutSec),

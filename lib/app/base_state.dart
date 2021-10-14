@@ -27,89 +27,79 @@ import 'package:uni_links/uni_links.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
-  @protected
-  late Store globalStore;
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
-  final PageRoute Function(WidgetBuilder)? splashRouteBuilder;
+  final PageRoute Function(WidgetBuilder) _splashRouteBuilder;
   final Set<AplModule> modules;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
   final Locale? locale;
 
+  final _debugTree = DebugTree();
+
   AplAppState(
       {String? title,
       this.navObserver,
       required this.defaultConfig,
       required this.splashBuilder,
-      this.splashRouteBuilder,
+      PageRoute Function(WidgetBuilder)? splashRouteBuilder,
       Future<String?> Function()? initialLinkProvider,
       Set<Analyst>? analysts,
       required this.routes,
       this.locale,
       this.modules = const {}})
       : this.title = title ?? "Applithium Based Application",
+        _splashRouteBuilder = splashRouteBuilder ??
+            ((WidgetBuilder builder) => MaterialPageRoute(builder: builder)),
         _initialLinkProvider = initialLinkProvider ?? getInitialLink;
 
   @override
   initState() {
-    Fimber.plantTree(DebugTree());
+    Fimber.plantTree(_debugTree);
     log("initState");
     super.initState();
-    globalStore = _buildGlobalStore(modules);
-    _plantCustomLogTree();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scope(
-        parentContext: null,
-        store: globalStore,
-        builder: (context) => MaterialApp(
-            navigatorObservers: navObserver != null ? [navObserver!] : const [],
-            home: _SplashScreen<_AppInitialData>(
-              builder: splashBuilder,
-              routeBuilder: splashRouteBuilder ??
-                  (builder) => MaterialPageRoute(builder: builder),
-              configLoader: (context) async {
-                final provider = globalStore.getOrNull<ConfigProvider>();
-                final config = provider != null
-                    ? (await provider.getApplicationConfig())
-                    : defaultConfig;
-                final initialLink = await _initialLinkProvider.call();
-                log("initial link = $initialLink");
-                return _AppInitialData(config, initialLink);
-              },
-              nextScreenBuilder: (context, initialData) => Scope(
-                  parentContext: context,
-                  store: _buildAppStore(modules: modules, data: initialData),
-                  builder: (context) => _RealApplication(
-                      locale: locale,
-                      initialData: initialData,
-                      routes: routes,
-                      title: title)),
-            )));
+    return MaterialApp(
+        navigatorObservers: navObserver != null ? [navObserver!] : const [],
+        home: _SplashScreen<_AppInitialData>(
+          builder: splashBuilder,
+          routeBuilder: _splashRouteBuilder,
+          loadingTask: (context) async {
+            final globalStore = await _buildGlobalStore(modules);
+            _plantCustomLogTree(globalStore);
+            final provider = globalStore.getOrNull<ConfigProvider>();
+            final config = provider != null
+                ? (await provider.getApplicationConfig())
+                : defaultConfig;
+            final initialLink = await _initialLinkProvider.call();
+            log("initial link = $initialLink");
+            return _AppInitialData(globalStore, config, initialLink);
+          },
+          nextScreenBuilder: (context, initialData) => Scope(
+              parentContext: context,
+              store: _buildAppStore(modules: modules, data: initialData),
+              builder: (context) => _RealApplication(
+                  locale: locale,
+                  initialData: initialData,
+                  routes: routes,
+                  title: title)),
+        ));
   }
 
   @override
   void dispose() {
-    _unPlantCustomLogTree();
-    Fimber.unplantTree(DebugTree());
+    Fimber.clearAll();
     super.dispose();
   }
 
-  void _plantCustomLogTree() {
-    final customTree = globalStore.getOrNull<LogTree>();
+  void _plantCustomLogTree(Store store) {
+    final customTree = store.getOrNull<LogTree>();
     if (customTree != null) {
       Fimber.plantTree(customTree);
-    }
-  }
-
-  void _unPlantCustomLogTree() {
-    final customTree = globalStore.getOrNull<LogTree>();
-    if (customTree != null) {
-      Fimber.unplantTree(customTree);
     }
   }
 }
@@ -118,13 +108,13 @@ class _SplashScreen<D> extends StatelessWidget {
   final WidgetBuilder builder;
   final PageRoute Function(WidgetBuilder) routeBuilder;
   final Widget Function(BuildContext, D) nextScreenBuilder;
-  final Future<D> Function(BuildContext) configLoader;
+  final Future<D> Function(BuildContext) loadingTask;
 
   const _SplashScreen(
       {Key? key,
       required this.builder,
       required this.routeBuilder,
-      required this.configLoader,
+      required this.loadingTask,
       required this.nextScreenBuilder})
       : super(key: key);
 
@@ -135,7 +125,7 @@ class _SplashScreen<D> extends StatelessWidget {
   }
 
   Future<void> _setupInitFlow(BuildContext context) async {
-    final config = await configLoader.call(context);
+    final config = await loadingTask.call(context);
     log("pushReplacement");
     Navigator.pushReplacement(context,
         routeBuilder.call((context) => nextScreenBuilder(context, config)));
@@ -256,21 +246,25 @@ class _RealApplicationState extends State<_RealApplication> {
 }
 
 class _AppInitialData {
+  final Store globalStore;
   final AplConfig config;
   final String? link;
 
-  _AppInitialData(this.config, this.link);
+  _AppInitialData(this.globalStore, this.config, this.link);
 }
 
-Store _buildGlobalStore(Set<AplModule> modules) {
+Future<Store> _buildGlobalStore(Set<AplModule> modules) async {
   final result = Store()..add((provider) => SharedPreferences.getInstance());
-  modules.forEach((module) => module.injectToGlobal(result));
+  for (final module in modules) {
+    await module.injectOnSplash(result);
+  }
   return result;
 }
 
 Store _buildAppStore(
     {required Set<AplModule> modules, required _AppInitialData data}) {
   final store = Store()
+    ..extend(data.globalStore)
     ..add((provider) => EventTriggeredHandlerService(provider.get()))
     ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
     ..add((provider) => EventBus(listeners: {
@@ -283,7 +277,9 @@ Store _buildAppStore(
       preferencesProvider: provider.get(),
       listener: SessionEventsAdapter(provider.get(), provider.get())));
 
-  modules.forEach((module) => module.injectToApp(store));
+  for (final module in modules) {
+     module.injectOnMain(store);
+  }
 
   return store;
 }

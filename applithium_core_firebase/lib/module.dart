@@ -17,10 +17,9 @@ import 'messaging.dart';
 class FirebaseModule extends AplModule {
 
   @override
-  void injectToGlobal(Store store) async {
+  Future<void> injectOnSplash(Store store) async {
     await Firebase.initializeApp();
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-
     store.add<ConfigProvider>((provider) => FirebaseConfigProvider(
       fetchTimeoutSec: 2
     ));
@@ -28,7 +27,7 @@ class FirebaseModule extends AplModule {
   }
 
   @override
-  void injectToApp(Store store) async {
+  void injectOnMain(Store store) {
     final AplConfig config = store.get();
     store.add<MessagingService>((provider) => FirebaseMessagingService(
         router: provider.get(), appKey: config.messagingApiKey));

@@ -1,7 +1,7 @@
 import 'package:applithium_core/scopes/store.dart';
 
 abstract class AplModule<T> {
-  void injectToGlobal(Store store);
+  Future<void> injectOnSplash(Store store);
 
-  void injectToApp(Store store);
+  void injectOnMain(Store store);
 }
