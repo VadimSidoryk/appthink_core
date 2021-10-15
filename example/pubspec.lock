@@ -18,17 +18,21 @@ packages:
   applithium_core:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
-    version: "0.0.20"
+      path: "."
+      ref: master
+      resolved-ref: d23a184eabde12fc3799b3a37ea1697f47bb2ff0
+      url: "ssh://git@bitbucket.org/appthink/core.git"
+    source: git
+    version: "0.0.22"
   applithium_core_firebase:
     dependency: "direct main"
     description:
-      path: "../applithium_core_firebase"
-      relative: true
-    source: path
-    version: "0.0.14"
+      path: applithium_core_firebase
+      ref: master
+      resolved-ref: d23a184eabde12fc3799b3a37ea1697f47bb2ff0
+      url: "ssh://git@bitbucket.org/appthink/core.git"
+    source: git
+    version: "0.0.15"
   args:
     dependency: transitive
     description:
