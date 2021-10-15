@@ -1,11 +1,11 @@
-import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/events/base_event.dart';
+import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/presentation/states.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 
 import 'events.dart';
 

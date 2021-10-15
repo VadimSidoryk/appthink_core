@@ -3,8 +3,8 @@ import 'package:applithium_core/services/localization/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-const CONTENT_SCREEN_TITLE = "Content Screen";
-const LIST_SCREEN_TITLE = "List Screen";
+const CONTENT_SCREEN_TITLE = "Content screen";
+const LIST_SCREEN_TITLE = "List screen";
 
 class PickerScreen extends StatelessWidget {
   static final items = [

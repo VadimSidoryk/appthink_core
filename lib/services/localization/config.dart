@@ -2,7 +2,7 @@
 const DEFAULT_LOCALE_KEY = "en-US";
 
 class LocalizationConfig {
-  final Map<String, Map<String, String>> _stringData;
+  final Map<String, dynamic> _stringData;
 
   const LocalizationConfig(this._stringData);
 
@@ -11,21 +11,28 @@ class LocalizationConfig {
   }
 
   String getTranslation(String key, String locale) {
+    if(!_stringData.containsKey(key)) {
+      return key;
+    }
     final map = _stringData[key]!;
-    if(map.containsKey(locale)) {
-      return map[locale]!;
+    if(!(map is Map<String, dynamic>) || !map.containsKey(locale)) {
+      return key;
     } else {
-      return map[DEFAULT_LOCALE_KEY]!;
+      return map[locale]!;
     }
   }
 
   Set<String> getSupportedLocaleCodes() {
     final result = <String>{};
     for(String key in _stringData.keys) {
-      result.addAll(_stringData[key]!.keys);
+      final map = _stringData[key]!;
+      if(map is Map<String, dynamic>) {
+        result.addAll(map.keys);
+      }
+
     }
     if(result.isNotEmpty) {
-      return result;
+      return result..add(DEFAULT_LOCALE_KEY);
     } else {
       return { DEFAULT_LOCALE_KEY };
     }
