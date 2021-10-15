@@ -4,6 +4,7 @@ import 'package:applithium_core/module/base.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/service.dart';
 import 'package:applithium_core/services/messaging/service.dart';
+import 'package:applithium_core/utils/any.dart';
 import 'package:applithium_core_firebase/config.dart';
 import 'package:applithium_core_firebase/crashlytics_tree.dart';
 import 'package:fimber/fimber.dart';
@@ -11,7 +12,6 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:applithium_core/utils/any.dart';
 
 import 'analytics.dart';
 import 'messaging.dart';

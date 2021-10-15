@@ -1,6 +1,7 @@
 import 'package:applithium_core/either/either.dart';
-import 'errors.dart';
 import 'package:http/http.dart';
+
+import 'errors.dart';
 
 Future<Either<int>> httpPost(
     {required String url,

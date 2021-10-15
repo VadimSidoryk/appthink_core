@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 const _KEY_MESSAGING_API_KEY = "messaging_api_key";
+const _KEY_LOCALIZATION = "localization";
 
 abstract class AplConfig {
 
   const AplConfig();
 
   String get messagingApiKey => getString(_KEY_MESSAGING_API_KEY);
+
+  Map<String, dynamic> get localizationData => jsonDecode(getString(_KEY_LOCALIZATION));
 
   String getString(String key);
 

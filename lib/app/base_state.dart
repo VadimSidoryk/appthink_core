@@ -18,6 +18,9 @@ import 'package:applithium_core/services/events/action.dart';
 import 'package:applithium_core/services/events/analyst_adapter.dart';
 import 'package:applithium_core/services/events/service.dart';
 import 'package:applithium_core/services/history/service.dart';
+import 'package:applithium_core/services/localization/config.dart';
+import 'package:applithium_core/services/localization/delegate.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -184,11 +187,11 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
-    // final localizationConfig = widget.initialData.config.localizations;
-    // final supportedLocales = localizationConfig
-    //     .getSupportedLocaleCodes()
-    //     .map((item) => item.toLocale())
-    //     .toList();
+    final localizationConfig = LocalizationConfig(widget.initialData.config.localizationData);
+    final supportedLocales = localizationConfig
+        .getSupportedLocaleCodes()
+        .map((item) => item.toLocale())
+        .toList();
 
     return MaterialApp(
       title: widget.title,
@@ -198,9 +201,9 @@ class _RealApplicationState extends State<_RealApplication> {
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
       locale: widget.locale,
-      // supportedLocales: supportedLocales,
+      supportedLocales: supportedLocales,
       localizationsDelegates: [
-        // AppLocalizationsDelegate(localizationConfig),
+        AppLocalizationsDelegate(localizationConfig),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
