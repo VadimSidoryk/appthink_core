@@ -10,17 +10,16 @@ void main() {
   final notLocalizedListValue = "List screen";
   final localizedListValue = "Экран отображения листа";
 
-  final config = DefaultConfig(
-      values: { "messaging_api_key": "",
-        "localization": "{"
+  final config = DefaultConfig("", values: {
+    "localization": "{"
         "\"$notLocalizedContentValue\": {"
-            "\"ru-RU\": \"$localizedContentValue\""
-            "},"
-            "\"$notLocalizedListValue\": {"
-            "\"ru-RU\": \"$localizedListValue\""
-            "}"
-            "}"
-      });
+        "\"ru-RU\": \"$localizedContentValue\""
+        "},"
+        "\"$notLocalizedListValue\": {"
+        "\"ru-RU\": \"$localizedListValue\""
+        "}"
+        "}"
+  });
 
   testWidgets("app without locale", (tester) async {
     final MyApp app = MyApp(

@@ -25,7 +25,7 @@ class MyApp extends StatefulWidget {
       {this.observer,
       this.initialLinkProvider,
       this.locale,
-      this.config = const DefaultConfig()});
+      this.config = const DefaultConfig("")});
 
   @override
   State<StatefulWidget> createState() {
