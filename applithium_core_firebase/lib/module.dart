@@ -4,7 +4,7 @@ import 'package:applithium_core/module/base.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/service.dart';
 import 'package:applithium_core/services/messaging/service.dart';
-import 'package:applithium_core/utils/any.dart';
+import 'package:applithium_core/utils/extentions.dart';
 import 'package:applithium_core_firebase/config.dart';
 import 'package:applithium_core_firebase/crashlytics_tree.dart';
 import 'package:fimber/fimber.dart';

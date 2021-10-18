@@ -1,4 +1,4 @@
-import 'package:applithium_core/services/analytics/trackable.dart';
+import 'package:applithium_core/events/trackable.dart';
 
 
 const EVENT_ARG_NAME = "name";

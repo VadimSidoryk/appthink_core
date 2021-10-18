@@ -1,4 +1,4 @@
-import 'package:applithium_core/either/either.dart';
+import 'package:applithium_core/utils/either.dart';
 import 'package:http/http.dart';
 
 import 'errors.dart';

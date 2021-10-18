@@ -3,14 +3,11 @@ import 'dart:async';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/events/system_listener.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/base.dart';
 import 'package:flutter/widgets.dart';
 
 import 'analyst.dart';
-import 'config.dart';
 
-class AnalyticsService extends AplService<AnalyticsConfig>
-    implements SystemListener {
+class AnalyticsService implements SystemListener {
   final List<Analyst> analysts = [];
 
   void addAnalyst(Analyst analyst) {
@@ -36,11 +33,6 @@ class AnalyticsService extends AplService<AnalyticsConfig>
       currentValue = provider.call(currentValue);
       return currentValue;
     }).listen((value) => setUserProperty(eventName, value));
-  }
-
-  @override
-  void init(BuildContext context, AnalyticsConfig config) {
-    // TODO: implement init
   }
 
   @override

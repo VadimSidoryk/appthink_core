@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/either/either.dart';
+import 'package:applithium_core/utils/either.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/usecases/base.dart';
 import 'package:async/async.dart';
