@@ -1,15 +1,14 @@
-import 'dart:convert';
-
 import 'package:applithium_core/utils/either.dart';
 import 'package:http/http.dart';
 
 import 'errors.dart';
+import 'parser.dart';
 
 Future<Either<O>> httpGet<I, O>({
   required String url,
   Map<String, String>? headers,
   Map<String, String>? params,
-  required O Function(dynamic) builder}) async {
+  required Parser<O> resultParser}) async {
     final Response response;
     final paramsString;
     final uri;
@@ -31,8 +30,7 @@ Future<Either<O>> httpGet<I, O>({
     }
 
     try {
-      final data = json.decode(response.body);
-      final result = builder.call(data);
+      final result = resultParser(response.body);
       return Either.withValue(result);
     } catch (e){
       return Either.withError(e);
