@@ -1,7 +1,8 @@
+import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/scopes/store.dart';
 
-abstract class AplModule<T> {
-  Future<void> injectOnSplash(Store store);
+abstract class AppModule {
+  Future<bool> injectConfigProvider(Store store);
 
-  void injectOnMain(Store store);
+  Future<void> injectDependencies(Store store, AplConfig config);
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
@@ -33,7 +34,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
   final PageRoute Function(WidgetBuilder) _splashRouteBuilder;
-  final Set<AplModule> modules;
+  final Set<AppModule> modules;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
@@ -72,19 +73,20 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
           builder: splashBuilder,
           routeBuilder: _splashRouteBuilder,
           loadingTask: (context) async {
-            final globalStore = await _buildGlobalStore(modules);
-            _plantCustomLogTree(globalStore);
-            final provider = globalStore.getOrNull<ConfigProvider>();
+            final store = await _buildStoreWithConfigProvider(modules);
+            _plantCustomLogTree(store);
+            final provider = store.getOrNull<ConfigProvider>();
             final config = provider != null
                 ? (await provider.getApplicationConfig())
                 : defaultConfig;
+            await _injectDependenciesInStore(store, config);
             final initialLink = await _initialLinkProvider.call();
             log("initial link = $initialLink");
-            return _AppInitialData(globalStore, config, initialLink);
+            return _AppInitialData(store, config, initialLink);
           },
           nextScreenBuilder: (context, initialData) => Scope(
               parentContext: context,
-              store: _buildAppStore(modules: modules, data: initialData),
+              store: initialData.store,
               builder: (context) => _RealApplication(
                   locale: locale,
                   initialData: initialData,
@@ -103,6 +105,41 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     final customTree = store.getOrNull<LogTree>();
     if (customTree != null) {
       Fimber.plantTree(customTree);
+    }
+  }
+
+  Future<Store> _buildStoreWithConfigProvider(Set<AppModule> modules) async {
+    final result = Store();
+    bool isConfigAdded = false;
+    for (final module in modules) {
+      final isConfigAddedByModule = await module.injectConfigProvider(result);
+      if (isConfigAddedByModule && isConfigAdded) {
+        logError("ConfigProvider by module $module overrides previous one");
+      }
+      isConfigAdded |= isConfigAddedByModule;
+    }
+
+    if (!isConfigAdded) {
+      logError("ConfigProvider wasn't added");
+    }
+    return result;
+  }
+
+  Future<void> _injectDependenciesInStore(Store store, AplConfig config) async {
+    store.add((provider) => SharedPreferences.getInstance());
+    store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
+    store.add((provider) => EventTriggeredHandlerService(provider.get()));
+    store.add((provider) => EventBus(listeners: {
+          provider.get<AnalyticsService>(),
+          TriggeredEventsHandlerAdapter(provider.get())
+        }));
+    store.add((provider) => config);
+    store.add((provider) => UsageHistoryService(
+        preferencesProvider: provider.get(),
+        listener: SessionEventsAdapter(provider.get(), provider.get())));
+
+    for (final module in modules) {
+      await module.injectDependencies(store, config);
     }
   }
 }
@@ -187,7 +224,8 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
-    final localizationConfig = LocalizationConfig(widget.initialData.config.localizationData);
+    final localizationConfig =
+        LocalizationConfig(widget.initialData.config.localizationData);
     final supportedLocales = localizationConfig
         .getSupportedLocaleCodes()
         .map((item) => item.toLocale())
@@ -249,40 +287,9 @@ class _RealApplicationState extends State<_RealApplication> {
 }
 
 class _AppInitialData {
-  final Store globalStore;
+  final Store store;
   final AplConfig config;
   final String? link;
 
-  _AppInitialData(this.globalStore, this.config, this.link);
-}
-
-Future<Store> _buildGlobalStore(Set<AplModule> modules) async {
-  final result = Store()..add((provider) => SharedPreferences.getInstance());
-  for (final module in modules) {
-    await module.injectOnSplash(result);
-  }
-  return result;
-}
-
-Store _buildAppStore(
-    {required Set<AplModule> modules, required _AppInitialData data}) {
-  final store = Store()
-    ..extend(data.globalStore)
-    ..add((provider) => EventTriggeredHandlerService(provider.get()))
-    ..add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()))
-    ..add((provider) => EventBus(listeners: {
-          provider.get<AnalyticsService>(),
-          TriggeredEventsHandlerAdapter(provider.get())
-        }))
-    ..add((provider) => data.config);
-
-  store.add((provider) => UsageHistoryService(
-      preferencesProvider: provider.get(),
-      listener: SessionEventsAdapter(provider.get(), provider.get())));
-
-  for (final module in modules) {
-     module.injectOnMain(store);
-  }
-
-  return store;
+  _AppInitialData(this.store, this.config, this.link);
 }
