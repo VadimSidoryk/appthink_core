@@ -12,9 +12,9 @@ extension Loggable on Object {
     log("${source ?? this} : $methodName with params $params");
   }
 
-  void logError(String message, {dynamic ex}) {
+  void logError(String message, {dynamic ex, StackTrace? stacktrace}) {
     Fimber.withTag(this.runtimeType.toString(), (log) {
-      log.e(message, ex: ex);
+      log.e(message, ex: ex, stacktrace: stacktrace);
     });
   }
 

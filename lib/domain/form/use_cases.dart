@@ -1,5 +1,5 @@
 import 'package:applithium_core/domain/content/use_cases.dart';
-import 'package:applithium_core/usecases/base.dart';
+import '../use_case.dart';
 
 class FormUseCases<M> extends ContentUseCases<M> {
 

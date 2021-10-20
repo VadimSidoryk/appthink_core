@@ -10,24 +10,24 @@ import '../events.dart';
 class ListingBloc<IM, M extends BaseListModel<IM>> extends BlocWithRepository<M, ListingScreenState<IM, M>> {
   final ListingUseCases<IM, M> useCases;
 
-  ListingBloc(this.useCases, {AplRepository<M>? repository}): super(ListingScreenState.initial(), repositoryValue: repository) {
+  ListingBloc(this.useCases, {Repository<M>? repository}): super(ListingScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: ListingScreenState.initial(),
-        sourceProvider: (event) => useCases.load,
+        loadingUCProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
-    updateOn<WidgetShownEvent, ListDisplayingState<IM, M>>(
+    changeOn<WidgetShownEvent, ListDisplayingState<IM, M>>(
         waitingStateProvider: (state) => state.update(),
-        updaterProvider: (event) => useCases.update);
+        changingUCProvider: (event) => useCases.update);
     loadOn<ListReloadRequested>(
         waitingState: ListingScreenState.initial(),
-        sourceProvider: (event) => useCases.load,
+        loadingUCProvider: (event) => useCases.load,
         onError: (error) => state.withError(error));
-    updateOn<ListUpdateRequested, ListDisplayingState<IM, M>>(
+    changeOn<ListUpdateRequested, ListDisplayingState<IM, M>>(
         waitingStateProvider: (state) => state.update(),
-        updaterProvider: (event) => useCases.update);
-    updateOn<ListScrolledToEnd, ListDisplayingState<IM, M>>(
+        changingUCProvider: (event) => useCases.update);
+    changeOn<ListScrolledToEnd, ListDisplayingState<IM, M>>(
       waitingStateProvider: (state) => state.pageLoading(),
-        updaterProvider: (event) => useCases.loadMore
+        changingUCProvider: (event) => useCases.loadMore
     );
   }
 }

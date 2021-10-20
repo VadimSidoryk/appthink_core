@@ -1,5 +1,4 @@
-import 'package:applithium_core/usecases/base.dart';
-
+import '../use_case.dart';
 import 'model.dart';
 
 class ListingUseCases<IM, M extends BaseListModel<IM>> {
