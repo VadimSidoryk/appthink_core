@@ -20,16 +20,16 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: e28ef23a4a3fae05b25860387c98b24ac459ee02
+      resolved-ref: "4f4fb103be3e154b1ac58be6331d9587011383c7"
       url: "ssh://git@bitbucket.org/appthink/core.git"
     source: git
-    version: "0.0.28"
+    version: "0.0.29"
   applithium_core_firebase:
     dependency: "direct main"
     description:
       path: applithium_core_firebase
       ref: master
-      resolved-ref: e28ef23a4a3fae05b25860387c98b24ac459ee02
+      resolved-ref: "4f4fb103be3e154b1ac58be6331d9587011383c7"
       url: "ssh://git@bitbucket.org/appthink/core.git"
     source: git
     version: "0.0.18"
@@ -638,7 +638,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.9"
+    version: "2.2.10"
   xdg_directories:
     dependency: transitive
     description:
