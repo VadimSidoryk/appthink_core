@@ -1,5 +1,5 @@
 import 'package:applithium_core/domain/listing/use_cases.dart';
-import 'package:applithium_core/usecases/mocks.dart';
+import 'package:applithium_core/domain/use_case.dart';
 
 import 'model.dart';
 

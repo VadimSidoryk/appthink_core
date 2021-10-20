@@ -1,4 +1,4 @@
-import 'package:applithium_core/usecases/base.dart';
+import '../use_case.dart';
 
 class ContentUseCases<M> {
   final UseCase<void, M> load;

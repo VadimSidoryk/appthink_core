@@ -2,7 +2,7 @@ import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/presentation/content/events.dart';
 import 'package:applithium_core/presentation/content/states.dart';
 import 'package:applithium_core/presentation/events.dart';
-import 'package:applithium_core/presentation/widget_state.dart';
+import 'package:applithium_core/presentation/widget.dart';
 import 'package:applithium_core_example/content/domain/model.dart';
 import 'package:applithium_core_example/content/domain/use_cases.dart';
 import 'package:applithium_core_example/content/presentation/bloc.dart';
@@ -41,12 +41,12 @@ class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentSc
               color: Colors.black,
               onPressed: widget.backClicked,
             )),
-        body: Center(child: _createBody(state, this)));
+        body: Center(child: _createBody(state)));
   }
 
 
   Widget _createBody(
-      ContentScreenState<ExampleContentModel> state, EventsListener listener) {
+      ContentScreenState<ExampleContentModel> state) {
     if (state is ContentLoadingState<ExampleContentModel>) {
       return CircularProgressIndicator();
     } else if (state is ContentLoadFailedState<ExampleContentModel>) {
@@ -56,7 +56,7 @@ class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentSc
           Text("Failed, ${state.error}"),
           OutlinedButton(
             child: Text("Reload"),
-            onPressed: () => listener.onNewEvent(BaseContentEvents.reload()),
+            onPressed: () => this.onNewEvent(BaseContentEvents.reload()),
           )
         ],
       );
@@ -72,10 +72,10 @@ class _ExampleContentState extends StateWithBloc<ExampleContentScreen, ContentSc
             children: [
               OutlinedButton(
                   child: Text("+"),
-                  onPressed: () => listener.onNewEvent(ExampleContentEvents.addLike())),
+                  onPressed: () => this.onNewEvent(ExampleContentEvents.addLike())),
               OutlinedButton(
                   child: Text("-"),
-                  onPressed: () => listener.onNewEvent(ExampleContentEvents.removeLike()))
+                  onPressed: () => this.onNewEvent(ExampleContentEvents.removeLike()))
             ],
           )
         ],

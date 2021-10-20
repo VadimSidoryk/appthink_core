@@ -21,14 +21,14 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.26"
+    version: "0.0.27"
   applithium_core_firebase:
     dependency: "direct main"
     description:
       path: "../applithium_core_firebase"
       relative: true
     source: path
-    version: "0.0.17"
+    version: "0.0.18"
   args:
     dependency: transitive
     description:
