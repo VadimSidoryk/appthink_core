@@ -14,14 +14,14 @@ import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'package:applithium_core/services/analytics/service.dart';
-import 'package:applithium_core/services/analytics/usage_adapter.dart';
-import 'package:applithium_core/services/events/action.dart';
-import 'package:applithium_core/services/events/analyst_adapter.dart';
-import 'package:applithium_core/services/events/service.dart';
+import 'package:applithium_core/services/analytics/session_adapter.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/localization/config.dart';
 import 'package:applithium_core/services/localization/delegate.dart';
 import 'package:applithium_core/services/localization/extensions.dart';
+import 'package:applithium_core/services/promo/action.dart';
+import 'package:applithium_core/services/promo/analyst_adapter.dart';
+import 'package:applithium_core/services/promo/service.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -34,7 +34,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
   final PageRoute Function(WidgetBuilder) _splashRouteBuilder;
-  final Set<AppModule> modules;
+  final Set<AplModule> modules;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
@@ -108,7 +108,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     }
   }
 
-  Future<Store> _buildStoreWithConfigProvider(Set<AppModule> modules) async {
+  Future<Store> _buildStoreWithConfigProvider(Set<AplModule> modules) async {
     final result = Store();
     bool isConfigAdded = false;
     for (final module in modules) {
@@ -128,15 +128,15 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   Future<void> _injectDependenciesInStore(Store store, AplConfig config) async {
     store.add((provider) => SharedPreferences.getInstance());
     store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
-    store.add((provider) => EventTriggeredHandlerService(provider.get()));
+    store.add((provider) => PromoService(provider.get()));
     store.add((provider) => EventBus(listeners: {
           provider.get<AnalyticsService>(),
-          TriggeredEventsHandlerAdapter(provider.get())
+          PromoEventsAdapter(provider.get())
         }));
     store.add((provider) => config);
     store.add((provider) => UsageHistoryService(
         preferencesProvider: provider.get(),
-        listener: SessionEventsAdapter(provider.get(), provider.get())));
+        listener: AnalyticsSessionAdapter(provider.get(), provider.get())));
 
     for (final module in modules) {
       await module.injectDependencies(store, config);
@@ -211,14 +211,14 @@ class _RealApplicationState extends State<_RealApplication> {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
     context
-        .get<EventTriggeredHandlerService>()
-        .setActionHandler(_processAction);
+        .get<PromoService>()
+        .setActionHandler(_onPromoAction);
     _setupWidgetObservers();
     _handleIncomingLinks();
     context.get<UsageHistoryService>().openSession();
   }
 
-  void _processAction(SystemAction action, Object? sender) {
+  void _onPromoAction(PromoAction action, Object? sender) {
     log("_processAction");
   }
 

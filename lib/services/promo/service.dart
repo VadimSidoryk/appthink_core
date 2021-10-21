@@ -1,8 +1,6 @@
 import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/json/condition.dart';
-import 'package:applithium_core/json/interpolation.dart';
-import 'package:applithium_core/services/base.dart';
-import 'package:flutter/widgets.dart';
+import 'package:applithium_core/utils/json/condition.dart';
+import 'package:applithium_core/utils/json/interpolation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'action.dart';
@@ -10,9 +8,9 @@ import 'event_trigger.dart';
 
 const _countKey = "count";
 
-typedef ActionHandler = Function(SystemAction action, Object? sender);
+typedef ActionHandler = Function(PromoAction action, Object? sender);
 
-class EventTriggeredHandlerService  extends AplService {
+class PromoService {
 
   final Future<SharedPreferences> _preferencesProvider;
   Map<String, Set<AplEventTrigger>> _triggers = {};
@@ -20,13 +18,13 @@ class EventTriggeredHandlerService  extends AplService {
 
   final _interpolation = Interpolation();
 
-  EventTriggeredHandlerService(this._preferencesProvider);
+  PromoService(this._preferencesProvider);
 
   void setActionHandler(ActionHandler handler) {
     _actionsHandler = handler;
   }
 
-  void handleEvent(AppEvent event) async {
+  void handleEvent(AplEvent event) async {
     final key = "${event.name}.$_countKey";
     final count = ((await _preferencesProvider).getInt(key) ?? 0) + 1;
     (await _preferencesProvider).setInt(key, count);
@@ -51,10 +49,5 @@ class EventTriggeredHandlerService  extends AplService {
         }
       }
     }
-  }
-
-  @override
-  void init(BuildContext context, config) {
-    // add triggers from config
   }
 }

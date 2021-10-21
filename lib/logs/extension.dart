@@ -9,7 +9,7 @@ extension Loggable on Object {
 
   void logMethod(String methodName,
       {Object? source, List<Object?> params = const []}) {
-    log("${source ?? this} : $methodName with params $params");
+    (source ?? this).log(": $methodName ($params)");
   }
 
   void logError(String message, {dynamic ex, StackTrace? stacktrace}) {
@@ -19,7 +19,7 @@ extension Loggable on Object {
   }
 
   Object logResult(Object source, String methodName) {
-    source.log("$methodName returns $this");
+    source.log("$methodName -> $this");
     return this;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:applithium_core/events/base_event.dart';
 import 'package:flutter/widgets.dart';
 
-abstract class WidgetEvents extends AppEvent {
+abstract class WidgetEvents extends AplEvent {
   WidgetEvents(String name, [Map<String, Object>? params])
       : super(name, params);
 }

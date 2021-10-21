@@ -5,23 +5,23 @@ import 'package:flutter/cupertino.dart';
 
 import 'service.dart';
 
-class TriggeredEventsHandlerAdapter extends SystemListener {
-  final EventTriggeredHandlerService _service;
+class PromoEventsAdapter extends SystemListener {
+  final PromoService _service;
 
-  TriggeredEventsHandlerAdapter(this._service);
+  PromoEventsAdapter(this._service);
 
   @override
   List<NavigatorObserver> get navigatorObservers =>
       [_NavigatorEventsObserver(_service)];
 
   @override
-  void onNewEvent(AppEvent event) async {
+  void onNewEvent(AplEvent event) async {
     _service.handleEvent(event);
   }
 }
 
 class _NavigatorEventsObserver extends NavigatorObserver {
-  final EventTriggeredHandlerService _service;
+  final PromoService _service;
 
   _NavigatorEventsObserver(this._service);
 

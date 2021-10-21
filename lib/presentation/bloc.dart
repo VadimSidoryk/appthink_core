@@ -10,11 +10,11 @@ import '../applithium_core.dart';
 
 abstract class BlocWithRepository<M, S extends BaseState<M>>
     extends Bloc<WidgetEvents, S> {
-  final Repository<M> repository;
+  final AplRepository<M> repository;
   StreamSubscription? _subscription;
 
-  BlocWithRepository(S initialState, {Repository<M>? repositoryValue})
-      : repository = repositoryValue ?? Repository<M>(-1),
+  BlocWithRepository(S initialState, {AplRepository<M>? repositoryValue})
+      : repository = repositoryValue ?? AplRepository<M>(-1),
         super(initialState) {
     _subscription = this.repository.updatesStream.listen((data) {
       add(BaseWidgetEvents.repositoryUpdated(data));

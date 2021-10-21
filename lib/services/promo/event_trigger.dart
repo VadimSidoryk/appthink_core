@@ -6,7 +6,7 @@ class AplEventTrigger  {
   static const String _actionKey = "action";
 
   final String condition;
-  final SystemAction action;
+  final PromoAction action;
 
   factory AplEventTrigger.fromMap(Map<String, dynamic> map) {
     return AplEventTrigger(map[_conditionKey], map[_actionKey]);

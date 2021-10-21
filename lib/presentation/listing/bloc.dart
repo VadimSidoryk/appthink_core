@@ -10,7 +10,7 @@ import '../events.dart';
 class ListingBloc<IM, M extends BaseListModel<IM>> extends BlocWithRepository<M, ListingScreenState<IM, M>> {
   final ListingUseCases<IM, M> useCases;
 
-  ListingBloc(this.useCases, {Repository<M>? repository}): super(ListingScreenState.initial(), repositoryValue: repository) {
+  ListingBloc(this.useCases, {AplRepository<M>? repository}): super(ListingScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: ListingScreenState.initial(),
         loadingUCProvider: (event) => useCases.load,

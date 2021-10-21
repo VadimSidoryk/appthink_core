@@ -14,7 +14,7 @@ class FormBloc<M extends BaseFormModel> extends BlocWithRepository<M, FormScreen
 
   final FormUseCases<M> useCases;
 
-  FormBloc(this.useCases, {Repository<M>? repository}) : super(FormScreenState.initial(), repositoryValue: repository) {
+  FormBloc(this.useCases, {AplRepository<M>? repository}) : super(FormScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: FormScreenState.initial(),
         loadingUCProvider: (event) => useCases.load,

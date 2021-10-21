@@ -37,7 +37,7 @@ abstract class StateWithBloc<W extends StatefulWidget, S extends BaseState> exte
   }
 
   @override
-  void onNewEvent(AppEvent event) {
+  void onNewEvent(AplEvent event) {
     context.get<EventBus>().onNewEvent(event);
     if (event is WidgetEvents) {
       _bloc.add(event);

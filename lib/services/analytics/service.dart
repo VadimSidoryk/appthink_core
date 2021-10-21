@@ -21,7 +21,7 @@ class AnalyticsService implements SystemListener {
   }
 
   @override
-  void onNewEvent(AppEvent event) {
+  void onNewEvent(AplEvent event) {
     logMethod("trackEventWithParams", params: [event]);
     analysts.forEach((impl) => impl.onNewEvent(event));
   }

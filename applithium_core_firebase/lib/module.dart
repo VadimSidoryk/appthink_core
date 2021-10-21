@@ -19,13 +19,17 @@ const _KEY_MODE = "mode";
 const _MODE_RELEASE = "release";
 const _MODE_DEBUG = "debug";
 
-class FirebaseModule extends AppModule {
+class FirebaseModule extends AplModule {
+  List<Function(FirebaseApp, AplConfig)> serviceBuilders;
+  FirebaseApp? _app;
   FirebaseAnalytics? _analytics;
+
+  FirebaseModule([this.serviceBuilders = const []]);
 
   @override
   Future<bool> injectConfigProvider(Store store) async {
     logMethod("injectConfigProvider");
-    await Firebase.initializeApp();
+    _app = await Firebase.initializeApp();
     _analytics = FirebaseAnalytics()
       ..setUserProperty(
           name: _KEY_MODE, value: kReleaseMode ? _MODE_RELEASE : _MODE_DEBUG);
@@ -44,6 +48,12 @@ class FirebaseModule extends AppModule {
     store.add<LogTree>((provider) => CrashlyticsTree());
     _analytics?.let((val) {
       store.get<AnalyticsService>().addAnalyst(FirebaseAnalyst(val));
+    });
+
+    _app?.let((val) {
+      serviceBuilders.forEach((serviceBuilder) {
+        store.add((provider) => serviceBuilder.call(val, config));
+      });
     });
   }
 }
