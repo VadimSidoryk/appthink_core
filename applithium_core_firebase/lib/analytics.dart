@@ -21,7 +21,7 @@ class FirebaseAnalyst extends Analyst {
   }
 
   @override
-  void onNewEvent(AppEvent event) {
+  void onNewEvent(AplEvent event) {
     logMethod("onNewEvent", params: [event]);
     _analytics.logEvent(name: event.name, parameters: event.params);
   }

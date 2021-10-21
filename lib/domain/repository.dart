@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'use_case.dart';
 
-class Repository<T> {
+class AplRepository<T> {
   @protected
   final data = BehaviorSubject<T>();
 
@@ -22,7 +22,7 @@ class Repository<T> {
   bool isOutdated = true;
   StreamSubscription? _outdatedSubscription;
 
-  Repository(this.timeToLiveMillis);
+  AplRepository(this.timeToLiveMillis);
 
   Future<Either<bool>> _loadWith(UseCase<void, T> useCase) async {
     logMethod("loadWith", params: [useCase]);
@@ -148,7 +148,7 @@ class Repository<T> {
 }
 
 abstract class SideEffect<M> {
-  Future<Either<bool>> apply(Repository<M> repo);
+  Future<Either<bool>> apply(AplRepository<M> repo);
 
   factory SideEffect.load(UseCase<void, M> loadingUseCase) =>
       Load<M>._(loadingUseCase);
@@ -171,7 +171,7 @@ class Load<M> extends SideEffect<M> {
   Load._(this.sourceUseCase) : super._();
 
   @override
-  Future<Either<bool>> apply(Repository<M> repo) {
+  Future<Either<bool>> apply(AplRepository<M> repo) {
     return repo._loadWith(sourceUseCase);
   }
 }
@@ -182,7 +182,7 @@ class Update<M> extends SideEffect<M> {
   Update._(this.updateUseCase) : super._();
 
   @override
-  Future<Either<bool>> apply(Repository<M> repo) {
+  Future<Either<bool>> apply(AplRepository<M> repo) {
     return repo._loadIfOutdatedWith(updateUseCase);
   }
 }
@@ -193,7 +193,7 @@ class Change<M> extends SideEffect<M> {
   Change._(this.changingUseCase) : super._();
 
   @override
-  Future<Either<bool>> apply(Repository<M> repo) {
+  Future<Either<bool>> apply(AplRepository<M> repo) {
     return repo._changeWith(changingUseCase);
   }
 }
@@ -204,7 +204,7 @@ class Post<M> extends SideEffect<M> {
   Post._(this.sendingUseCase) : super._();
 
   @override
-  Future<Either<bool>> apply(Repository<M> repo) async {
+  Future<Either<bool>> apply(AplRepository<M> repo) async {
     final data = await repo.updatesStream.first;
     if (data == null) {
       return Either.withError("Can't get value from repository");

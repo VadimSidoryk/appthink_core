@@ -1,4 +1,4 @@
-import 'package:applithium_core/json/condition.dart';
+import 'package:applithium_core/utils/json/condition.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,0 +1,25 @@
+import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/module/base.dart';
+import 'package:applithium_core/scopes/store.dart';
+import 'package:applithium_core/services/analytics/service.dart';
+import 'package:appmetrica_sdk/appmetrica_sdk.dart';
+
+import 'analyst.dart';
+
+const _KEY_APPMETRICA_API_KEY = "app_metrica_api_key";
+
+class AppmetricaModule extends AplModule {
+  @override
+  Future<bool> injectConfigProvider(Store store) async {
+    return false;
+  }
+
+  @override
+  Future<void> injectDependencies(Store store, AplConfig config) async {
+    final apiKey = config.getString(_KEY_APPMETRICA_API_KEY);
+    final sdk = AppmetricaSdk();
+    await sdk.activate(apiKey: apiKey);
+    sdk.setStatisticsSending(statisticsSending: true);
+    store.get<AnalyticsService>().addAnalyst(AppmetricaAnalyst(sdk));
+  }
+}

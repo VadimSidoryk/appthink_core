@@ -8,7 +8,7 @@ import 'package:applithium_core/presentation/events.dart';
 class ContentBloc<M> extends BlocWithRepository<M, ContentScreenState<M>> {
   final ContentUseCases<M> useCases;
 
-  ContentBloc(this.useCases, {Repository<M>? repository})
+  ContentBloc(this.useCases, {AplRepository<M>? repository})
       : super(ContentScreenState.initial(), repositoryValue: repository) {
     loadOn<WidgetCreatedEvent>(
         waitingState: ContentScreenState.initial(),

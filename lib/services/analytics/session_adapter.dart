@@ -8,17 +8,17 @@ import 'package:applithium_core/services/history/usage_listener.dart';
 
 const secondsInAppProperty = "seconds_in_app";
 
-class SessionEventsAdapter extends SessionListener {
+class AnalyticsSessionAdapter extends SessionListener {
   final EventBus eventBus;
   final AnalyticsService analyticsService;
   StreamSubscription? subscription;
 
-  SessionEventsAdapter(this.eventBus, this.analyticsService);
+  AnalyticsSessionAdapter(this.eventBus, this.analyticsService);
 
   @override
   void onSessionStarted(int count, int daysFromFirstSession,
       int daysFromLastSession) {
-    eventBus.onNewEvent(AppEvent.sessionStarted(count, daysFromFirstSession, daysFromLastSession));
+    eventBus.onNewEvent(AplEvent.sessionStarted(count, daysFromFirstSession, daysFromLastSession));
     analyticsService.setUserProperty(EVENT_SESSION_STARTED_ARG_SESSION_COUNT, count);
     subscription = analyticsService.periodicUpdatedUserProperty<int>(
         secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);

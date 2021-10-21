@@ -29,16 +29,16 @@ const EVENT_SESSION_STARTED_ARG_DAYS_FROM_FIRST_SESSION =
 const EVENT_SCREEN_OPENED_NAME = "screen_opened";
 const EVENT_SCREEN_OPENED_ARG_SCREEN_NAME = "screen_name";
 
-abstract class AppEvent extends Trackable  {
+abstract class AplEvent extends Trackable  {
   @override
   final String name;
 
   @override
   final Map<String, Object> params;
 
-  AppEvent(this.name, [Map<String, Object>? params]): params = params ?? {};
+  AplEvent(this.name, [Map<String, Object>? params]): params = params ?? {};
 
-  factory AppEvent.sessionStarted(int sessionCount,  int daysFromFirstSession, int dayFromLastSession) =>
+  factory AplEvent.sessionStarted(int sessionCount,  int daysFromFirstSession, int dayFromLastSession) =>
   SessionStarted._(sessionCount, daysFromFirstSession, dayFromLastSession);
 
   Map<String, dynamic> asArgs() {
@@ -46,7 +46,7 @@ abstract class AppEvent extends Trackable  {
   }
 }
 
-class SessionStarted extends AppEvent {
+class SessionStarted extends AplEvent {
 
   final int sessionCount;
   final int daysFromLastSession;

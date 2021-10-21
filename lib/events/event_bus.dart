@@ -15,7 +15,7 @@ class EventBus {
         .toList();
   }
 
-  void onNewEvent(AppEvent event) {
+  void onNewEvent(AplEvent event) {
     log("onNewEvent ${event.name} params: ${event.params}");
     listeners.forEach((impl) => impl.onNewEvent(event));
   }
