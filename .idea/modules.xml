@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/applithium_core.iml" filepath="$PROJECT_DIR$/.idea/applithium_core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../Bsnj/applithium_core_appmetrica/applithium_core_appmetrica.iml" filepath="$PROJECT_DIR$/../../Bsnj/applithium_core_appmetrica/applithium_core_appmetrica.iml" />
-    </modules>
-  </component>
-</project>

@@ -1,0 +1,40 @@
+import 'dart:convert';
+
+import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/services/service_base.dart';
+import 'package:share/share.dart';
+
+import 'config.dart';
+import 'config_remote.dart';
+import 'package:applithium_core/logs/extension.dart';
+
+class ShareService extends AplService {
+  late ShareConfig config;
+
+  @override
+  Future<void> init(AplConfig appConfig) async {
+    config = appConfig.shareConfig;
+  }
+
+  void share(
+      {String intent = VAL_DEFAULT_INTENT, List<Object> params = const []}) {
+    logMethod("share", params: [intent, params]);
+    Share.share(
+        config.intentToText.containsKey(intent)
+            ? config.intentToText[intent]
+            : config.intentToText[VAL_DEFAULT_INTENT],
+        subject: config.intentToSubject.containsKey(intent)
+            ? config.intentToSubject[intent]
+            : config.intentToSubject[VAL_DEFAULT_INTENT]);
+  }
+}
+
+extension _RemoteShareConfig on AplConfig {
+  static const _KEY_SHARE = "share";
+
+  ShareConfig get shareConfig {
+    final source = this.getString(_KEY_SHARE);
+    final json = jsonDecode(source);
+    return RemoteShareConfigSerializer.fromMap(json);
+  }
+}

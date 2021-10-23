@@ -1,4 +1,4 @@
-import 'package:applithium_core/app_state_base.dart';
+import 'package:applithium_core/app/base_state.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core_example/app_graph.dart';
 import 'package:applithium_core_firebase/module.dart';
