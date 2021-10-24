@@ -10,7 +10,7 @@ void main() {
   final notLocalizedListValue = "List screen";
   final localizedListValue = "Экран отображения листа";
 
-  final config = DefaultConfig("", values: {
+  final config = DefaultConfig(values: {
     "localization": "{"
         "\"$notLocalizedContentValue\": {"
         "\"ru-RU\": \"$localizedContentValue\""

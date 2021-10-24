@@ -13,7 +13,7 @@ import 'package:applithium_core/services/analytics/log_analyst.dart';
 import 'analyst.dart';
 
 class AnalyticsService extends AplService implements SystemListener {
-  final List<Analyst> analysts = const [];
+  final List<Analyst> analysts = <Analyst>[];
 
   AnalyticsService();
 
