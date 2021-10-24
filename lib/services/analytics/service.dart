@@ -1,14 +1,26 @@
 import 'dart:async';
 
+import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/base_event.dart';
+import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/events/system_listener.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/scopes/store.dart';
+import 'package:applithium_core/services/service_base.dart';
 import 'package:flutter/widgets.dart';
+import 'package:applithium_core/services/analytics/log_analyst.dart';
 
 import 'analyst.dart';
 
-class AnalyticsService implements SystemListener {
-  final List<Analyst> analysts = [];
+class AnalyticsService extends AplService implements SystemListener {
+  final List<Analyst> analysts = const [];
+
+  AnalyticsService();
+
+  @override
+  Future<void> init(AplConfig appConfig) async {
+    //TODO: add config here
+  }
 
   void addAnalyst(Analyst analyst) {
     logMethod("addAnalyst", params: [analyst]);
@@ -42,5 +54,14 @@ class AnalyticsService implements SystemListener {
         .map((impl) => impl.navigatorObservers)
         .reduce((result, currentList) => result + currentList)
         .toList();
+  }
+
+  @override
+  void addToStore(Store store) {
+    store.add((provider) {
+      this..addAnalyst(LogAnalyst());
+      provider.get<EventBus>().addListener(this);
+      return this;
+    });
   }
 }

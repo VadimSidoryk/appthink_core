@@ -5,7 +5,7 @@ import 'helper.dart';
 
 extension TranslatableText on Text {
   Text tr(BuildContext context) => Text(
-      Localizations.of<LocalizationHelper>(context, LocalizationHelper)
+      Localizations.of<AplLocalization>(context, AplLocalization)
               ?.translate(data!) ?? data!..logError("Can't find localization"),
       key: key,
       style: style,
@@ -21,20 +21,4 @@ extension TranslatableText on Text {
       textWidthBasis: textWidthBasis);
 }
 
-extension LocaleHelper on String {
-  Locale toLocale({String separator = '-'}) {
-    final localeList = split(separator);
-    switch (localeList.length) {
-      case 2:
-        return Locale(localeList.first, localeList.last);
-      case 3:
-        return Locale.fromSubtags(
-          languageCode: localeList.first,
-          scriptCode: localeList[1],
-          countryCode: localeList.last,
-        );
-      default:
-        return Locale(localeList.first);
-    }
-  }
-}
+

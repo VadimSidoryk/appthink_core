@@ -1,36 +1,45 @@
+import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/scopes/store.dart';
+import 'package:applithium_core/services/analytics/service.dart';
+import 'package:applithium_core/services/analytics/session_adapter.dart';
+import 'package:applithium_core/services/history/config.dart';
 import 'package:applithium_core/services/history/lifecycle_adapter.dart';
 import 'package:applithium_core/services/history/usage_listener.dart';
+import 'package:applithium_core/services/service_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:applithium_core/utils/extentions.dart';
 
-class UsageHistoryService {
+class UsageHistoryService extends AplService {
   String get _sessionCountKey =>
-      "$preferencesName.UsageHistoryService.sessionCount";
+      "$config.UsageHistoryService.sessionCount";
 
   String get firstSessionDayKey =>
-      "$preferencesName.UsageHistoryService.firstSessionDay";
+      "$config.UsageHistoryService.firstSessionDay";
 
   String get firstSessionMonthKey =>
-      "$preferencesName.UsageHistoryService.firstSessionMonth";
+      "$config.UsageHistoryService.firstSessionMonth";
 
   String get firstSessionYearKey =>
-      "$preferencesName.UsageHistoryService.firstSessionYear";
+      "$config.UsageHistoryService.firstSessionYear";
 
   String get lastSessionDayKey =>
-      "$preferencesName.UsageHistoryService.lastSessionDay";
+      "$config.UsageHistoryService.lastSessionDay";
 
   String get lastSessionMonthKey =>
-      "$preferencesName.UsageHistoryService.lastSessionMonth";
+      "$config.UsageHistoryService.lastSessionMonth";
 
   String get lastSessionYearKey =>
-      "$preferencesName.UsageHistoryService.lastSessionYear";
+      "$config.UsageHistoryService.lastSessionYear";
 
-  UsageHistoryService(
-      {this.preferencesName, required this.preferencesProvider, this.listener});
+  late UsageHistoryConfig config;
+  late Future<SharedPreferences> preferencesProvider;
+  SessionListener? listener;
 
-  final String? preferencesName;
-  final Future<SharedPreferences> preferencesProvider;
-  final SessionListener? listener;
+  @override
+  Future<void> init(AplConfig appConfig) async {
+    config = appConfig.usageConfig;
+  }
 
   WidgetsBindingObserver asWidgetObserver() {
     return UsageWidgetStateAdapter(this);
@@ -97,5 +106,24 @@ class UsageHistoryService {
     prefs.setInt(lastSessionYearKey, now.year);
     prefs.setInt(lastSessionMonthKey, now.month);
     prefs.setInt(lastSessionDayKey, now.day);
+  }
+
+  @override
+  void addToStore(Store store) {
+    store.add((provider) {
+      this.preferencesProvider = provider.get();
+      provider.getOrNull<AnalyticsService>()?.let((analytics) {
+        this.listener = AnalyticsSessionAdapter(provider.get(), provider.get());
+      });
+      return this;
+    });
+  }
+}
+
+extension _RemoteUsageConfig on AplConfig {
+  static const _KEY_PREFERENCE = "preference";
+
+  UsageHistoryConfig get usageConfig {
+    return UsageHistoryConfig("usage");
   }
 }

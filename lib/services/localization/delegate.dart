@@ -1,14 +1,14 @@
-import 'package:applithium_core/services/localization/config.dart';
+import 'package:applithium_core/services/localization/helper.dart';
 import 'package:flutter/widgets.dart';
 
-import 'helper.dart';
+import 'service.dart';
 
 class AppLocalizationsDelegate
-    extends LocalizationsDelegate<LocalizationHelper> {
+    extends LocalizationsDelegate<AplLocalization> {
 
-  final LocalizationConfig config;
+  final LocalizationBuilder builder;
 
-  const AppLocalizationsDelegate(this.config);
+  const AppLocalizationsDelegate(this.builder);
 
   @override
   bool isSupported(Locale locale) {
@@ -16,8 +16,8 @@ class AppLocalizationsDelegate
   }
 
   @override
-  Future<LocalizationHelper> load(Locale locale) async {
-    return new LocalizationHelper(locale, config);
+  Future<AplLocalization> load(Locale locale) async {
+    return builder.call(locale);
   }
 
   @override

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:applithium_core/config/model.dart';
+import 'package:applithium_core/scopes/store.dart';
+import 'package:applithium_core/services/service_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rate_my_app/rate_my_app.dart';
@@ -10,10 +12,11 @@ import 'package:applithium_core/logs/extension.dart';
 import 'config.dart';
 import 'config_remote.dart';
 
-class RateUsService {
+class RateUsService extends AplService {
   late RateUsConfig config;
   late RateMyApp _impl;
 
+  @override
   Future<void> init(AplConfig appConfig) async {
     this.config = appConfig.rateUs;
     _impl = RateMyApp(
@@ -21,7 +24,6 @@ class RateUsService {
       appStoreIdentifier: config.appStoreId,
     );
     await _impl.init();
-
   }
 
   bool get shouldOpenDialog => _impl.shouldOpenDialog;
@@ -92,14 +94,23 @@ class RateUsService {
           .laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
     );
   }
+
+  @override
+  void addToStore(Store store) {
+    return store.add((provider) => this);
+  }
 }
 
 extension RemoteSaveOnConfig on AplConfig {
   static const _KEY_RATE_US = "rate_us";
 
   RateUsConfig get rateUs {
-    final source = this.getString(_KEY_RATE_US);
-    final json = jsonDecode(source);
-    return RemoteRateUsConfigSerializer.fromMap(json);
+    final result = this.getString(_KEY_RATE_US);
+    if(result.value != null) {
+      final json = jsonDecode(result.value!);
+      return RemoteRateUsConfigSerializer.fromMap(json);
+    } else {
+      throw result.exception ?? "RateUs config wasn't provided";
+    }
   }
 }

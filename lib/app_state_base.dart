@@ -6,21 +6,17 @@ import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/events/event_bus.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/module/base.dart';
+import 'package:applithium_core/module/default.dart';
 import 'package:applithium_core/router/route_details.dart';
 import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
-import 'package:applithium_core/services/analytics/log_analyst.dart';
-import 'package:applithium_core/services/analytics/service.dart';
-import 'package:applithium_core/services/analytics/session_adapter.dart';
 import 'package:applithium_core/services/history/service.dart';
-import 'package:applithium_core/services/localization/config.dart';
 import 'package:applithium_core/services/localization/delegate.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
+import 'package:applithium_core/services/localization/service.dart';
 import 'package:applithium_core/services/promo/action.dart';
-import 'package:applithium_core/services/promo/analyst_adapter.dart';
 import 'package:applithium_core/services/promo/service.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +25,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'services/service_base.dart';
+
 class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
   final PageRoute Function(WidgetBuilder) _splashRouteBuilder;
+  final Set<AplService>? services;
   final Set<AplModule> modules;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
@@ -52,6 +51,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       Set<Analyst>? analysts,
       required this.routes,
       this.locale,
+      this.services,
       this.modules = const {}})
       : this.title = title ?? "Applithium Based Application",
         _splashRouteBuilder = splashRouteBuilder ??
@@ -127,20 +127,12 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
   Future<void> _injectDependenciesInStore(Store store, AplConfig config) async {
     store.add((provider) => SharedPreferences.getInstance());
-    store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
-    store.add((provider) => PromoService(provider.get()));
-    store.add((provider) => EventBus(listeners: {
-          provider.get<AnalyticsService>(),
-          PromoEventsAdapter(provider.get())
-        }));
+    store.add((provider) => EventBus());
     store.add((provider) => config);
-    store.add((provider) => UsageHistoryService(
-        preferencesProvider: provider.get(),
-        listener: AnalyticsSessionAdapter(provider.get(), provider.get())));
 
-    for (final module in modules) {
-      await module.injectDependencies(store, config);
-    }
+    await DefaultModule(services: services).injectDependencies(store, config);
+    await Future.wait(
+        modules.map((module) => module.injectDependencies(store, config)));
   }
 }
 
@@ -210,9 +202,7 @@ class _RealApplicationState extends State<_RealApplication> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
-    context
-        .get<PromoService>()
-        .setActionHandler(_onPromoAction);
+    context.get<PromoService>().setActionHandler(_onPromoAction);
     _setupWidgetObservers();
     _handleIncomingLinks();
     context.get<UsageHistoryService>().openSession();
@@ -224,12 +214,7 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
-    final localizationConfig =
-        LocalizationConfig(widget.initialData.config.localizationData);
-    final supportedLocales = localizationConfig
-        .getSupportedLocaleCodes()
-        .map((item) => item.toLocale())
-        .toList();
+    final localizationService = context.getOrNull<LocalizationService>();
 
     return MaterialApp(
       title: widget.title,
@@ -239,12 +224,14 @@ class _RealApplicationState extends State<_RealApplication> {
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
       locale: widget.locale,
-      supportedLocales: supportedLocales,
-      localizationsDelegates: [
-        AppLocalizationsDelegate(localizationConfig),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
+      supportedLocales: localizationService?.supportedLocales ?? <Locale>[],
+      localizationsDelegates: localizationService != null
+          ? [
+              AppLocalizationsDelegate(context.get<LocalizationBuilder>()),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ]
+          : [],
     );
   }
 

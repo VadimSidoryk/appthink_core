@@ -1,19 +1,17 @@
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/router/router.dart';
+import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/messaging/service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FirebaseMessagingService extends MessagingService {
-  final String appKey;
-
   final AndroidNotificationChannel _androidChannel;
   final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   final AplRouter router;
 
-  FirebaseMessagingService(
-      {required this.appKey,
+  FirebaseMessagingService({
       required this.router,
       String channelId = "applithium_notification_channel",
       String channelTitle = "Applithium based App's channel",
@@ -65,7 +63,7 @@ class FirebaseMessagingService extends MessagingService {
   }
 
   void _getTokenImpl() {
-    FirebaseMessaging.instance.getToken(vapidKey: appKey).then((token) {
+    FirebaseMessaging.instance.getToken(vapidKey: apiKey).then((token) {
       if (token != null) {
         _tokenSubj.add(token);
       }

@@ -4,9 +4,11 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 class EventBus {
-  final Set<SystemListener> listeners;
+  final Set<SystemListener> listeners = {};
 
-  EventBus({required this.listeners});
+  void addListener(SystemListener listener) {
+    listeners.add(listener);
+  }
 
   List<NavigatorObserver> get navigatorObservers {
     return listeners

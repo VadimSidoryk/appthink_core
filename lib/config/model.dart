@@ -1,23 +1,15 @@
-import 'dart:convert';
-
-const _KEY_MESSAGING_API_KEY = "messaging_api_key";
-const _KEY_LOCALIZATION = "localization";
+import 'package:applithium_core/utils/either.dart';
 
 abstract class AplConfig {
   const AplConfig();
 
-  String get messagingApiKey => getString(_KEY_MESSAGING_API_KEY);
+  Either<String> getString(String key);
 
-  Map<String, dynamic> get localizationData =>
-      jsonDecode(getString(_KEY_LOCALIZATION));
+  Either<bool> getBool(String key);
 
-  String getString(String key);
+  Either<int> getInt(String key);
 
-  bool getBool(String key);
-
-  int getInt(String key);
-
-  double getDouble(String key);
+  Either<double> getDouble(String key);
 }
 
 class DefaultConfig extends AplConfig {
@@ -26,10 +18,9 @@ class DefaultConfig extends AplConfig {
   final defaultDouble;
   final defaultString;
 
-  final String _messagingApiKey;
   final Map<String, dynamic> values;
 
-  const DefaultConfig(this._messagingApiKey,
+  const DefaultConfig(
       {this.values = const {},
       this.defaultBool = false,
       this.defaultInt = 0,
@@ -37,44 +28,38 @@ class DefaultConfig extends AplConfig {
       this.defaultString = ""});
 
   @override
-  String get messagingApiKey => _messagingApiKey;
-
-  @override
-  Map<String, dynamic> get localizationData => {};
-
-  @override
-  bool getBool(String key) {
+  Either<bool> getBool(String key) {
     if (values.containsKey(key)) {
-      return values[key];
+      return Either.withValue(values[key]);
     } else {
-      return defaultBool;
+      return Either.withValue(defaultBool);
     }
   }
 
   @override
-  double getDouble(String key) {
+  Either<double> getDouble(String key) {
     if (values.containsKey(key)) {
-      return values[key];
+      return Either.withValue(values[key]);
     } else {
-      return defaultDouble;
+      return Either.withValue(defaultDouble);
     }
   }
 
   @override
-  int getInt(String key) {
+  Either<int> getInt(String key) {
     if (values.containsKey(key)) {
-      return values[key];
+      return Either.withValue(values[key]);
     } else {
-      return defaultInt;
+      return Either.withValue(defaultInt);
     }
   }
 
   @override
-  String getString(String key) {
+  Either<String> getString(String key) {
     if (values.containsKey(key)) {
-      return values[key];
+      return Either.withValue(values[key]);
     } else {
-      return defaultString;
+      return Either.withValue(defaultString);
     }
   }
 }
