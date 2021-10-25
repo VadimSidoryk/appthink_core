@@ -13,7 +13,9 @@ dependencies:
 
   appmetrica_sdk: ^0.0.7
   applithium_core:
-    path: ../
+    git:
+      url: ssh://git@bitbucket.org/appthink/core.git
+      ref: master
 
 dev_dependencies:
   flutter_test:

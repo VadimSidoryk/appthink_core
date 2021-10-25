@@ -12,7 +12,6 @@ import 'package:applithium_core/router/router.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/analytics/analyst.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/localization/delegate.dart';
 import 'package:applithium_core/services/localization/service.dart';
@@ -48,7 +47,6 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       required this.splashBuilder,
       PageRoute Function(WidgetBuilder)? splashRouteBuilder,
       Future<String?> Function()? initialLinkProvider,
-      Set<Analyst>? analysts,
       required this.routes,
       this.locale,
       this.services,
@@ -202,10 +200,13 @@ class _RealApplicationState extends State<_RealApplication> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
-    context.get<PromoService>().setActionHandler(_onPromoAction);
+    final promoService = context.getOrNull<PromoService>();
+    if(promoService != null) {
+      promoService.setActionHandler(_onPromoAction);
+    }
     _setupWidgetObservers();
     _handleIncomingLinks();
-    context.get<UsageHistoryService>().openSession();
+    context.getOrNull<UsageHistoryService>()?.openSession();
   }
 
   void _onPromoAction(PromoAction action, Object? sender) {
@@ -250,8 +251,13 @@ class _RealApplicationState extends State<_RealApplication> {
     if (_widgetObserver != null) {
       WidgetsBinding.instance?.removeObserver(_widgetObserver!);
     }
-    _widgetObserver = context.get<UsageHistoryService>().asWidgetObserver();
+    final historyService = context.getOrNull<UsageHistoryService>();
+    if(historyService != null) {
+    _widgetObserver = historyService.asWidgetObserver();
     WidgetsBinding.instance?.addObserver(_widgetObserver!);
+    }
+
+
   }
 
   void _handleIncomingLinks() {
