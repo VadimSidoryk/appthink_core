@@ -46,8 +46,8 @@ class FirebaseModule extends AplModule {
         _KEY_MODE, kReleaseMode ? _MODE_RELEASE : _MODE_DEBUG);
     FlutterError.onError = crashlytics.recordFlutterError;
     store.add<LogTree>((provider) => CrashlyticsTree());
-    _analytics?.let((val) {
-      store.get<AnalyticsService>().addAnalyst(FirebaseAnalyst(val));
+    _analytics?.let((impl) {
+      store.getOrNull<AnalyticsService>()?.let((service) => service.addAnalyst(FirebaseAnalyst(impl)));
     });
 
     _app?.let((val) {

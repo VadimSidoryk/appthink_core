@@ -21,7 +21,7 @@ class AppmetricaModule extends AplModule {
       final sdk = AppmetricaSdk();
       await sdk.activate(apiKey: apiKey);
       sdk.setStatisticsSending(statisticsSending: true);
-      store.get<AnalyticsService>().addAnalyst(AppmetricaAnalyst(sdk));
+      store.getOrNull<AnalyticsService>()?.let((val) => val.addAnalyst(AppmetricaAnalyst(sdk)));
     });
 
   }
