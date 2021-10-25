@@ -11,10 +11,14 @@ class EventBus {
   }
 
   List<NavigatorObserver> get navigatorObservers {
-    return listeners
-        .map((impl) => impl.navigatorObservers)
-        .reduce((result, currentList) => result + currentList)
-        .toList();
+    if(listeners.isEmpty) {
+      return [];
+    } else {
+      return listeners
+          .map((impl) => impl.navigatorObservers)
+          .reduce((result, currentList) => result + currentList)
+          .toList();
+    }
   }
 
   void onNewEvent(AplEvent event) {
