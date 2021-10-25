@@ -225,7 +225,7 @@ class _RealApplicationState extends State<_RealApplication> {
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
       locale: widget.locale,
-      supportedLocales: localizationService?.supportedLocales ?? <Locale>[],
+      supportedLocales: localizationService?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
       localizationsDelegates: localizationService != null
           ? [
               AppLocalizationsDelegate(context.get<LocalizationBuilder>()),
