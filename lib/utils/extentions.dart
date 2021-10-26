@@ -16,3 +16,15 @@ extension FunctionExt<T> on T Function() {
     }
   }
 }
+
+extension FutureFunctionExt<T> on Future<T> Function() {
+  Future<Either<T>> safeCall(Object holder, String methodName, [List<Object> params = const []]) async {
+    try {
+      holder.logMethod(methodName, params: params);
+      return Either.withValue(await this.call())..logResult(holder, methodName);
+    } catch (e, stacktrace) {
+      holder.logError(methodName, ex: e, stacktrace: stacktrace);
+      return Either.withError(e);
+    }
+  }
+}
