@@ -89,6 +89,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
               parentContext: context,
               store: initialData.store,
               builder: (context) => _RealApplication(
+                themeData: themeData,
                   locale: locale,
                   initialData: initialData,
                   routes: routes,
@@ -166,6 +167,7 @@ class _SplashScreen<D> extends StatelessWidget {
 }
 
 class _RealApplication extends StatefulWidget {
+  final ThemeData? themeData;
   final _AppInitialData initialData;
   final String title;
   final List<RouteDetails> routes;
@@ -173,6 +175,7 @@ class _RealApplication extends StatefulWidget {
 
   const _RealApplication(
       {Key? key,
+      this.themeData,
       this.locale,
       required this.title,
       required this.initialData,
@@ -222,7 +225,7 @@ class _RealApplicationState extends State<_RealApplication> {
 
     return MaterialApp(
       title: widget.title,
-      theme: context.getOrNull(),
+      theme: widget.themeData,
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
