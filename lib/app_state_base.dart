@@ -37,6 +37,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
   final Locale? locale;
+  final ThemeData? themeData;
 
   final _debugTree = DebugTree();
 
@@ -49,6 +50,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       Future<String?> Function()? initialLinkProvider,
       required this.routes,
       this.locale,
+      this.themeData,
       this.services,
       this.modules = const {}})
       : this.title = title ?? "Applithium Based Application",
@@ -66,6 +68,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        theme: this.themeData,
         navigatorObservers: navObserver != null ? [navObserver!] : const [],
         home: _SplashScreen<_AppInitialData>(
           builder: splashBuilder,
@@ -201,7 +204,7 @@ class _RealApplicationState extends State<_RealApplication> {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
     final promoService = context.getOrNull<PromoService>();
-    if(promoService != null) {
+    if (promoService != null) {
       promoService.setActionHandler(_onPromoAction);
     }
     _setupWidgetObservers();
@@ -225,7 +228,8 @@ class _RealApplicationState extends State<_RealApplication> {
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
       locale: widget.locale,
-      supportedLocales: localizationService?.supportedLocales ?? const <Locale>[Locale('en', 'US')],
+      supportedLocales: localizationService?.supportedLocales ??
+          const <Locale>[Locale('en', 'US')],
       localizationsDelegates: localizationService != null
           ? [
               AppLocalizationsDelegate(context.get<LocalizationBuilder>()),
@@ -252,12 +256,10 @@ class _RealApplicationState extends State<_RealApplication> {
       WidgetsBinding.instance?.removeObserver(_widgetObserver!);
     }
     final historyService = context.getOrNull<UsageHistoryService>();
-    if(historyService != null) {
-    _widgetObserver = historyService.asWidgetObserver();
-    WidgetsBinding.instance?.addObserver(_widgetObserver!);
+    if (historyService != null) {
+      _widgetObserver = historyService.asWidgetObserver();
+      WidgetsBinding.instance?.addObserver(_widgetObserver!);
     }
-
-
   }
 
   void _handleIncomingLinks() {
