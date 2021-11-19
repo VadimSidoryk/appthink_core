@@ -23,3 +23,44 @@ extension Loggable on Object {
     return this;
   }
 }
+
+T logAndRun<T>(Object holder, String functionName, List<dynamic> params, T Function() block) {
+  final message = "$functionName($params)";
+  holder.log("call $message");
+  try {
+    final result = block();
+    holder.log("$message -> $result");
+    return result;
+  } catch(e) {
+    holder.logError("$holder:$message throw $e");
+    throw e;
+  }
+}
+
+Future<T> logAndRunAsync<T>(Object holder, String functionName, List<dynamic> params, Future<T> Function() block) async {
+  final message = "$functionName($params)";
+  holder.log("call $message");
+  try {
+    final result = await block();
+    holder.log("$message emit $result");
+    return result;
+  } catch(e) {
+    holder.logError("$holder:$message throw $e");
+    throw e;
+  }
+}
+
+Stream<T> logAndRunStream<T>(Object holder, String functionName, List<dynamic> params, Stream<T> Function() block) {
+  final message = "$functionName($params)";
+  holder.log("call $message");
+  try {
+    return block().map((result) {
+      holder.log("$message: emit $result");
+
+      return result;
+    });
+  } catch(e) {
+    holder.logError("$holder:$message throw $e");
+    throw e;
+  }
+}
