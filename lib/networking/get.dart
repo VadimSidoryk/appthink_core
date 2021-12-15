@@ -13,8 +13,17 @@ Future<Either<O>> httpGet<I, O>({
     final paramsString;
     final uri;
     try {
-      paramsString = Uri(queryParameters: params).query;
-      uri = Uri.parse("$url?$paramsString");
+      if(params?.isNotEmpty == true) {
+        paramsString = Uri(queryParameters: params).query;
+        if(!url.contains("?")) {
+          uri = Uri.parse("$url?$paramsString");
+        } else {
+          uri = Uri.parse("$url&$paramsString");
+        }
+      } else {
+        uri = url;
+      }
+
     } catch(e) {
       return Either.withError(e);
     }
