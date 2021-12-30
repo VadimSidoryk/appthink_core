@@ -10,24 +10,21 @@ import 'package:applithium_core/utils/json/interpolation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'action.dart';
+import 'event_trigger.dart';
 
 const _countKey = "count";
 
 typedef ActionHandler = Function(PromoAction action, Object? sender);
 
-class PromoService extends AplService {
+class PromoService {
 
-  late Future<SharedPreferences> _preferencesProvider;
+  final Future<SharedPreferences> _preferencesProvider;
+  Map<String, Set<AplEventTrigger>> _triggers = {};
   ActionHandler? _actionsHandler;
-  late PromoConfig _promoConfig;
+
   final _interpolation = Interpolation();
 
-  PromoService();
-
-  @override
-  Future<void> init(AplConfig appConfig) async {
-    _promoConfig = appConfig.promoConfig;
-  }
+  PromoService(this._preferencesProvider);
 
   void setActionHandler(ActionHandler handler) {
     _actionsHandler = handler;
@@ -38,9 +35,9 @@ class PromoService extends AplService {
     final count = ((await _preferencesProvider).getInt(key) ?? 0) + 1;
     (await _preferencesProvider).setInt(key, count);
 
-    if (_promoConfig.triggers.containsKey(event.name)) {
+    if (_triggers.containsKey(event.name)) {
 
-      final triggers = _promoConfig.triggers[event.name];
+      final triggers = _triggers[event.name];
       if(triggers != null) {
         for (final trigger in triggers) {
           bool isHandled;
@@ -58,23 +55,5 @@ class PromoService extends AplService {
         }
       }
     }
-  }
-
-  @override
-  void addToStore(Store store) {
-    store.add((provider) {
-      this._preferencesProvider = provider.get();
-      provider.get<EventBus>().addListener(PromoEventsAdapter(this));
-      return this;
-    });
-  }
-}
-
-extension _PromoAplConfig on AplConfig {
-
-  static const _KEY_PROMO_CONFIG = "promo";
-
-  PromoConfig get promoConfig {
-    return PromoConfig({});
   }
 }

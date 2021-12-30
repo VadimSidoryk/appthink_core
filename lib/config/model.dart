@@ -1,15 +1,24 @@
-import 'package:applithium_core/utils/either.dart';
+import 'dart:convert';
+
+
+const _KEY_MESSAGING_API_KEY = "messaging_api_key";
+const _KEY_LOCALIZATION = "localization";
 
 abstract class AplConfig {
   const AplConfig();
 
-  Either<String> getString(String key);
+  String get messagingApiKey => getString(_KEY_MESSAGING_API_KEY);
 
-  Either<bool> getBool(String key);
+  Map<String, dynamic> get localizationData =>
+      jsonDecode(getString(_KEY_LOCALIZATION));
 
-  Either<int> getInt(String key);
+  String getString(String key);
 
-  Either<double> getDouble(String key);
+  bool getBool(String key);
+
+  int getInt(String key);
+
+  double getDouble(String key);
 }
 
 class DefaultConfig extends AplConfig {
@@ -20,12 +29,12 @@ class DefaultConfig extends AplConfig {
 
   final Map<String, dynamic> values;
 
-  const DefaultConfig(
+  const DefaultConfig(this._messagingApiKey,
       {this.values = const {},
-      this.defaultBool = false,
-      this.defaultInt = 0,
-      this.defaultDouble = .0,
-      this.defaultString = ""});
+        this.defaultBool = false,
+        this.defaultInt = 0,
+        this.defaultDouble = .0,
+        this.defaultString = ""});
 
   @override
   Either<bool> getBool(String key) {

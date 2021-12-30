@@ -14,7 +14,7 @@ import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/history/service.dart';
 import 'package:applithium_core/services/localization/delegate.dart';
-import 'package:applithium_core/services/localization/service.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
 import 'package:applithium_core/services/promo/action.dart';
 import 'package:applithium_core/services/promo/service.dart';
 import 'package:fimber/fimber.dart';
@@ -24,6 +24,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'services/analytics/analyst.dart';
+import 'services/analytics/log_analyst.dart';
+import 'services/analytics/service.dart';
+import 'services/analytics/session_adapter.dart';
+import 'services/localization/config.dart';
+import 'services/promo/analyst_adapter.dart';
 import 'services/service_base.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
@@ -31,32 +37,38 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
   final PageRoute Function(WidgetBuilder) _splashRouteBuilder;
-  final Set<AplService>? services;
-  final Set<AplModule> modules;
+  final Future<Store> Function() _storeBuilder;
+  final Future<void> Function(Store, AplConfig) _setupFlow;
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
   final Locale? locale;
-  final ThemeData? themeData;
 
   final _debugTree = DebugTree();
 
   AplAppState(
       {String? title,
-      this.navObserver,
-      required this.defaultConfig,
-      required this.splashBuilder,
-      PageRoute Function(WidgetBuilder)? splashRouteBuilder,
-      Future<String?> Function()? initialLinkProvider,
-      required this.routes,
-      this.locale,
-      this.themeData,
-      this.services,
-      this.modules = const {}})
+        this.navObserver,
+        required this.defaultConfig,
+        required this.splashBuilder,
+        PageRoute Function(WidgetBuilder)? splashRouteBuilder,
+        Future<String?> Function()? initialLinkProvider,
+        Set<Analyst>? analysts,
+        required this.routes,
+        this.locale,
+        Set<AplModule> modules = const {},
+        Future<void> Function(Store, AplConfig)? customSetupFlow})
       : this.title = title ?? "Applithium Based Application",
         _splashRouteBuilder = splashRouteBuilder ??
             ((WidgetBuilder builder) => MaterialPageRoute(builder: builder)),
-        _initialLinkProvider = initialLinkProvider ?? getInitialLink;
+        _initialLinkProvider = initialLinkProvider ?? getInitialLink,
+        _storeBuilder = (() async => _buildStoreWithConfigProvider(modules)),
+        _setupFlow = ((Store store, AplConfig config) async {
+          await _injectDependenciesInStore(store, config, modules);
+          if (customSetupFlow != null) {
+            await customSetupFlow.call(store, config);
+          }
+        });
 
   @override
   initState() {
@@ -68,19 +80,18 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: this.themeData,
         navigatorObservers: navObserver != null ? [navObserver!] : const [],
         home: _SplashScreen<_AppInitialData>(
           builder: splashBuilder,
           routeBuilder: _splashRouteBuilder,
           loadingTask: (context) async {
-            final store = await _buildStoreWithConfigProvider(modules);
+            final store = await _storeBuilder.call();
             _plantCustomLogTree(store);
             final provider = store.getOrNull<ConfigProvider>();
             final config = provider != null
                 ? (await provider.getApplicationConfig())
                 : defaultConfig;
-            await _injectDependenciesInStore(store, config);
+            await _setupFlow.call(store, config);
             final initialLink = await _initialLinkProvider.call();
             log("initial link = $initialLink");
             return _AppInitialData(store, config, initialLink);
@@ -89,7 +100,6 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
               parentContext: context,
               store: initialData.store,
               builder: (context) => _RealApplication(
-                themeData: themeData,
                   locale: locale,
                   initialData: initialData,
                   routes: routes,
@@ -110,31 +120,41 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     }
   }
 
-  Future<Store> _buildStoreWithConfigProvider(Set<AplModule> modules) async {
+  static Future<Store> _buildStoreWithConfigProvider(
+      Set<AplModule> modules) async {
     final result = Store();
     bool isConfigAdded = false;
     for (final module in modules) {
       final isConfigAddedByModule = await module.injectConfigProvider(result);
       if (isConfigAddedByModule && isConfigAdded) {
-        logError("ConfigProvider by module $module overrides previous one");
+        print("ConfigProvider by module $module overrides previous one");
       }
       isConfigAdded |= isConfigAddedByModule;
     }
 
     if (!isConfigAdded) {
-      logError("ConfigProvider wasn't added");
+      print("ConfigProvider wasn't added");
     }
     return result;
   }
 
-  Future<void> _injectDependenciesInStore(Store store, AplConfig config) async {
+  static Future<void> _injectDependenciesInStore(
+      Store store, AplConfig config, Set<AplModule> modules) async {
     store.add((provider) => SharedPreferences.getInstance());
-    store.add((provider) => EventBus());
+    store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
+    store.add((provider) => PromoService(provider.get()));
+    store.add((provider) => EventBus(listeners: {
+      provider.get<AnalyticsService>(),
+      PromoEventsAdapter(provider.get())
+    }));
     store.add((provider) => config);
+    store.add((provider) => UsageHistoryService(
+        preferencesProvider: provider.get(),
+        listener: AnalyticsSessionAdapter(provider.get(), provider.get())));
 
-    await DefaultModule(services: services).injectDependencies(store, config);
-    await Future.wait(
-        modules.map((module) => module.injectDependencies(store, config)));
+    for (final module in modules) {
+      await module.injectDependencies(store, config);
+    }
   }
 }
 
@@ -146,10 +166,10 @@ class _SplashScreen<D> extends StatelessWidget {
 
   const _SplashScreen(
       {Key? key,
-      required this.builder,
-      required this.routeBuilder,
-      required this.loadingTask,
-      required this.nextScreenBuilder})
+        required this.builder,
+        required this.routeBuilder,
+        required this.loadingTask,
+        required this.nextScreenBuilder})
       : super(key: key);
 
   @override
@@ -167,7 +187,6 @@ class _SplashScreen<D> extends StatelessWidget {
 }
 
 class _RealApplication extends StatefulWidget {
-  final ThemeData? themeData;
   final _AppInitialData initialData;
   final String title;
   final List<RouteDetails> routes;
@@ -175,11 +194,10 @@ class _RealApplication extends StatefulWidget {
 
   const _RealApplication(
       {Key? key,
-      this.themeData,
-      this.locale,
-      required this.title,
-      required this.initialData,
-      required this.routes})
+        this.locale,
+        required this.title,
+        required this.initialData,
+        required this.routes})
       : super(key: key);
 
   @override
@@ -206,13 +224,10 @@ class _RealApplicationState extends State<_RealApplication> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     Scope.of(context)?.store.add((provider) => _router);
-    final promoService = context.getOrNull<PromoService>();
-    if (promoService != null) {
-      promoService.setActionHandler(_onPromoAction);
-    }
+    context.get<PromoService>().setActionHandler(_onPromoAction);
     _setupWidgetObservers();
     _handleIncomingLinks();
-    context.getOrNull<UsageHistoryService>()?.openSession();
+    context.get<UsageHistoryService>().openSession();
   }
 
   void _onPromoAction(PromoAction action, Object? sender) {
@@ -221,25 +236,27 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
-    final localizationService = context.getOrNull<LocalizationService>();
+    final localizationConfig =
+    LocalizationConfig(widget.initialData.config.localizationData);
+    final supportedLocales = localizationConfig
+        .getSupportedLocaleCodes()
+        .map((item) => item.toLocale())
+        .toList();
 
     return MaterialApp(
       title: widget.title,
-      theme: widget.themeData,
+      theme: context.getOrNull(),
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
       navigatorObservers: context.get<EventBus>().navigatorObservers,
       locale: widget.locale,
-      supportedLocales: localizationService?.supportedLocales ??
-          const <Locale>[Locale('en', 'US')],
-      localizationsDelegates: localizationService != null
-          ? [
-              AppLocalizationsDelegate(context.get<LocalizationBuilder>()),
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ]
-          : [],
+      supportedLocales: supportedLocales,
+      localizationsDelegates: [
+        AppLocalizationsDelegate(localizationConfig),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
     );
   }
 
@@ -258,11 +275,8 @@ class _RealApplicationState extends State<_RealApplication> {
     if (_widgetObserver != null) {
       WidgetsBinding.instance?.removeObserver(_widgetObserver!);
     }
-    final historyService = context.getOrNull<UsageHistoryService>();
-    if (historyService != null) {
-      _widgetObserver = historyService.asWidgetObserver();
-      WidgetsBinding.instance?.addObserver(_widgetObserver!);
-    }
+    _widgetObserver = context.get<UsageHistoryService>().asWidgetObserver();
+    WidgetsBinding.instance?.addObserver(_widgetObserver!);
   }
 
   void _handleIncomingLinks() {
@@ -273,13 +287,13 @@ class _RealApplicationState extends State<_RealApplication> {
       if (!mounted) return;
       if (uri != null) {
         log("handling initial link = $uri");
-        _router.applyRoute(uri.toString());
+        _router.push(uri.toString());
       } else {
         logError("incoming uri is null");
       }
     }, onError: (Object err) {
       if (!mounted) return;
-      logError("can't handle incoming link", ex: err);
+      logError("can't handle incoming link", err);
     });
   }
 }

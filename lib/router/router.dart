@@ -22,7 +22,11 @@ class AplRouter {
     navigationKey.currentState?.pop(result);
   }
 
-  void applyRoute(String path) {
+  void replace(String path) {
+    navigationKey.currentState?.pushReplacementNamed(path);
+  }
+
+  void push(String path) {
     navigationKey.currentState?.pushNamed(path);
   }
 

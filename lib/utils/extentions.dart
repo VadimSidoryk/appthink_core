@@ -11,7 +11,7 @@ extension FunctionExt<T> on T Function() {
       holder.logMethod(methodName, params: params);
       return Either.withValue(this.call())..logResult(holder, methodName);
     } catch (e, stacktrace) {
-      holder.logError(methodName, ex: e, stacktrace: stacktrace);
+      holder.logError(methodName, e, stacktrace);
       return Either.withError(e);
     }
   }
@@ -23,7 +23,7 @@ extension FutureFunctionExt<T> on Future<T> Function() {
       holder.logMethod(methodName, params: params);
       return Either.withValue(await this.call())..logResult(holder, methodName);
     } catch (e, stacktrace) {
-      holder.logError(methodName, ex: e, stacktrace: stacktrace);
+      holder.logError(methodName, e, stacktrace);
       return Either.withError(e);
     }
   }

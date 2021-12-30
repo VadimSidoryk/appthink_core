@@ -26,12 +26,11 @@ class ShareService extends AplService {
         ? config.intentToText[intent]
         : config.intentToText[VAL_DEFAULT_INTENT];
 
-    if(params.isNotEmpty) {
+    if (params.isNotEmpty) {
       shareText = sprintf(shareText, params);
     }
 
-    Share.share(
-        shareText,
+    Share.share(shareText,
         subject: config.intentToSubject.containsKey(intent)
             ? config.intentToSubject[intent]
             : config.intentToSubject[VAL_DEFAULT_INTENT]);
@@ -48,11 +47,7 @@ extension _RemoteShareConfig on AplConfig {
 
   ShareConfig get shareConfig {
     final result = this.getString(_KEY_SHARE);
-    if(result.value != null) {
-      final json = jsonDecode(result.value!);
-      return RemoteShareConfigSerializer.fromMap(json);
-    } else {
-      throw result.exception ?? "Share config wasn't provided";
-    }
+    final json = jsonDecode(result);
+    return RemoteShareConfigSerializer.fromMap(json);
   }
 }

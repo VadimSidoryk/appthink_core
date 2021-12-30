@@ -10,36 +10,34 @@ import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:applithium_core/utils/extentions.dart';
 
-class UsageHistoryService extends AplService {
+class UsageHistoryService {
   String get _sessionCountKey =>
-      "$config.UsageHistoryService.sessionCount";
+      "$preferencesName.UsageHistoryService.sessionCount";
 
   String get firstSessionDayKey =>
-      "$config.UsageHistoryService.firstSessionDay";
+      "$preferencesName.UsageHistoryService.firstSessionDay";
 
   String get firstSessionMonthKey =>
-      "$config.UsageHistoryService.firstSessionMonth";
+      "$preferencesName.UsageHistoryService.firstSessionMonth";
 
   String get firstSessionYearKey =>
-      "$config.UsageHistoryService.firstSessionYear";
+      "$preferencesName.UsageHistoryService.firstSessionYear";
 
   String get lastSessionDayKey =>
-      "$config.UsageHistoryService.lastSessionDay";
+      "$preferencesName.UsageHistoryService.lastSessionDay";
 
   String get lastSessionMonthKey =>
-      "$config.UsageHistoryService.lastSessionMonth";
+      "$preferencesName.UsageHistoryService.lastSessionMonth";
 
   String get lastSessionYearKey =>
-      "$config.UsageHistoryService.lastSessionYear";
+      "$preferencesName.UsageHistoryService.lastSessionYear";
 
-  late UsageHistoryConfig config;
-  late Future<SharedPreferences> preferencesProvider;
-  SessionListener? listener;
+  UsageHistoryService(
+      {this.preferencesName, required this.preferencesProvider, this.listener});
 
-  @override
-  Future<void> init(AplConfig appConfig) async {
-    config = appConfig.usageConfig;
-  }
+  final String? preferencesName;
+  final Future<SharedPreferences> preferencesProvider;
+  final SessionListener? listener;
 
   WidgetsBindingObserver asWidgetObserver() {
     return UsageWidgetStateAdapter(this);
@@ -106,24 +104,5 @@ class UsageHistoryService extends AplService {
     prefs.setInt(lastSessionYearKey, now.year);
     prefs.setInt(lastSessionMonthKey, now.month);
     prefs.setInt(lastSessionDayKey, now.day);
-  }
-
-  @override
-  void addToStore(Store store) {
-    store.add((provider) {
-      this.preferencesProvider = provider.get();
-      provider.getOrNull<AnalyticsService>()?.let((analytics) {
-        this.listener = AnalyticsSessionAdapter(provider.get(), provider.get());
-      });
-      return this;
-    });
-  }
-}
-
-extension _RemoteUsageConfig on AplConfig {
-  static const _KEY_PREFERENCE = "preference";
-
-  UsageHistoryConfig get usageConfig {
-    return UsageHistoryConfig("usage");
   }
 }
