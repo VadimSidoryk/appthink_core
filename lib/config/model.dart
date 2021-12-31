@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:applithium_core/utils/either.dart';
+import 'package:async/async.dart';
+
 
 const _KEY_MESSAGING_API_KEY = "messaging_api_key";
 const _KEY_LOCALIZATION = "localization";
@@ -12,13 +15,13 @@ abstract class AplConfig {
   Map<String, dynamic> get localizationData =>
       jsonDecode(getString(_KEY_LOCALIZATION));
 
-  String getString(String key);
+  Result<String> getString(String key);
 
-  bool getBool(String key);
+  Result<bool> getBool(String key);
 
-  int getInt(String key);
+  Result<int> getInt(String key);
 
-  double getDouble(String key);
+  Result<double> getDouble(String key);
 }
 
 class DefaultConfig extends AplConfig {
