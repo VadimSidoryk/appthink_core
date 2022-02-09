@@ -1,9 +1,9 @@
 abstract class BaseState<M> {
   final String tag;
+  get error;
 
-  BaseState(this.tag);
+  const BaseState(this.tag);
 
   BaseState<M> withError(dynamic error);
 
-  BaseState<M> withData(M data);
 }

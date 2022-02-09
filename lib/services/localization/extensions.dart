@@ -1,5 +1,5 @@
-import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
+import 'package:applithium_core/logs/extension.dart';
 
 import 'helper.dart';
 

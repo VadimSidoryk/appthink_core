@@ -15,7 +15,7 @@ class PromoEventsAdapter extends SystemListener {
       [_NavigatorEventsObserver(_service)];
 
   @override
-  void onNewEvent(AplEvent event) async {
+  void onEvent(AplEvent event) async {
     _service.handleEvent(event);
   }
 }

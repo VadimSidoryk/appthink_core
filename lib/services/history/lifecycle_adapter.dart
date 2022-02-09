@@ -1,6 +1,7 @@
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/history/service.dart';
 import 'package:flutter/widgets.dart';
+import 'package:applithium_core/logs/extension.dart';
+
+import 'service.dart';
 
 class UsageWidgetStateAdapter extends WidgetsBindingObserver {
 

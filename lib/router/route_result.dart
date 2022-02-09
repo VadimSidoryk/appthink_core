@@ -1,9 +1,9 @@
-import 'package:applithium_core/router/matchers.dart';
-import 'package:applithium_core/router/partial_uri.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'matchers.dart';
+import 'partial_uri.dart';
 import 'route_details.dart';
 
 @immutable

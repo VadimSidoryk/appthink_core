@@ -1,27 +1,29 @@
 import 'dart:convert';
 
-import 'package:applithium_core/utils/either.dart';
-import 'package:async/async.dart';
-
-
-const _KEY_MESSAGING_API_KEY = "messaging_api_key";
-const _KEY_LOCALIZATION = "localization";
+const KEY_MESSAGING_API_KEY = "messaging_api_key";
+const KEY_LOCALIZATION = "localization";
+const KEY_VAPID_KEY = "messaging_vapid_key";
+const KEY_SERVER_KEY = "messaging_server_key";
 
 abstract class AplConfig {
   const AplConfig();
 
-  String get messagingApiKey => getString(_KEY_MESSAGING_API_KEY);
+  String get vapidKey => getString(KEY_VAPID_KEY);
+
+  String get serverKey => getString(KEY_SERVER_KEY);
 
   Map<String, dynamic> get localizationData =>
-      jsonDecode(getString(_KEY_LOCALIZATION));
+      jsonDecode(getString(KEY_LOCALIZATION));
 
-  Result<String> getString(String key);
 
-  Result<bool> getBool(String key);
 
-  Result<int> getInt(String key);
+  String getString(String key);
 
-  Result<double> getDouble(String key);
+  bool getBool(String key);
+
+  int getInt(String key);
+
+  double getDouble(String key);
 }
 
 class DefaultConfig extends AplConfig {
@@ -32,46 +34,49 @@ class DefaultConfig extends AplConfig {
 
   final Map<String, dynamic> values;
 
-  const DefaultConfig(this._messagingApiKey,
+  const DefaultConfig(
       {this.values = const {},
-        this.defaultBool = false,
-        this.defaultInt = 0,
-        this.defaultDouble = .0,
-        this.defaultString = ""});
+      this.defaultBool = false,
+      this.defaultInt = 0,
+      this.defaultDouble = .0,
+      this.defaultString = ""});
 
   @override
-  Either<bool> getBool(String key) {
+  Map<String, dynamic> get localizationData => {};
+
+  @override
+  bool getBool(String key) {
     if (values.containsKey(key)) {
-      return Either.withValue(values[key]);
+      return values[key];
     } else {
-      return Either.withValue(defaultBool);
+      return defaultBool;
     }
   }
 
   @override
-  Either<double> getDouble(String key) {
+  double getDouble(String key) {
     if (values.containsKey(key)) {
-      return Either.withValue(values[key]);
+      return values[key];
     } else {
-      return Either.withValue(defaultDouble);
+      return defaultDouble;
     }
   }
 
   @override
-  Either<int> getInt(String key) {
+  int getInt(String key) {
     if (values.containsKey(key)) {
-      return Either.withValue(values[key]);
+      return values[key];
     } else {
-      return Either.withValue(defaultInt);
+      return defaultInt;
     }
   }
 
   @override
-  Either<String> getString(String key) {
+  String getString(String key) {
     if (values.containsKey(key)) {
-      return Either.withValue(values[key]);
+      return values[key];
     } else {
-      return Either.withValue(defaultString);
+      return defaultString;
     }
   }
 }

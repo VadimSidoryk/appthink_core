@@ -1,15 +1,16 @@
 import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/services/service_base.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'config.dart';
 
-class LocalNotificationService extends AplService {
+class LocalNotificationService  {
   late LocalNotificationConfig _config;
   late FlutterLocalNotificationsPlugin plugin;
   final Function(String?)? onNotificationClick;
 
-  LocalNotificationService({this.onNotificationClick});
+  LocalNotificationService(AplConfig config, {this.onNotificationClick}) {
+    _init(config);
+  }
 
   NotificationDetails? get notificationDetails {
     return NotificationDetails(
@@ -17,8 +18,7 @@ class LocalNotificationService extends AplService {
             _config.channelName, _config.channelDescription));
   }
 
-  @override
-  Future<void> init(AplConfig appConfig) async {
+  Future<void> _init(AplConfig appConfig) async {
     _config = appConfig.notificationConfig;
     final plugin = await _initPlugin();
     log("injectToApp");

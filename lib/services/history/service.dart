@@ -1,14 +1,8 @@
-import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/analytics/service.dart';
-import 'package:applithium_core/services/analytics/session_adapter.dart';
-import 'package:applithium_core/services/history/config.dart';
-import 'package:applithium_core/services/history/lifecycle_adapter.dart';
-import 'package:applithium_core/services/history/usage_listener.dart';
-import 'package:applithium_core/services/service_base.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:applithium_core/utils/extentions.dart';
+
+import 'lifecycle_adapter.dart';
+import 'usage_listener.dart';
 
 class UsageHistoryService {
   String get _sessionCountKey =>

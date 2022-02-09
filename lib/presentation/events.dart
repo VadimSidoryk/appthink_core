@@ -2,28 +2,29 @@ import 'package:applithium_core/events/base_event.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class WidgetEvents extends AplEvent {
-  WidgetEvents(String name, [Map<String, Object>? params])
-      : super(name, params);
+  const WidgetEvents(String name, [Map<String, Object>? params, bool shouldBeTracked = true])
+      : super(name, params, shouldBeTracked);
 }
 
 class BaseWidgetEvents<M> extends WidgetEvents {
-  BaseWidgetEvents._(String name, [Map<String, Object>? params])
-      : super(name, params);
+  BaseWidgetEvents._(String name, [Map<String, Object>? params, bool shouldBeTracked = true])
+      : super(name, params, shouldBeTracked);
 
-  factory BaseWidgetEvents.widgetCreated(Widget widget) =>
-      WidgetCreatedEvent._(widget);
+  factory BaseWidgetEvents.widgetCreated(String name, Type type) =>
+      WidgetCreatedEvent._(name, type);
 
   factory BaseWidgetEvents.widgetShown(String name) => WidgetShownEvent._(name);
 
-  factory BaseWidgetEvents.repositoryUpdated(M data) =>
-      RepositoryUpdatedEvent._(data);
+  factory BaseWidgetEvents.internalStateChanged(M data) =>
+      InternalStateChanged._(data);
 }
 
 class WidgetCreatedEvent<M> extends BaseWidgetEvents<M> {
-  final Widget widget;
+  final String name;
+  final Type type;
 
-  WidgetCreatedEvent._(this.widget)
-      : super._("widget_created", {"screen_name": widget.toString()});
+  WidgetCreatedEvent._(this.name, this.type)
+      : super._("widget_created", {"screen_name": name, "screen_type": type});
 }
 
 class WidgetShownEvent<M> extends BaseWidgetEvents<M> {
@@ -33,9 +34,9 @@ class WidgetShownEvent<M> extends BaseWidgetEvents<M> {
       : super._("widget_shown", {"screen_name": screenName});
 }
 
-class RepositoryUpdatedEvent<M> extends BaseWidgetEvents<M> {
+class InternalStateChanged<M> extends BaseWidgetEvents<M> {
   final M data;
 
-  RepositoryUpdatedEvent._(this.data)
-      : super._("repository_updated", {"data": data.toString()});
+  InternalStateChanged._(this.data)
+      : super._("internal_state_changed", {"data": data.toString()}, false);
 }

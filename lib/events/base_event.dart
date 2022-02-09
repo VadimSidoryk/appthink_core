@@ -1,5 +1,4 @@
-import 'package:applithium_core/events/trackable.dart';
-
+import 'trackable.dart';
 
 const EVENT_ARG_NAME = "name";
 
@@ -30,13 +29,17 @@ const EVENT_SCREEN_OPENED_NAME = "screen_opened";
 const EVENT_SCREEN_OPENED_ARG_SCREEN_NAME = "screen_name";
 
 abstract class AplEvent extends Trackable  {
+
+  @override
+  final bool shouldBeTracked;
+
   @override
   final String name;
 
   @override
   final Map<String, Object> params;
 
-  AplEvent(this.name, [Map<String, Object>? params]): params = params ?? {};
+  const AplEvent(this.name, [Map<String, Object>? params, this.shouldBeTracked = true]): params = params ?? const {};
 
   factory AplEvent.sessionStarted(int sessionCount,  int daysFromFirstSession, int dayFromLastSession) =>
   SessionStarted._(sessionCount, daysFromFirstSession, dayFromLastSession);

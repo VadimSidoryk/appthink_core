@@ -1,106 +1,117 @@
+
 import 'dart:async';
 
-import 'package:applithium_core/domain/repository.dart';
-import 'package:applithium_core/domain/use_case.dart';
-import 'package:applithium_core/presentation/events.dart';
-import 'package:applithium_core/presentation/states.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
-import '../applithium_core.dart';
+import 'events.dart';
+import 'states.dart';
 
-abstract class BlocWithRepository<M, S extends BaseState<M>>
-    extends Bloc<WidgetEvents, S> {
-  final AplRepository<M> repository;
-  StreamSubscription? _subscription;
+abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
 
-  BlocWithRepository(S initialState, {AplRepository<M>? repositoryValue})
-      : repository = repositoryValue ?? AplRepository<M>(-1),
-        super(initialState) {
-    _subscription = this.repository.updatesStream.listen((data) {
-      add(BaseWidgetEvents.repositoryUpdated(data));
+  @override
+  Stream<S> get stream {
+    return _connectableStream;
+  }
+
+  final _subscriptions = CompositeSubscription();
+  late Stream<S> _connectableStream;
+
+  AplBloc(S initialState): super(initialState) {
+    _connectableStream = ValueConnectableStream(super.stream).autoConnect();
+
+    doOn<InternalStateChanged>((event, emit) {
+      emit(event.data);
     });
-    on<RepositoryUpdatedEvent>(
-            (event, emit) => emit(state.withData(event.data) as S));
   }
 
-  @protected
-  void loadOn<E extends WidgetEvents>(
-      {required S waitingState,
-        required UseCase<void, M> Function(E) loadingUCProvider,
-        required FutureOr<S> Function(dynamic) onError}) {
-    sideEffectIml<E>(
-        waitingStateProvider: (state) => waitingState,
-        effectProvider: (event) => SideEffect.load(loadingUCProvider.call(event)),
-        onError: onError);
-  }
-
-  @protected
-  void updateOn<E extends WidgetEvents>(
-      {required S waitingState,
-        required UseCase<void, M> Function(E) updatingUCProvider,
-        required FutureOr<S> Function(dynamic) onError}) {
-    sideEffectIml<E>(
-        waitingStateProvider: (state) => waitingState,
-        effectProvider: (event) => SideEffect.update(updatingUCProvider.call(event)),
-        onError: onError);
-  }
-
-  @protected
-  void changeOn<E extends WidgetEvents, S1 extends S>(
-      {S Function(S1)? waitingStateProvider,
-        required UseCase<M, M> Function(E) changingUCProvider,
-        FutureOr<S> Function(dynamic)? onError,
-        FutureOr<S> Function()? onCancel}) {
-    final initialState = state;
-    sideEffectIml<E>(
-        stateFilter: (state) => state is S1,
-        waitingStateProvider: waitingStateProvider != null
-            ? (state) => waitingStateProvider.call(state as S1)
-            : null,
-        effectProvider: (event) => SideEffect.change(changingUCProvider.call(event)),
-        onError: onError ?? (error) => initialState,
-        onCancel: onCancel ?? () => initialState);
-  }
-
-  @protected
-  void sideEffectIml<E extends WidgetEvents>(
-      {bool Function(S)? stateFilter,
-        S Function(S)? waitingStateProvider,
-        required SideEffect<M> Function(E) effectProvider,
-        FutureOr<S> Function()? onSuccess,
-        FutureOr<S> Function()? onCancel,
-        FutureOr<S> Function(dynamic)? onError}) {
+  void doOn<E extends WidgetEvents> (EventHandler<E, S> handler, { EventTransformer<E>? transformer}) {
+    final methodName = "doOn";
     on<E>((event, emit) async {
-      if (stateFilter != null && !stateFilter.call(state)) {
-        return;
+      try {
+        await handler.call(event, emit);
+      } catch (e, stacktrace) {
+        logError(methodName, e, stacktrace);
+        super.add(BaseWidgetEvents.internalStateChanged(state.withError(e)));
       }
+    }, transformer: transformer);
+  }
 
-      if (waitingStateProvider != null) {
-        emit(waitingStateProvider.call(state));
+  void bind<T>(Stream<T> stream, S Function(S, T) stateProvider) {
+    addSubscription(stream.listen((event) {
+      BaseState newState;
+      try {
+        newState = stateProvider.call(state, event);
+      } catch (e) {
+        newState = state.withError(e);
       }
+      super.add(BaseWidgetEvents.internalStateChanged(newState));
+    }));
+  }
 
-      final effectResult = await effectProvider(event).apply(repository);
-      if (effectResult.value != null) {
-        if (effectResult.value! && onSuccess != null) {
-          final resultState = await onSuccess.call();
-          emit(resultState);
-        } else if (!effectResult.value! && onCancel != null) {
-          final cancelState = await onCancel.call();
-          emit(cancelState);
-        }
-      } else {
-        if (onError != null) {
-          final errorState =
-          await onError.call(effectResult.exception ?? "Unknown exception");
-          emit(errorState);
-        }
-      }
-    });
+  Stream<T> observe<T>(T Function(S) mapper) {
+    return stream.map(mapper).distinct();
   }
 
   @override
   Future<void> close() async {
+    _subscriptions.dispose();
     await super.close();
-    return _subscription?.cancel();
+  }
+
+  @protected
+  void addSubscription(StreamSubscription subscription) {
+    _subscriptions.add(subscription);
+  }
+}
+
+extension BindUtils<S extends BaseState> on AplBloc<S> {
+
+  void bind2<T1, T2>(Stream<T1> stream1, Stream<T2> stream2,
+      S Function(S, T1, T2) stateProvider) {
+    return bind(
+        CombineLatestStream.list([stream1, stream2]),
+            (state, List<dynamic> values) =>
+            stateProvider.call(
+                state,
+                values[0] as T1,
+                values[1] as T2
+            ));
+  }
+
+  void bind3<T1, T2, T3>(
+      Stream<T1> stream1,
+      Stream<T2> stream2,
+      Stream<T3> stream3,
+      S Function(S, T1, T2, T3) stateProvider) {
+    return bind(
+        CombineLatestStream.list([stream1, stream2, stream3]),
+    (state, List<dynamic> values) =>
+        stateProvider.call(
+            state,
+            values[0] as T1,
+            values[1] as T2,
+            values[2] as T3
+        ));
+  }
+
+  void bind4<T1, T2, T3, T4>(
+      Stream<T1> stream1,
+      Stream<T2> stream2,
+      Stream<T3> stream3,
+      Stream<T4> stream4,
+      S Function(S, T1, T2, T3, T4) stateProvider) {
+    return bind(
+        CombineLatestStream.list([stream1, stream2, stream3, stream4]),
+    (state, List<dynamic> values) =>
+        stateProvider.call(
+            state,
+            values[0] as T1,
+            values[1] as T2,
+            values[2] as T3,
+            values[3] as T4
+        ));
   }
 }

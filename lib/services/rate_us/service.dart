@@ -2,26 +2,28 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/service_base.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-import 'package:applithium_core/logs/extension.dart';
+
 
 import 'config.dart';
 import 'config_remote.dart';
 
-class RateUsService extends AplService {
-  late RateUsConfig config;
+class RateUsService  {
   late RateMyApp _impl;
+  late RateUsConfig _config;
 
-  @override
-  Future<void> init(AplConfig appConfig) async {
-    this.config = appConfig.rateUs;
+  RateUsService(AplConfig config) {
+    _init(config);
+  }
+
+  Future<void> _init(AplConfig config) async {
+    _config = config.rateUs;
     _impl = RateMyApp(
-      googlePlayIdentifier: config.googlePlayId,
-      appStoreIdentifier: config.appStoreId,
+      googlePlayIdentifier: _config.googlePlayId,
+      appStoreIdentifier: _config.appStoreId,
     );
     await _impl.init();
   }
@@ -33,9 +35,9 @@ class RateUsService extends AplService {
 
     _impl.showRateDialog(
       context,
-      title: config.title,
+      title: _config.title,
       // The dialog title.
-      message: config.text,
+      message: _config.text,
       // The dialog message.
       rateButton: 'RATE',
       // The dialog "rate" button text.
@@ -57,9 +59,9 @@ class RateUsService extends AplService {
 
     _impl.showStarRateDialog(
       context,
-      title: config.title,
+      title: _config.title,
       // The dialog title.
-      message: config.text,
+      message: _config.text,
       // The dialog message.
       actionsBuilder: (context, stars) {
         // Triggered when the user updates the star rating.
@@ -82,7 +84,7 @@ class RateUsService extends AplService {
       },
       ignoreNativeDialog: Platform.isAndroid,
       // Set to false if you want to show the Apple's native app rating dialog on iOS or Google's native app rating dialog (depends on the current Platform).
-      dialogStyle: const DialogStyle(
+      dialogStyle: DialogStyle(
         // Custom dialog styles.
         titleAlign: TextAlign.center,
         messageAlign: TextAlign.center,
@@ -94,11 +96,6 @@ class RateUsService extends AplService {
           .laterButtonPressed), // Called when the user dismissed the dialog (either by taping outside or by pressing the "back" button).
     );
   }
-
-  @override
-  void addToStore(Store store) {
-    return store.add((provider) => this);
-  }
 }
 
 extension RemoteSaveOnConfig on AplConfig {
@@ -106,11 +103,7 @@ extension RemoteSaveOnConfig on AplConfig {
 
   RateUsConfig get rateUs {
     final result = this.getString(_KEY_RATE_US);
-    if(result.value != null) {
-      final json = jsonDecode(result.value!);
-      return RemoteRateUsConfigSerializer.fromMap(json);
-    } else {
-      throw result.exception ?? "RateUs config wasn't provided";
-    }
+    final json = jsonDecode(result);
+    return RemoteRateUsConfigSerializer.fromMap(json);
   }
 }

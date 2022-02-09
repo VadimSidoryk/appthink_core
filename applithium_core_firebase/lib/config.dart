@@ -1,10 +1,9 @@
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/utils/either.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:applithium_core/logs/extension.dart';
 
-const FIREBASE_CONFIG_RESOURCES_KEY = "resources";
+const FIREBASE_CONFIG_RESOURCES_KEY = "utils";
 const FIREBASE_CONFIG_EVENTS_KEY = "event_handlers";
 const FIREBASE_CONFIG_PRESENTATION_KEY = "presentation";
 
@@ -17,61 +16,76 @@ class FirebaseConfigProvider extends ConfigProvider {
 
   @override
   Future<AplConfig> getApplicationConfig() async {
-    logMethod("getApplicationConfig");
+    final methodName = "getApplicationConfig";
+    logMethod(methodName);
     final RemoteConfig remoteConfig = RemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: Duration(seconds: fetchTimeoutSec),
       minimumFetchInterval: const Duration(hours: 1),
     ));
-    // await remoteConfig.setDefaults(defaults);
-    await remoteConfig.fetchAndActivate();
-    RemoteConfigValue(null, ValueSource.valueStatic);
+    log("setDefaults $defaults");
+    await remoteConfig.setDefaults(defaults);
+    try {
+      log("fetch and activate");
+      await remoteConfig.fetchAndActivate();
+      RemoteConfigValue(null, ValueSource.valueStatic);
+    } catch (e, stacktrace) {
+      logError(methodName, e, stacktrace);
+    }
     return FirebaseAplConfigAdapter(remoteConfig);
   }
 }
 
 class FirebaseAplConfigAdapter extends AplConfig {
-  final RemoteConfig _impl;
+  final RemoteConfig configImpl;
 
-  FirebaseAplConfigAdapter(this._impl);
+  FirebaseAplConfigAdapter(this.configImpl);
 
   @override
-  Either<bool> getBool(String key) {
+  bool getBool(String key) {
+    final methodName = "getBool";
+    logMethod(methodName, params: [key]);
     try {
-      return Either.withValue(_impl.getBool(key));
+      return configImpl.getBool(key);
     } catch (e, stacktrace) {
-      logError("getBool", ex: e, stacktrace: stacktrace);
-      return Either.withError(e);
+      logError(methodName, e, stacktrace);
+      return false;
     }
   }
 
   @override
-  Either<double> getDouble(String key) {
+  double getDouble(String key) {
+    final methodName = "getDouble";
+    logMethod(methodName, params: [key]);
     try {
-      return Either.withValue(_impl.getDouble(key));
+      return configImpl.getDouble(key);
     } catch (e, stacktrace) {
-      logError("getDouble", ex: e, stacktrace: stacktrace);
-      return Either.withError(e);
+      logError(methodName, e, stacktrace);
+      return 0;
     }
   }
 
   @override
-  Either<int> getInt(String key) {
+  int getInt(String key) {
+    final methodName = "getInt";
+    logMethod(methodName, params: [key]);
     try {
-      return Either.withValue(_impl.getInt(key));
+      return configImpl.getInt(key);
     } catch (e, stacktrace) {
-      logError("getInt", ex: e, stacktrace: stacktrace);
-      return Either.withError(e);
+      logError(methodName, e, stacktrace);
+      return 0;
     }
   }
 
   @override
-  Either<String> getString(String key) {
+  String getString(String key) {
+    final methodName = "getString";
+    logMethod(methodName, params: [key]);
     try {
-      return Either.withValue(_impl.getString(key));
+      return configImpl.getString(key);
     } catch (e, stacktrace) {
-      logError("getString", ex: e, stacktrace: stacktrace);
-      return Either.withError(e);
+      logError(methodName, e, stacktrace);
+      return "";
     }
   }
 }

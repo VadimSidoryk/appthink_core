@@ -1,44 +1,40 @@
 import 'dart:convert';
 
 import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/service_base.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:share/share.dart';
 import 'package:sprintf/sprintf.dart';
 
 import 'config.dart';
 import 'config_remote.dart';
-import 'package:applithium_core/logs/extension.dart';
 
-class ShareService extends AplService {
-  late ShareConfig config;
+class ShareService {
+  late ShareConfig _config;
 
-  @override
-  Future<void> init(AplConfig appConfig) async {
-    config = appConfig.shareConfig;
+  ShareService(AplConfig config) {
+    _init(config);
+  }
+
+  Future<void> _init(AplConfig appConfig) async {
+    _config = appConfig.shareConfig;
   }
 
   void share(
       {String intent = VAL_DEFAULT_INTENT, List<Object> params = const []}) {
     logMethod("share", params: [intent, params]);
 
-    String shareText = config.intentToText.containsKey(intent)
-        ? config.intentToText[intent]
-        : config.intentToText[VAL_DEFAULT_INTENT];
+    String shareText = _config.intentToText.containsKey(intent)
+        ? _config.intentToText[intent]
+        : _config.intentToText[VAL_DEFAULT_INTENT];
 
     if (params.isNotEmpty) {
       shareText = sprintf(shareText, params);
     }
 
     Share.share(shareText,
-        subject: config.intentToSubject.containsKey(intent)
-            ? config.intentToSubject[intent]
-            : config.intentToSubject[VAL_DEFAULT_INTENT]);
-  }
-
-  @override
-  void addToStore(Store store) {
-    store.add((provider) => this);
+        subject: _config.intentToSubject.containsKey(intent)
+            ? _config.intentToSubject[intent]
+            : _config.intentToSubject[VAL_DEFAULT_INTENT]);
   }
 }
 

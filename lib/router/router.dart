@@ -1,7 +1,7 @@
-import 'package:applithium_core/router/route_result.dart';
 import 'package:flutter/widgets.dart';
 
 import 'route_details.dart';
+import 'route_result.dart';
 
 class AplRouter {
   final List<RouteDetails> routes;

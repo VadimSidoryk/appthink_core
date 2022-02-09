@@ -1,7 +1,7 @@
-import 'package:applithium_core/router/route_result.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'matchers.dart';
+import 'route_result.dart';
 
 typedef WidgetBuilderWithRouteResult = Widget Function(BuildContext, RouteResult);
 

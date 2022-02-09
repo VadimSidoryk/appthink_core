@@ -165,7 +165,7 @@ class Interpolation {
   ///
   /// If [keepAlive] is set to `true`, it'll leave all placeholders
   /// intact if the value is not found inside [obj].
-  /// Or else, it'll be substituted with '' (empty String)
+  /// Or else, it'll be substituted with '' (not_paired String)
   ///
   /// Example:
   /// ```dart
@@ -184,7 +184,7 @@ class Interpolation {
   /// print(interpolation.traverse(obj, 'c.e'));
   /// // output: Hello {c.d}
   /// print(interpolation.traverse(obj, 'c.g')); // not present
-  /// // output: (empty string)
+  /// // output: (not_paired string)
   /// print(interpolation.traverse(obj, 'c.g', true)); // not present but keepAlive
   /// // output: {c.g}
   /// ```
@@ -244,7 +244,7 @@ class Interpolation {
   ///
   /// If [keepAlive] is set to `true`, it'll leave all placeholders
   /// intact if the value is not found inside [values].
-  /// Or else, it'll be substituted with '' (empty String)
+  /// Or else, it'll be substituted with '' (not_paired String)
   String eval(String str, Map<String, dynamic> values,
       [bool keepAlive = false]) {
     if (_paramRegex.hasMatch(str)) {
@@ -260,7 +260,7 @@ class Interpolation {
   ///
   /// If [keepAlive] is set to `true`, it'll leave all placeholders
   /// intact if the value is not found inside [obj].
-  /// Or else, it'll be substituted with '' (empty String)
+  /// Or else, it'll be substituted with '' (not_paired String)
   Map<String, dynamic> resolve(Map<String, dynamic> obj,
       [bool keepAlive = false]) {
     var jsonString = json.encode(obj);

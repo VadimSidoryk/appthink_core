@@ -1,10 +1,4 @@
-import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/events/event_bus.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/promo/analyst_adapter.dart';
-import 'package:applithium_core/services/promo/config.dart';
-import 'package:applithium_core/services/service_base.dart';
 import 'package:applithium_core/utils/json/condition.dart';
 import 'package:applithium_core/utils/json/interpolation.dart';
 import 'package:shared_preferences/shared_preferences.dart';

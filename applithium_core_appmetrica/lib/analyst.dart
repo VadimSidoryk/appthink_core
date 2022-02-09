@@ -1,9 +1,9 @@
+import 'package:appmetrica_sdk/appmetrica_sdk.dart';
 import 'package:applithium_core/events/base_event.dart';
 import 'package:applithium_core/services/analytics/analyst.dart';
-import 'package:appmetrica_sdk/appmetrica_sdk.dart';
 import 'package:flutter/src/widgets/navigator.dart';
-import 'package:flutter/widgets.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:flutter/widgets.dart';
 
 
 const _EVENT_SCREEN_VIEW = "screen_view";
@@ -41,7 +41,7 @@ class AppmetricaAnalyst extends Analyst {
   }
 
   @override
-  void onNewEvent(AplEvent event) {
+  void onEvent(AplEvent event) {
     _sdk.reportEvent(name: event.name, attributes: event.params);
   }
 }

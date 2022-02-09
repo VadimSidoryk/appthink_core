@@ -1,36 +1,33 @@
 import 'dart:async';
-import 'dart:developer';
 
-import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/config/provider.dart';
-import 'package:applithium_core/events/event_bus.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/module/base.dart';
-import 'package:applithium_core/module/default.dart';
-import 'package:applithium_core/router/route_details.dart';
-import 'package:applithium_core/router/router.dart';
-import 'package:applithium_core/scopes/extensions.dart';
-import 'package:applithium_core/scopes/scope.dart';
 import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/history/service.dart';
-import 'package:applithium_core/services/localization/delegate.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
-import 'package:applithium_core/services/promo/action.dart';
-import 'package:applithium_core/services/promo/service.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
+import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 
+import 'config/model.dart';
+import 'config/provider.dart';
+import 'events/event_bus.dart';
+import 'module.dart';
+import 'router/route_details.dart';
+import 'router/router.dart';
+import 'scopes/scope.dart';
 import 'services/analytics/analyst.dart';
-import 'services/analytics/log_analyst.dart';
+import 'services/analytics/analyst_logs.dart';
 import 'services/analytics/service.dart';
 import 'services/analytics/session_adapter.dart';
+import 'services/history/service.dart';
 import 'services/localization/config.dart';
+import 'services/localization/delegate.dart';
+import 'services/promo/action.dart';
 import 'services/promo/analyst_adapter.dart';
-import 'services/service_base.dart';
+import 'services/promo/service.dart';
 
 class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
@@ -42,23 +39,25 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final List<RouteDetails> routes;
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
+  final Widget Function(BuildContext, Widget)? wrapper;
   final Locale? locale;
 
   final _debugTree = DebugTree();
 
   AplAppState(
       {String? title,
-        this.navObserver,
-        required this.defaultConfig,
-        required this.splashBuilder,
-        PageRoute Function(WidgetBuilder)? splashRouteBuilder,
-        Future<String?> Function()? initialLinkProvider,
-        Set<Analyst>? analysts,
-        required this.routes,
-        this.locale,
-        Set<AplModule> modules = const {},
-        Future<void> Function(Store, AplConfig)? customSetupFlow})
-      : this.title = title ?? "Applithium Based Application",
+      this.navObserver,
+      this.wrapper,
+      required this.defaultConfig,
+      required this.splashBuilder,
+      PageRoute Function(WidgetBuilder)? splashRouteBuilder,
+      Future<String?> Function()? initialLinkProvider,
+      Set<Analyst>? analysts,
+      required this.routes,
+      this.locale,
+      Set<AplModule> modules = const {},
+      Future<void> Function(Store, AplConfig)? customSetupFlow})
+      : this.title = title ?? "Sample Application",
         _splashRouteBuilder = splashRouteBuilder ??
             ((WidgetBuilder builder) => MaterialPageRoute(builder: builder)),
         _initialLinkProvider = initialLinkProvider ?? getInitialLink,
@@ -101,6 +100,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
               store: initialData.store,
               builder: (context) => _RealApplication(
                   locale: locale,
+                  wrapper: wrapper,
                   initialData: initialData,
                   routes: routes,
                   title: title)),
@@ -144,9 +144,9 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
     store.add((provider) => PromoService(provider.get()));
     store.add((provider) => EventBus(listeners: {
-      provider.get<AnalyticsService>(),
-      PromoEventsAdapter(provider.get())
-    }));
+          provider.get<AnalyticsService>(),
+          PromoEventsAdapter(provider.get())
+        }));
     store.add((provider) => config);
     store.add((provider) => UsageHistoryService(
         preferencesProvider: provider.get(),
@@ -166,10 +166,10 @@ class _SplashScreen<D> extends StatelessWidget {
 
   const _SplashScreen(
       {Key? key,
-        required this.builder,
-        required this.routeBuilder,
-        required this.loadingTask,
-        required this.nextScreenBuilder})
+      required this.builder,
+      required this.routeBuilder,
+      required this.loadingTask,
+      required this.nextScreenBuilder})
       : super(key: key);
 
   @override
@@ -187,6 +187,7 @@ class _SplashScreen<D> extends StatelessWidget {
 }
 
 class _RealApplication extends StatefulWidget {
+  final Widget Function(BuildContext, Widget)? wrapper;
   final _AppInitialData initialData;
   final String title;
   final List<RouteDetails> routes;
@@ -194,10 +195,11 @@ class _RealApplication extends StatefulWidget {
 
   const _RealApplication(
       {Key? key,
-        this.locale,
-        required this.title,
-        required this.initialData,
-        required this.routes})
+      this.locale,
+      this.wrapper,
+      required this.title,
+      required this.initialData,
+      required this.routes})
       : super(key: key);
 
   @override
@@ -237,13 +239,13 @@ class _RealApplicationState extends State<_RealApplication> {
   @override
   Widget build(BuildContext context) {
     final localizationConfig =
-    LocalizationConfig(widget.initialData.config.localizationData);
+        LocalizationConfig(widget.initialData.config.localizationData);
     final supportedLocales = localizationConfig
         .getSupportedLocaleCodes()
         .map((item) => item.toLocale())
         .toList();
 
-    return MaterialApp(
+    final appInstance = MaterialApp(
       title: widget.title,
       theme: context.getOrNull(),
       navigatorKey: _navigationKey,
@@ -258,6 +260,8 @@ class _RealApplicationState extends State<_RealApplication> {
         GlobalWidgetsLocalizations.delegate,
       ],
     );
+
+    return widget.wrapper?.call(context, appInstance) ?? appInstance;
   }
 
   @override
