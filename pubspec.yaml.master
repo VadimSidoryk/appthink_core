@@ -13,8 +13,8 @@ dependencies:
     sdk: flutter
 
   fluttertoast: ^8.0.8
-  flutter_local_notifications: ^8.2.0
-  flutter_bloc: ^7.2.0
+  flutter_local_notifications: ^9.2.0
+  flutter_bloc: ^8.0.1
   rxdart: ^0.27.1
   async: ^2.6.1
   http: ^0.13.3
@@ -25,16 +25,16 @@ dependencies:
   share: ^2.0.4
   sprintf: ^6.0.0
   equatable: ^2.0.3
-  freezed_annotation: ^0.14.2
+  freezed_annotation: 1.1.0
 
 dev_dependencies:
-  golden_toolkit: ^0.11.0
+  golden_toolkit: ^0.13.0
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
   build_runner:
-  freezed: ^0.14.2
+  freezed: 1.1.1
 
 flutter:
 
