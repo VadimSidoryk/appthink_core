@@ -14,7 +14,7 @@ void main() {
     final config = LocalizationConfig({
       key1: {DEFAULT_LOCALE_KEY: notLocalizedValue}
     });
-    final helper = AplLocalization(Locale("ru", "RU"), config);
+    final helper = LocalizationHelper(Locale("ru", "RU"), config);
     assert(helper.translate(key1) == notLocalizedValue);
   });
 
@@ -22,7 +22,7 @@ void main() {
     final config = LocalizationConfig({
       key1: {DEFAULT_LOCALE_KEY: notLocalizedValue, "ru-RU": localizedValue}
     });
-    final helper = AplLocalization(Locale("ru", "RU"), config);
+    final helper = LocalizationHelper(Locale("ru", "RU"), config);
     assert(helper.translate(key1) == localizedValue);
   });
 
@@ -31,7 +31,7 @@ void main() {
       key1: {DEFAULT_LOCALE_KEY: notLocalizedValue, "ru-RU": localizedValue},
       key2: {DEFAULT_LOCALE_KEY: notLocalizedValue}
     });
-    final helper = AplLocalization(Locale("ru-RU"), config);
+    final helper = LocalizationHelper(Locale("ru-RU"), config);
     assert(helper.translate(key1) == localizedValue);
     assert(helper.translate(key2) == notLocalizedValue);
   });

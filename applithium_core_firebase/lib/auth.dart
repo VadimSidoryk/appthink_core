@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:async/async.dart';
 import 'package:applithium_core/services/auth/auth.dart';
 import 'package:applithium_core/services/auth/models/auth_option.dart';
-import 'package:couples/utils/id_generator.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
