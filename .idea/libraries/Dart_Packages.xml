@@ -819,6 +819,7 @@
         <entry key="shared_preferences_android">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_android-2.0.11/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_android-2.0.10/lib" />
             </list>
           </value>
@@ -826,6 +827,7 @@
         <entry key="shared_preferences_ios">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_ios-2.0.10/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_ios-2.0.9/lib" />
             </list>
           </value>
@@ -979,8 +981,8 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.8/lib" />
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.3/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.3.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.3/lib" />
             </list>
           </value>
         </entry>
@@ -1066,8 +1068,9 @@
         <entry key="win32">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.3.6/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.3.11/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.2.10/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.3.6/lib" />
             </list>
           </value>
         </entry>
@@ -1238,6 +1241,8 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.13/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.7/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_android-2.0.10/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_android-2.0.11/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_ios-2.0.10/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_ios-2.0.9/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_linux-2.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences_linux-2.1.0/lib" />
@@ -1280,6 +1285,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/web_socket_channel-2.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/webdriver-3.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.2.10/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.3.11/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/win32-2.3.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/xdg_directories-0.2.0+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/xdg_directories-0.2.0/lib" />
