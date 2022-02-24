@@ -17,7 +17,7 @@ class LogInfo {
 }
 
 Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
-    {LogInfo? info}) async {
+    {LogInfo? info, Function(dynamic)? onError}) async {
   try {
     info?.let((val) => val.holder.logMethod(val.methodName, params: val.params));
     final result = await function.call();
@@ -25,6 +25,11 @@ Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
     return Result.value(result);
   } catch (e, stacktrace) {
     info?.let((val) =>  val.holder.logError(val.methodName, e, stacktrace));
+    try {
+      onError?.call(e);
+    } catch(e) {
+      info?.let((val) => val.holder.logError(val.methodName, e, stacktrace));
+    }
     return Result.error(e);
   }
 }
