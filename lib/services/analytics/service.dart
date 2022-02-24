@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:applithium_core/events/base_event.dart';
+import 'package:applithium_core/events/mapper/scheme.dart';
 import 'package:applithium_core/events/system_listener.dart';
-import 'package:flutter/widgets.dart';
 import 'package:applithium_core/logs/extension.dart';
+import 'package:flutter/widgets.dart';
 
 import 'analyst.dart';
 
@@ -21,9 +21,9 @@ class AnalyticsService implements SystemListener {
   }
 
   @override
-  void onEvent(AplEvent event) {
-    logMethod("trackEventWithParams", params: [event]);
-    analysts.forEach((impl) => impl.onEvent(event));
+  void onEvent(EventData eventData) {
+    logMethod("trackEventWithParams", params: [eventData]);
+    analysts.forEach((impl) => impl.onEvent(eventData));
   }
 
   StreamSubscription periodicUpdatedUserProperty<T>(

@@ -7,23 +7,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'events.dart';
-import 'states.dart';
+import 'state.dart';
+
 
 abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
 
   @override
-  Stream<S> get stream {
-    return _connectableStream;
-  }
+  Stream<S> get stream => _valueStream;
 
   final _subscriptions = CompositeSubscription();
-  late Stream<S> _connectableStream;
+  late Stream<S> _valueStream;
 
   AplBloc(S initialState): super(initialState) {
-    _connectableStream = ValueConnectableStream(super.stream).autoConnect();
+    _valueStream = ValueConnectableStream(super.stream).autoConnect();
 
-    doOn<InternalStateChanged>((event, emit) {
-      emit(event.data);
+    doOn<BaseWidgetEvents>((event, emit) {
+      if(event is ChangingInternalState<S>) {
+        S nextState = event.changer.call(state);
+        emit(nextState);
+      } else {
+        //ignore other base widget events
+      }
     });
   }
 
@@ -34,20 +38,21 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
         await handler.call(event, emit);
       } catch (e, stacktrace) {
         logError(methodName, e, stacktrace);
-        super.add(BaseWidgetEvents.internalStateChanged(state.withError(e)));
+        super.add(BaseWidgetEvents.changeStateWith((S state) => state.withError(e)));
       }
     }, transformer: transformer);
   }
 
   void bind<T>(Stream<T> stream, S Function(S, T) stateProvider) {
     addSubscription(stream.listen((event) {
-      BaseState newState;
-      try {
-        newState = stateProvider.call(state, event);
-      } catch (e) {
-        newState = state.withError(e);
-      }
-      super.add(BaseWidgetEvents.internalStateChanged(newState));
+      final changer = (S state) {
+        try {
+          return stateProvider.call(state, event);
+        } catch (e) {
+          return state.withError(e);
+        }
+      };
+      super.add(BaseWidgetEvents.changeStateWith(changer));
     }));
   }
 

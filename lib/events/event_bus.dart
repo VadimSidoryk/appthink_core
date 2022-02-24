@@ -1,13 +1,15 @@
+import 'package:applithium_core/events/mapper/scheme.dart';
+import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 import 'base_event.dart';
 import 'system_listener.dart';
-import 'package:applithium_core/logs/extension.dart';
 
 class EventBus {
+  final EventsScheme scheme;
   final Set<SystemListener> listeners;
 
-  EventBus({required this.listeners});
+  EventBus({required this.scheme, required this.listeners});
 
   List<NavigatorObserver> get navigatorObservers {
     return listeners
@@ -17,7 +19,13 @@ class EventBus {
   }
 
   void onNewEvent(AplEvent event) {
-    log("onNewEvent ${event.name} params: ${event.params}");
-    listeners.forEach((impl) => impl.onEvent(event));
+    log("onNewAplEvent: $event");
+    final events = scheme.mapEvent(event);
+    log("events data: $events");
+    events?.forEach((event) {
+      listeners.forEach((impl) {
+        impl.onEvent(event);
+      });
+    });
   }
 }

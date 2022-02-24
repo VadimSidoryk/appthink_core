@@ -19,7 +19,6 @@ class AnalyticsSessionAdapter extends SessionListener {
   void onSessionStarted(int count, int daysFromFirstSession,
       int daysFromLastSession) {
     eventBus.onNewEvent(AplEvent.sessionStarted(count, daysFromFirstSession, daysFromLastSession));
-    analyticsService.setUserProperty(EVENT_SESSION_STARTED_ARG_SESSION_COUNT, count);
     subscription = analyticsService.periodicUpdatedUserProperty<int>(
         secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
   }

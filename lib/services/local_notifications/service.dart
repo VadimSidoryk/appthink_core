@@ -15,7 +15,7 @@ class LocalNotificationService  {
   NotificationDetails? get notificationDetails {
     return NotificationDetails(
         android: AndroidNotificationDetails(_config.channelId,
-            _config.channelName, _config.channelDescription));
+            _config.channelName, channelDescription: _config.channelDescription));
   }
 
   Future<void> _init(AplConfig appConfig) async {

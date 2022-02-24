@@ -1,65 +1,31 @@
 import 'package:applithium_core/events/event_bus.dart';
-import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/presentation/bloc.dart';
-import 'package:applithium_core/presentation/events.dart';
-import 'package:applithium_core/presentation/states.dart';
 import 'package:applithium_core/scopes/extensions.dart';
-import 'package:applithium_core/utils/extension.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/cupertino.dart';
 
-abstract class AplScreenState<W extends StatefulWidget, E extends WidgetEvents, S extends BaseState>
-    extends State<W> implements EventsListener<E> {
+import 'events.dart';
 
-  final String? screenName;
-  final BlocBuilderCondition<S>? buildWhen;
-
-  AplBloc<S>? _bloc;
-
-  AplScreenState(this.screenName, this.buildWhen);
-
-  AplBloc<S> createBloc(BuildContext context);
-
-  Widget createWidget(
-      BuildContext context, Stream<S> stream, EventsListener<E> listener);
+abstract class AplScreenState<W extends StatefulWidget> extends State<W>  {
 
   @override
   void initState() {
     super.initState();
-    _bloc = createBloc(context);
-    screenName?.let((it) {
-      onEventImpl(BaseWidgetEvents.widgetCreated(it, widget.runtimeType));
-    });
+    onEventImpl(BaseWidgetEvents.screenCreated(this));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder(
-        bloc: _bloc,
-        buildWhen: buildWhen,
-        builder: (context, state) => createWidget(
-            context, _bloc!.stream.asBroadcastStream(), this));
+  @protected
+  void onEventImpl(WidgetEvents event) {
+    try {
+      final eventBus = context.getOrNull<EventBus>();
+      eventBus?.onNewEvent(event);
+    } catch (e, stacktrace) {
+      widget.logError("process in eventBus", e, stacktrace);
+    }
   }
 
   @override
   void dispose() {
-    _bloc?.close();
+    onEventImpl(BaseWidgetEvents.screenDestroyed(this));
     super.dispose();
-  }
-
-  @override
-  void onEvent(E event) {
-    onEventImpl(event);
-  }
-
-  void onEventImpl(WidgetEvents event) {
-    try {
-      context.getOrNull<EventBus>()?.onNewEvent(event);
-    } catch (e, stacktrace) {
-      widget.logError("process in eventBus", e, stacktrace);
-    }
-
-    _bloc?.add(event);
   }
 }

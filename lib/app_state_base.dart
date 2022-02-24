@@ -1,15 +1,18 @@
 import 'dart:async';
 
+import 'package:applithium_core/events/mapper/scheme.dart';
+import 'package:applithium_core/events/mapper/scheme_freezed.dart';
+import 'package:applithium_core/events/navigator.dart';
+import 'package:applithium_core/logs/extension.dart';
+import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/store.dart';
+import 'package:applithium_core/services/localization/extensions.dart';
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
-import 'package:applithium_core/scopes/extensions.dart';
 
 import 'config/model.dart';
 import 'config/provider.dart';
@@ -37,6 +40,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final Future<Store> Function() _storeBuilder;
   final Future<void> Function(Store, AplConfig) _setupFlow;
   final List<RouteDetails> routes;
+  @visibleForTesting
   final NavigatorObserver? navObserver;
   final Future<String?> Function() _initialLinkProvider;
   final Widget Function(BuildContext, Widget)? wrapper;
@@ -46,6 +50,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
   AplAppState(
       {String? title,
+        @visibleForTesting
       this.navObserver,
       this.wrapper,
       required this.defaultConfig,
@@ -54,6 +59,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       Future<String?> Function()? initialLinkProvider,
       Set<Analyst>? analysts,
       required this.routes,
+      EventsScheme? eventScheme,
       this.locale,
       Set<AplModule> modules = const {},
       Future<void> Function(Store, AplConfig)? customSetupFlow})
@@ -63,7 +69,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
         _initialLinkProvider = initialLinkProvider ?? getInitialLink,
         _storeBuilder = (() async => _buildStoreWithConfigProvider(modules)),
         _setupFlow = ((Store store, AplConfig config) async {
-          await _injectDependenciesInStore(store, config, modules);
+          await _injectDependenciesInStore(store, config, modules, eventScheme ?? FreezedEventsScheme());
           if (customSetupFlow != null) {
             await customSetupFlow.call(store, config);
           }
@@ -85,6 +91,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
           routeBuilder: _splashRouteBuilder,
           loadingTask: (context) async {
             final store = await _storeBuilder.call();
+
             _plantCustomLogTree(store);
             final provider = store.getOrNull<ConfigProvider>();
             final config = provider != null
@@ -138,12 +145,14 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     return result;
   }
 
-  static Future<void> _injectDependenciesInStore(
-      Store store, AplConfig config, Set<AplModule> modules) async {
+  static Future<void> _injectDependenciesInStore(Store store, AplConfig config,
+      Set<AplModule> modules, EventsScheme eventsScheme) async {
     store.add((provider) => SharedPreferences.getInstance());
     store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
     store.add((provider) => PromoService(provider.get()));
-    store.add((provider) => EventBus(listeners: {
+    store.add((provider) => EventBus(
+        scheme: eventsScheme,
+        listeners: {
           provider.get<AnalyticsService>(),
           PromoEventsAdapter(provider.get())
         }));
@@ -245,13 +254,15 @@ class _RealApplicationState extends State<_RealApplication> {
         .map((item) => item.toLocale())
         .toList();
 
+    final eventBus = context.get<EventBus>();
+
     final appInstance = MaterialApp(
       title: widget.title,
       theme: context.getOrNull(),
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: context.get<EventBus>().navigatorObservers,
+      navigatorObservers: <NavigatorObserver>[NavigatorEventsObserver(eventBus)] + eventBus.navigatorObservers,
       locale: widget.locale,
       supportedLocales: supportedLocales,
       localizationsDelegates: [

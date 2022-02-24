@@ -41,8 +41,8 @@ class AppmetricaAnalyst extends Analyst {
   }
 
   @override
-  void onEvent(AplEvent event) {
-    _sdk.reportEvent(name: event.name, attributes: event.params);
+  void sendEvent(String name, Map<String, Object?>? params) {
+    _sdk.reportEvent(name: name, attributes: params);
   }
 }
 
