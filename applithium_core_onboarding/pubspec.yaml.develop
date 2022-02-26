@@ -1,4 +1,4 @@
-name: applithium_core_appmetrica
+name: applithium_core_onboarding
 description: A new Flutter plugin.
 version: 0.1.0
 homepage:
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  appmetrica_sdk: ^0.0.7
+  lottie: ^1.2.1
   applithium_core:
     path: ../
 

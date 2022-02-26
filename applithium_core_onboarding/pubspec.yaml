@@ -1,4 +1,4 @@
-name: applithium_core_appmetrica
+name: applithium_core_onboarding
 description: A new Flutter plugin.
 version: 0.1.0
 homepage:
@@ -11,9 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  appmetrica_sdk: ^0.0.7
+  lottie: ^1.2.1
+  flutter_svg: ^0.23.0+1
+  adaptive_action_sheet: ^2.0.1
+
   applithium_core:
-    path: ../
+    git:
+      url: ssh://git@bitbucket.org/appthink/core.git
+      ref: master
 
 dev_dependencies:
   flutter_test:
