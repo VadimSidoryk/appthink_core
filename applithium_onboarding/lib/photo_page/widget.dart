@@ -1,22 +1,13 @@
 import 'dart:io';
 
 import 'package:applithium_core/utils/extension.dart';
+import 'package:applithium_core_onboarding/widgets/action_button/widget.dart';
+import 'package:applithium_core_onboarding/widgets/action_sheet/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'resources.dart';
 
-/*
-Stack(children: [
-        _buildContent(context),
-        SafeArea(
-            child: Row(children: [
-          SizedBox(width: backButtonLeftOffset),
-          GestureDetector(child: SvgPicture.asset(icBarBack), onTap: onBack),
-          Spacer(),
-        ]))
-      ]),
- */
 class UserPhotoPage extends StatelessWidget {
   final Stream<String?> userPhotoPath;
   final Stream<bool> isLoading;

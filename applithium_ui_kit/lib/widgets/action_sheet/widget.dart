@@ -1,9 +1,9 @@
 import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
-import 'package:camera/camera.dart';
-import 'package:couples/widgets/action_sheet/resources.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'resources.dart';
+
+typedef CameraChecker = Future<bool> Function();
 
 class ActionSheetKit {
   final styles = ActionSheetKitStyles();
@@ -20,6 +20,7 @@ class ActionSheetKit {
 
   Future<dynamic> showPictureActionSheet(BuildContext context,
       {required bool isDeleteAvailable,
+      required CameraChecker checkCameras,
       Function()? onGallery,
       Function()? onCamera,
       Function()? onDelete,
@@ -28,8 +29,8 @@ class ActionSheetKit {
     var actions = [
       _actionSheetItem(context, strings.fromGallery, false, onGallery),
     ];
-    final cameras = await availableCameras();
-    if (cameras.isNotEmpty) {
+    final hasCameras = await checkCameras.call();
+    if (hasCameras) {
       actions.insert(
           0, _actionSheetItem(context, strings.takePhoto, false, onCamera));
     }
