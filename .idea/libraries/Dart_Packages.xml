@@ -31,6 +31,7 @@
               <option value="$USER_HOME$/.pub-cache/git/core-e863270850114b5e15539fa16481567f006d3699/lib" />
               <option value="$USER_HOME$/.pub-cache/git/core-b7a297c8b76c486fbabfb2e05d545b464ee5a20c/lib" />
               <option value="$USER_HOME$/.pub-cache/git/core-18bfdc8f7c326aea742074ec5437f4db2fc98e55/lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-930ada294481b24fa0c2b98667cae947457cd635/lib" />
             </list>
           </value>
         </entry>
@@ -76,6 +77,7 @@
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/bloc-8.0.2/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/bloc-7.2.1/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/bloc-8.0.3/lib" />
             </list>
           </value>
         </entry>
@@ -478,6 +480,7 @@
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-9.3.2/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.2.0/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-9.4.0/lib" />
             </list>
           </value>
         </entry>
@@ -645,6 +648,7 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+10/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/lib" />
             </list>
           </value>
         </entry>
@@ -1079,7 +1083,6 @@
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.8/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.3.0/lib" />
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.3/lib" />
             </list>
           </value>
         </entry>
@@ -1204,6 +1207,7 @@
     </properties>
     <CLASSES>
       <root url="file://$USER_HOME$/.pub-cache/git/core-18bfdc8f7c326aea742074ec5437f4db2fc98e55/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-930ada294481b24fa0c2b98667cae947457cd635/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-b7a297c8b76c486fbabfb2e05d545b464ee5a20c/applithium_core_firebase/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-b7a297c8b76c486fbabfb2e05d545b464ee5a20c/lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-e863270850114b5e15539fa16481567f006d3699/lib" />
@@ -1220,6 +1224,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/async-2.8.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/bloc-7.2.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/bloc-8.0.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/bloc-8.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/boolean_selector-2.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/build-2.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/build-2.2.1/lib" />
@@ -1290,6 +1295,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_auth_web-3.0.0+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-8.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-9.3.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications-9.4.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications_linux-0.4.1+1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications_linux-0.4.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_local_notifications_platform_interface-4.0.1/lib" />
@@ -1315,6 +1321,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/http_multi_server-3.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/http_parser-4.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+10/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker_for_web-2.1.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/image_picker_platform_interface-2.4.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0/lib" />
@@ -1392,7 +1399,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/sync_http-0.3.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/term_glyph-1.2.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.3.0/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/test_api-0.4.8/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/timezone-0.8.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/timing-1.0.0/lib" />
