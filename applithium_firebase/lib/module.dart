@@ -33,7 +33,7 @@ class FirebaseModule extends AplModule {
   Future<bool> injectConfigProvider(Store store) async {
     logMethod("injectConfigProvider");
     _app = await Firebase.initializeApp();
-    _analytics = FirebaseAnalytics()
+    _analytics = FirebaseAnalytics.instance
       ..setUserProperty(
           name: _KEY_MODE, value: kReleaseMode ? _MODE_RELEASE : _MODE_DEBUG);
     provider?.let((notNullVal) => store.add<ConfigProvider>((provider) => notNullVal));
