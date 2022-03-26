@@ -16,8 +16,8 @@ abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEven
   Widget createWidget(BuildContext context, S state);
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _bloc = createBloc(context);
   }
 
