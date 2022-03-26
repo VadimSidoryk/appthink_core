@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'screen.dart';
 
 abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEvents,
-    S extends BaseState> extends AplScreenState<W> implements EventsListener<E> {
+    S extends BaseState> extends AplScreenState<W, E> {
   AplBloc<S>? _bloc;
 
   AplBloc<S> createBloc(BuildContext context);
@@ -30,16 +30,10 @@ abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEven
   }
 
   @override
-  void onEvent(E event) {
-    onEventImpl(event);
-  }
-
-  @override
   void dispose() {
     super.dispose();
     _bloc?.close();
   }
-
 
   @override
   @protected
@@ -60,35 +54,6 @@ abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEven
         .where((it) => it is T)
         .map((it) => it as T);
   }
-
-
 }
 
-extension SendUtils<W extends StatefulWidget, E extends WidgetEvents,
-    S extends BaseState> on AplBlocScreenState<W, E, S> {
-  @protected
-  Function() send0(E Function() eventFactory) => () {
-        final event = eventFactory.call();
-        onEvent(event);
-      };
 
-  @protected
-  Function(T) send1<T>(E Function(T) eventFactory) => (arg) {
-        final event = eventFactory.call(arg);
-        onEvent(event);
-      };
-
-  @protected
-  Function(T1, T2) send2<T1, T2>(E Function(T1, T2) eventFactory) =>
-      (arg1, arg2) {
-        final event = eventFactory.call(arg1, arg2);
-        onEvent(event);
-      };
-
-  @protected
-  Function(T1, T2, T3) send3<T1, T2, T3>(E Function(T1, T2, T3) eventFactory) =>
-      (arg1, arg2, arg3) {
-        final event = eventFactory.call(arg1, arg2, arg3);
-        onEvent(event);
-      };
-}
