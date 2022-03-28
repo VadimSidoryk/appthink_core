@@ -1,21 +1,5 @@
-import 'dart:convert';
-
-const KEY_MESSAGING_API_KEY = "messaging_api_key";
-const KEY_LOCALIZATION = "localization";
-const KEY_VAPID_KEY = "messaging_vapid_key";
-const KEY_SERVER_KEY = "messaging_server_key";
-
 abstract class AplConfig {
   const AplConfig();
-
-  String get vapidKey => getString(KEY_VAPID_KEY);
-
-  String get serverKey => getString(KEY_SERVER_KEY);
-
-  Map<String, dynamic> get localizationData =>
-      jsonDecode(getString(KEY_LOCALIZATION));
-
-
 
   String getString(String key);
 
@@ -40,9 +24,6 @@ class DefaultConfig extends AplConfig {
       this.defaultInt = 0,
       this.defaultDouble = .0,
       this.defaultString = ""});
-
-  @override
-  Map<String, dynamic> get localizationData => {};
 
   @override
   bool getBool(String key) {

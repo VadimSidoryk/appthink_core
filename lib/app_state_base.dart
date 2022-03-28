@@ -248,7 +248,7 @@ class _RealApplicationState extends State<_RealApplication> {
   @override
   Widget build(BuildContext context) {
     final localizationConfig =
-        LocalizationConfig(widget.initialData.config.localizationData);
+        LocalizationConfig(<String, dynamic>{});
     final supportedLocales = localizationConfig
         .getSupportedLocaleCodes()
         .map((item) => item.toLocale())
