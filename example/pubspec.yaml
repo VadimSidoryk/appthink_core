@@ -17,7 +17,7 @@ dependencies:
       url: ssh://git@bitbucket.org/appthink/core.git
       ref: master
 
-  applithium_core_firebase:
+  applithium_firebase:
     git:
       url: ssh://git@bitbucket.org/appthink/core.git
       ref: master
