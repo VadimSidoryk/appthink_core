@@ -3,7 +3,6 @@ import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core_example/app_graph.dart';
 import 'package:applithium_firebase/module.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 final appTitle = "Applithium Core Example";
 final splashTitle = "Splash...";
@@ -38,7 +37,7 @@ class MyApp extends StatefulWidget {
               body: Center(child: Text(splashTitle)),
             ),
         title: appTitle,
-        modules: {FirebaseModule())},
+        modules: {FirebaseModule()},
         routes: mainAppGraph);
   }
 }
