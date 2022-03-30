@@ -4,11 +4,11 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/widgets.dart';
 
 
-class FirebaseAnalystImpl extends Analyst {
+class FirebaseAnalyst extends Analyst {
 
   final FirebaseAnalytics _analytics;
 
-  FirebaseAnalystImpl(this._analytics);
+  FirebaseAnalyst(this._analytics);
 
   @override
   List<NavigatorObserver> get navigatorObservers => [ FirebaseAnalyticsObserver(analytics: _analytics) ];

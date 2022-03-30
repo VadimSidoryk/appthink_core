@@ -19,24 +19,25 @@ const _KEY_MODE = "mode";
 const _MODE_RELEASE = "release";
 const _MODE_DEBUG = "debug";
 
-typedef FirebaseDependency = Function(Store, FirebaseApp, AplConfig);
-
 class FirebaseModule extends AplModule {
-  List<FirebaseDependency> serviceBuilders;
+  bool useAnalytics;
   FirebaseApp? _app;
   FirebaseAnalytics? _analytics;
   FirebaseConfigProvider? provider;
 
-  FirebaseModule({this.serviceBuilders = const [], this.provider});
+  FirebaseModule({this.provider, this.useAnalytics = true});
 
   @override
   Future<bool> injectConfigProvider(Store store) async {
     logMethod("injectConfigProvider");
     _app = await Firebase.initializeApp();
-    _analytics = FirebaseAnalytics.instance
-      ..setUserProperty(
-          name: _KEY_MODE, value: kReleaseMode ? _MODE_RELEASE : _MODE_DEBUG);
-    provider?.let((notNullVal) => store.add<ConfigProvider>((provider) => notNullVal));
+    store.add((provider) => _app);
+
+    _analytics = useAnalytics ? FirebaseAnalytics.instance : null;
+    _analytics?.setUserProperty(
+        name: _KEY_MODE, value: kReleaseMode ? _MODE_RELEASE : _MODE_DEBUG);
+    provider?.let(
+            (notNullVal) => store.add<ConfigProvider>((provider) => notNullVal));
     return true;
   }
 
@@ -49,13 +50,7 @@ class FirebaseModule extends AplModule {
     FlutterError.onError = crashlytics.recordFlutterError;
     store.add<LogTree>((provider) => CrashlyticsTreeImpl());
     _analytics?.let((val) {
-      store.get<AnalyticsService>().addAnalyst(FirebaseAnalystImpl(val));
-    });
-
-    _app?.let((val) {
-      serviceBuilders.forEach((firebaseDependencies) {
-        firebaseDependencies.call(store, val, config);
-      });
+      store.get<AnalyticsService>().addAnalyst(FirebaseAnalyst(val));
     });
   }
 }
