@@ -7,8 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'screen.dart';
 
-abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEvents,
-    S extends BaseState> extends AplScreenState<W, E> {
+abstract class AplBlocScreenState<W extends StatefulWidget,
+E extends WidgetEvents, S extends BaseState> extends AplScreenState<W>
+    implements EventsListener<E> {
   AplBloc<S>? _bloc;
 
   AplBloc<S> createBloc(BuildContext context);
@@ -18,7 +19,9 @@ abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEven
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _bloc = createBloc(context);
+    if (_bloc == null) {
+      _bloc = createBloc(context);
+    }
   }
 
   @override
@@ -27,6 +30,11 @@ abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEven
         bloc: _bloc,
         buildWhen: shouldRedrawScreen,
         builder: (context, state) => createWidget(context, state as S));
+  }
+
+  @override
+  void onEvent(E event) {
+    onEventImpl(event);
   }
 
   @override
@@ -47,12 +55,9 @@ abstract class AplBlocScreenState<W extends StatefulWidget, E extends WidgetEven
     return oldState.runtimeType != newState.runtimeType;
   }
 
-
   @protected
   Stream<T> stateStream<T>() {
-    return _bloc!.stream
-        .where((it) => it is T)
-        .map((it) => it as T);
+    return _bloc!.stream.where((it) => it is T).map((it) => it as T);
   }
 }
 

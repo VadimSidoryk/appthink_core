@@ -12,14 +12,7 @@ dependencies:
     sdk: flutter
 
   lottie: ^1.2.1
-  camera: ^0.9.4+8
-
   applithium_core:
-    git:
-      url: ssh://git@bitbucket.org/appthink/core.git
-      ref: master
-
-  applithium_ui_kit:
     git:
       url: ssh://git@bitbucket.org/appthink/core.git
       ref: master

@@ -5,18 +5,26 @@ import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'events.dart';
+import 'lifecycle_listener.dart';
 
-abstract class AplScreenState<W extends StatefulWidget, E extends WidgetEvents> extends State<W> implements EventsListener<E> {
+abstract class AplScreenState<W extends StatefulWidget> extends State<W> {
+  late LifecycleListeners _listeners;
 
   @override
   void initState() {
     super.initState();
-    onEventImpl(BaseWidgetEvents.screenCreated(this));
+    _listeners = LifecycleListeners(
+        resumeListener: () async =>
+            onEventImpl(BaseWidgetEvents.screenResumed(this)),
+        suspendingListener: () async =>
+            onEventImpl(BaseWidgetEvents.screenPaused(this)));
+    WidgetsBinding.instance?.addObserver(_listeners);
   }
 
   @override
-  void onEvent(E event) {
-    onEventImpl(event);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    onEventImpl(BaseWidgetEvents.screenCreated(this));
   }
 
   @protected
@@ -30,8 +38,14 @@ abstract class AplScreenState<W extends StatefulWidget, E extends WidgetEvents> 
   }
 
   @override
-  void dispose() {
+  void deactivate() {
     onEventImpl(BaseWidgetEvents.screenDestroyed(this));
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(_listeners);
     super.dispose();
   }
 }

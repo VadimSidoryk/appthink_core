@@ -6,7 +6,7 @@ import 'package:applithium_core/scopes/extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-abstract class AplParentScreenState<W extends StatefulWidget, E extends WidgetEvents> extends AplScreenState<W, E> {
+abstract class AplParentScreenState<W extends StatefulWidget> extends AplScreenState<W> {
 
   Key? get appKey => null;
 
