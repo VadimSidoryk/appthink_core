@@ -1,5 +1,6 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target
 
 part of 'events.dart';
@@ -23,6 +24,12 @@ class _$BaseWidgetEventsTearOff {
     );
   }
 
+  ScreenResumedEvent<M> screenResumed<M>(State<StatefulWidget> screenState) {
+    return ScreenResumedEvent<M>(
+      screenState,
+    );
+  }
+
   ScreenTransition<M> screenTransition<M>(String? from, String to) {
     return ScreenTransition<M>(
       from,
@@ -33,6 +40,12 @@ class _$BaseWidgetEventsTearOff {
   ChangingInternalState<M> changeStateWith<M>(dynamic Function(M) changer) {
     return ChangingInternalState<M>(
       changer,
+    );
+  }
+
+  ScreenPausedEvent<M> screenPaused<M>(State<StatefulWidget> screenState) {
+    return ScreenPausedEvent<M>(
+      screenState,
     );
   }
 
@@ -52,8 +65,10 @@ mixin _$BaseWidgetEvents<M> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
     required TResult Function(String? from, String to) screenTransition,
     required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
     required TResult Function(State<StatefulWidget> screenState)
         screenDestroyed,
   }) =>
@@ -61,16 +76,20 @@ mixin _$BaseWidgetEvents<M> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
     required TResult orElse(),
   }) =>
@@ -78,24 +97,30 @@ mixin _$BaseWidgetEvents<M> {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
     required TResult Function(ScreenTransition<M> value) screenTransition,
     required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
     required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
     required TResult orElse(),
   }) =>
@@ -167,15 +192,15 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is ScreenCreatedEvent<M> &&
-            (identical(other.screenState, screenState) ||
-                const DeepCollectionEquality()
-                    .equals(other.screenState, screenState)));
+        (other.runtimeType == runtimeType &&
+            other is ScreenCreatedEvent<M> &&
+            const DeepCollectionEquality()
+                .equals(other.screenState, screenState));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(screenState);
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(screenState));
 
   @JsonKey(ignore: true)
   @override
@@ -187,8 +212,10 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
     required TResult Function(String? from, String to) screenTransition,
     required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
     required TResult Function(State<StatefulWidget> screenState)
         screenDestroyed,
   }) {
@@ -199,8 +226,10 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
   }) {
     return screenCreated?.call(screenState);
@@ -210,8 +239,10 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -225,8 +256,10 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
     required TResult Function(ScreenTransition<M> value) screenTransition,
     required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
     required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
   }) {
     return screenCreated(this);
@@ -236,8 +269,10 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
   }) {
     return screenCreated?.call(this);
@@ -247,8 +282,10 @@ class _$ScreenCreatedEvent<M> implements ScreenCreatedEvent<M> {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -263,9 +300,171 @@ abstract class ScreenCreatedEvent<M> implements BaseWidgetEvents<M> {
   factory ScreenCreatedEvent(State<StatefulWidget> screenState) =
       _$ScreenCreatedEvent<M>;
 
-  State<StatefulWidget> get screenState => throw _privateConstructorUsedError;
+  State<StatefulWidget> get screenState;
   @JsonKey(ignore: true)
   $ScreenCreatedEventCopyWith<M, ScreenCreatedEvent<M>> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ScreenResumedEventCopyWith<M, $Res> {
+  factory $ScreenResumedEventCopyWith(ScreenResumedEvent<M> value,
+          $Res Function(ScreenResumedEvent<M>) then) =
+      _$ScreenResumedEventCopyWithImpl<M, $Res>;
+  $Res call({State<StatefulWidget> screenState});
+}
+
+/// @nodoc
+class _$ScreenResumedEventCopyWithImpl<M, $Res>
+    extends _$BaseWidgetEventsCopyWithImpl<M, $Res>
+    implements $ScreenResumedEventCopyWith<M, $Res> {
+  _$ScreenResumedEventCopyWithImpl(
+      ScreenResumedEvent<M> _value, $Res Function(ScreenResumedEvent<M>) _then)
+      : super(_value, (v) => _then(v as ScreenResumedEvent<M>));
+
+  @override
+  ScreenResumedEvent<M> get _value => super._value as ScreenResumedEvent<M>;
+
+  @override
+  $Res call({
+    Object? screenState = freezed,
+  }) {
+    return _then(ScreenResumedEvent<M>(
+      screenState == freezed
+          ? _value.screenState
+          : screenState // ignore: cast_nullable_to_non_nullable
+              as State<StatefulWidget>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ScreenResumedEvent<M> implements ScreenResumedEvent<M> {
+  _$ScreenResumedEvent(this.screenState);
+
+  @override
+  final State<StatefulWidget> screenState;
+
+  @override
+  String toString() {
+    return 'BaseWidgetEvents<$M>.screenResumed(screenState: $screenState)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ScreenResumedEvent<M> &&
+            const DeepCollectionEquality()
+                .equals(other.screenState, screenState));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(screenState));
+
+  @JsonKey(ignore: true)
+  @override
+  $ScreenResumedEventCopyWith<M, ScreenResumedEvent<M>> get copyWith =>
+      _$ScreenResumedEventCopyWithImpl<M, ScreenResumedEvent<M>>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
+    required TResult Function(String? from, String to) screenTransition,
+    required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
+    required TResult Function(State<StatefulWidget> screenState)
+        screenDestroyed,
+  }) {
+    return screenResumed(screenState);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
+    TResult Function(String? from, String to)? screenTransition,
+    TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
+    TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
+  }) {
+    return screenResumed?.call(screenState);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
+    TResult Function(String? from, String to)? screenTransition,
+    TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
+    TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
+    required TResult orElse(),
+  }) {
+    if (screenResumed != null) {
+      return screenResumed(screenState);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
+    required TResult Function(ScreenTransition<M> value) screenTransition,
+    required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
+    required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
+  }) {
+    return screenResumed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
+    TResult Function(ScreenTransition<M> value)? screenTransition,
+    TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
+    TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
+  }) {
+    return screenResumed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
+    TResult Function(ScreenTransition<M> value)? screenTransition,
+    TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
+    TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
+    required TResult orElse(),
+  }) {
+    if (screenResumed != null) {
+      return screenResumed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ScreenResumedEvent<M> implements BaseWidgetEvents<M> {
+  factory ScreenResumedEvent(State<StatefulWidget> screenState) =
+      _$ScreenResumedEvent<M>;
+
+  State<StatefulWidget> get screenState;
+  @JsonKey(ignore: true)
+  $ScreenResumedEventCopyWith<M, ScreenResumedEvent<M>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -324,18 +523,17 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is ScreenTransition<M> &&
-            (identical(other.from, from) ||
-                const DeepCollectionEquality().equals(other.from, from)) &&
-            (identical(other.to, to) ||
-                const DeepCollectionEquality().equals(other.to, to)));
+        (other.runtimeType == runtimeType &&
+            other is ScreenTransition<M> &&
+            const DeepCollectionEquality().equals(other.from, from) &&
+            const DeepCollectionEquality().equals(other.to, to));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(from) ^
-      const DeepCollectionEquality().hash(to);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(from),
+      const DeepCollectionEquality().hash(to));
 
   @JsonKey(ignore: true)
   @override
@@ -346,8 +544,10 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
     required TResult Function(String? from, String to) screenTransition,
     required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
     required TResult Function(State<StatefulWidget> screenState)
         screenDestroyed,
   }) {
@@ -358,8 +558,10 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
   }) {
     return screenTransition?.call(from, to);
@@ -369,8 +571,10 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -384,8 +588,10 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
     required TResult Function(ScreenTransition<M> value) screenTransition,
     required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
     required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
   }) {
     return screenTransition(this);
@@ -395,8 +601,10 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
   }) {
     return screenTransition?.call(this);
@@ -406,8 +614,10 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -421,8 +631,8 @@ class _$ScreenTransition<M> implements ScreenTransition<M> {
 abstract class ScreenTransition<M> implements BaseWidgetEvents<M> {
   factory ScreenTransition(String? from, String to) = _$ScreenTransition<M>;
 
-  String? get from => throw _privateConstructorUsedError;
-  String get to => throw _privateConstructorUsedError;
+  String? get from;
+  String get to;
   @JsonKey(ignore: true)
   $ScreenTransitionCopyWith<M, ScreenTransition<M>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -477,14 +687,13 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is ChangingInternalState<M> &&
-            (identical(other.changer, changer) ||
-                const DeepCollectionEquality().equals(other.changer, changer)));
+        (other.runtimeType == runtimeType &&
+            other is ChangingInternalState<M> &&
+            (identical(other.changer, changer) || other.changer == changer));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(changer);
+  int get hashCode => Object.hash(runtimeType, changer);
 
   @JsonKey(ignore: true)
   @override
@@ -496,8 +705,10 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
     required TResult Function(String? from, String to) screenTransition,
     required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
     required TResult Function(State<StatefulWidget> screenState)
         screenDestroyed,
   }) {
@@ -508,8 +719,10 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
   }) {
     return changeStateWith?.call(changer);
@@ -519,8 +732,10 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -534,8 +749,10 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
     required TResult Function(ScreenTransition<M> value) screenTransition,
     required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
     required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
   }) {
     return changeStateWith(this);
@@ -545,8 +762,10 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
   }) {
     return changeStateWith?.call(this);
@@ -556,8 +775,10 @@ class _$ChangingInternalState<M> implements ChangingInternalState<M> {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -572,9 +793,171 @@ abstract class ChangingInternalState<M> implements BaseWidgetEvents<M> {
   factory ChangingInternalState(dynamic Function(M) changer) =
       _$ChangingInternalState<M>;
 
-  dynamic Function(M) get changer => throw _privateConstructorUsedError;
+  dynamic Function(M) get changer;
   @JsonKey(ignore: true)
   $ChangingInternalStateCopyWith<M, ChangingInternalState<M>> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ScreenPausedEventCopyWith<M, $Res> {
+  factory $ScreenPausedEventCopyWith(ScreenPausedEvent<M> value,
+          $Res Function(ScreenPausedEvent<M>) then) =
+      _$ScreenPausedEventCopyWithImpl<M, $Res>;
+  $Res call({State<StatefulWidget> screenState});
+}
+
+/// @nodoc
+class _$ScreenPausedEventCopyWithImpl<M, $Res>
+    extends _$BaseWidgetEventsCopyWithImpl<M, $Res>
+    implements $ScreenPausedEventCopyWith<M, $Res> {
+  _$ScreenPausedEventCopyWithImpl(
+      ScreenPausedEvent<M> _value, $Res Function(ScreenPausedEvent<M>) _then)
+      : super(_value, (v) => _then(v as ScreenPausedEvent<M>));
+
+  @override
+  ScreenPausedEvent<M> get _value => super._value as ScreenPausedEvent<M>;
+
+  @override
+  $Res call({
+    Object? screenState = freezed,
+  }) {
+    return _then(ScreenPausedEvent<M>(
+      screenState == freezed
+          ? _value.screenState
+          : screenState // ignore: cast_nullable_to_non_nullable
+              as State<StatefulWidget>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ScreenPausedEvent<M> implements ScreenPausedEvent<M> {
+  _$ScreenPausedEvent(this.screenState);
+
+  @override
+  final State<StatefulWidget> screenState;
+
+  @override
+  String toString() {
+    return 'BaseWidgetEvents<$M>.screenPaused(screenState: $screenState)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ScreenPausedEvent<M> &&
+            const DeepCollectionEquality()
+                .equals(other.screenState, screenState));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(screenState));
+
+  @JsonKey(ignore: true)
+  @override
+  $ScreenPausedEventCopyWith<M, ScreenPausedEvent<M>> get copyWith =>
+      _$ScreenPausedEventCopyWithImpl<M, ScreenPausedEvent<M>>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
+    required TResult Function(String? from, String to) screenTransition,
+    required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
+    required TResult Function(State<StatefulWidget> screenState)
+        screenDestroyed,
+  }) {
+    return screenPaused(screenState);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
+    TResult Function(String? from, String to)? screenTransition,
+    TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
+    TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
+  }) {
+    return screenPaused?.call(screenState);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
+    TResult Function(String? from, String to)? screenTransition,
+    TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
+    TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
+    required TResult orElse(),
+  }) {
+    if (screenPaused != null) {
+      return screenPaused(screenState);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
+    required TResult Function(ScreenTransition<M> value) screenTransition,
+    required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
+    required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
+  }) {
+    return screenPaused(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
+    TResult Function(ScreenTransition<M> value)? screenTransition,
+    TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
+    TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
+  }) {
+    return screenPaused?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
+    TResult Function(ScreenTransition<M> value)? screenTransition,
+    TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
+    TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
+    required TResult orElse(),
+  }) {
+    if (screenPaused != null) {
+      return screenPaused(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ScreenPausedEvent<M> implements BaseWidgetEvents<M> {
+  factory ScreenPausedEvent(State<StatefulWidget> screenState) =
+      _$ScreenPausedEvent<M>;
+
+  State<StatefulWidget> get screenState;
+  @JsonKey(ignore: true)
+  $ScreenPausedEventCopyWith<M, ScreenPausedEvent<M>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -626,15 +1009,15 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is ScreenDestroyedEvent<M> &&
-            (identical(other.screenState, screenState) ||
-                const DeepCollectionEquality()
-                    .equals(other.screenState, screenState)));
+        (other.runtimeType == runtimeType &&
+            other is ScreenDestroyedEvent<M> &&
+            const DeepCollectionEquality()
+                .equals(other.screenState, screenState));
   }
 
   @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(screenState);
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(screenState));
 
   @JsonKey(ignore: true)
   @override
@@ -646,8 +1029,10 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(State<StatefulWidget> screenState) screenCreated,
+    required TResult Function(State<StatefulWidget> screenState) screenResumed,
     required TResult Function(String? from, String to) screenTransition,
     required TResult Function(dynamic Function(M) changer) changeStateWith,
+    required TResult Function(State<StatefulWidget> screenState) screenPaused,
     required TResult Function(State<StatefulWidget> screenState)
         screenDestroyed,
   }) {
@@ -658,8 +1043,10 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
   }) {
     return screenDestroyed?.call(screenState);
@@ -669,8 +1056,10 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(State<StatefulWidget> screenState)? screenCreated,
+    TResult Function(State<StatefulWidget> screenState)? screenResumed,
     TResult Function(String? from, String to)? screenTransition,
     TResult Function(dynamic Function(M) changer)? changeStateWith,
+    TResult Function(State<StatefulWidget> screenState)? screenPaused,
     TResult Function(State<StatefulWidget> screenState)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -684,8 +1073,10 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(ScreenCreatedEvent<M> value) screenCreated,
+    required TResult Function(ScreenResumedEvent<M> value) screenResumed,
     required TResult Function(ScreenTransition<M> value) screenTransition,
     required TResult Function(ChangingInternalState<M> value) changeStateWith,
+    required TResult Function(ScreenPausedEvent<M> value) screenPaused,
     required TResult Function(ScreenDestroyedEvent<M> value) screenDestroyed,
   }) {
     return screenDestroyed(this);
@@ -695,8 +1086,10 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
   }) {
     return screenDestroyed?.call(this);
@@ -706,8 +1099,10 @@ class _$ScreenDestroyedEvent<M> implements ScreenDestroyedEvent<M> {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(ScreenCreatedEvent<M> value)? screenCreated,
+    TResult Function(ScreenResumedEvent<M> value)? screenResumed,
     TResult Function(ScreenTransition<M> value)? screenTransition,
     TResult Function(ChangingInternalState<M> value)? changeStateWith,
+    TResult Function(ScreenPausedEvent<M> value)? screenPaused,
     TResult Function(ScreenDestroyedEvent<M> value)? screenDestroyed,
     required TResult orElse(),
   }) {
@@ -722,7 +1117,7 @@ abstract class ScreenDestroyedEvent<M> implements BaseWidgetEvents<M> {
   factory ScreenDestroyedEvent(State<StatefulWidget> screenState) =
       _$ScreenDestroyedEvent<M>;
 
-  State<StatefulWidget> get screenState => throw _privateConstructorUsedError;
+  State<StatefulWidget> get screenState;
   @JsonKey(ignore: true)
   $ScreenDestroyedEventCopyWith<M, ScreenDestroyedEvent<M>> get copyWith =>
       throw _privateConstructorUsedError;

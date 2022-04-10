@@ -11,34 +11,37 @@ import 'state.dart';
 
 
 abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
-
   @override
-  Stream<S> get stream => _valueStream;
+  Stream<S> get stream => _stateSubj;
 
   final _subscriptions = CompositeSubscription();
-  late Stream<S> _valueStream;
+  late BehaviorSubject<S> _stateSubj;
 
-  AplBloc(S initialState): super(initialState) {
-    _valueStream = ValueConnectableStream(super.stream).autoConnect();
+  AplBloc(S initialState) : super(initialState) {
+    _stateSubj = BehaviorSubject<S>.seeded(initialState);
+    super.stream.listen((it) {
+      _stateSubj.add(it);
+    });
 
     doOn<BaseWidgetEvents>((event, emit) {
-      if(event is ChangingInternalState<S>) {
+      if (event is ChangingInternalState<S>) {
         S nextState = event.changer.call(state);
         emit(nextState);
-      } else {
-        //ignore other base widget events
       }
+      onWidgetEvent(event);
     });
   }
 
-  void doOn<E extends WidgetEvents> (EventHandler<E, S> handler, { EventTransformer<E>? transformer}) {
+  void doOn<E extends WidgetEvents>(EventHandler<E, S> handler,
+      {EventTransformer<E>? transformer}) {
     final methodName = "doOn";
     on<E>((event, emit) async {
       try {
         await handler.call(event, emit);
       } catch (e, stacktrace) {
         logError(methodName, e, stacktrace);
-        super.add(BaseWidgetEvents.changeStateWith((S state) => state.withError(e)));
+        super.add(
+            BaseWidgetEvents.changeStateWith((S state) => state.withError(e)));
       }
     }, transformer: transformer);
   }
@@ -60,6 +63,9 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
     return stream.map(mapper).distinct();
   }
 
+  @protected
+  void onWidgetEvent(WidgetEvents event) {}
+
   @override
   Future<void> close() async {
     _subscriptions.dispose();
@@ -73,33 +79,20 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
 }
 
 extension BindUtils<S extends BaseState> on AplBloc<S> {
-
   void bind2<T1, T2>(Stream<T1> stream1, Stream<T2> stream2,
       S Function(S, T1, T2) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2]),
             (state, List<dynamic> values) =>
-            stateProvider.call(
-                state,
-                values[0] as T1,
-                values[1] as T2
-            ));
+            stateProvider.call(state, values[0] as T1, values[1] as T2));
   }
 
-  void bind3<T1, T2, T3>(
-      Stream<T1> stream1,
-      Stream<T2> stream2,
-      Stream<T3> stream3,
-      S Function(S, T1, T2, T3) stateProvider) {
+  void bind3<T1, T2, T3>(Stream<T1> stream1, Stream<T2> stream2,
+      Stream<T3> stream3, S Function(S, T1, T2, T3) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3]),
-    (state, List<dynamic> values) =>
-        stateProvider.call(
-            state,
-            values[0] as T1,
-            values[1] as T2,
-            values[2] as T3
-        ));
+            (state, List<dynamic> values) => stateProvider.call(
+            state, values[0] as T1, values[1] as T2, values[2] as T3));
   }
 
   void bind4<T1, T2, T3, T4>(
@@ -110,13 +103,29 @@ extension BindUtils<S extends BaseState> on AplBloc<S> {
       S Function(S, T1, T2, T3, T4) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3, stream4]),
-    (state, List<dynamic> values) =>
-        stateProvider.call(
+            (state, List<dynamic> values) => stateProvider.call(
             state,
             values[0] as T1,
             values[1] as T2,
             values[2] as T3,
-            values[3] as T4
-        ));
+            values[3] as T4));
+  }
+
+  void bind5<T1, T2, T3, T4, T5>(
+      Stream<T1> stream1,
+      Stream<T2> stream2,
+      Stream<T3> stream3,
+      Stream<T4> stream4,
+      Stream<T5> stream5,
+      S Function(S, T1, T2, T3, T4, T5) stateProvider) {
+    return bind(
+        CombineLatestStream.list([stream1, stream2, stream3, stream4, stream5]),
+            (state, List<dynamic> values) => stateProvider.call(
+            state,
+            values[0] as T1,
+            values[1] as T2,
+            values[2] as T3,
+            values[3] as T4,
+            values[4] as T5));
   }
 }
