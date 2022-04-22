@@ -35,11 +35,11 @@
         <entry key="applithium_core">
           <value>
             <list>
-              <option value="$USER_HOME$/.pub-cache/git/core-e863270850114b5e15539fa16481567f006d3699/lib" />
-              <option value="$USER_HOME$/.pub-cache/git/core-18bfdc8f7c326aea742074ec5437f4db2fc98e55/lib" />
-              <option value="$USER_HOME$/.pub-cache/git/core-ea501224788a14587364f7bfc0f00990705b36f1/lib" />
-              <option value="$USER_HOME$/.pub-cache/git/core-930ada294481b24fa0c2b98667cae947457cd635/lib" />
-              <option value="$USER_HOME$/.pub-cache/git/core-15140d4c48ec39d37d29dea03238a6c8f87c2383/lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-e863270850114b5e15539fa16481567f006d3699//lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-18bfdc8f7c326aea742074ec5437f4db2fc98e55//lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-ea501224788a14587364f7bfc0f00990705b36f1//lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-930ada294481b24fa0c2b98667cae947457cd635//lib" />
+              <option value="$USER_HOME$/.pub-cache/git/core-15140d4c48ec39d37d29dea03238a6c8f87c2383//lib" />
             </list>
           </value>
         </entry>
@@ -1208,12 +1208,12 @@
       </option>
     </properties>
     <CLASSES>
-      <root url="file://$USER_HOME$/.pub-cache/git/core-15140d4c48ec39d37d29dea03238a6c8f87c2383/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-18bfdc8f7c326aea742074ec5437f4db2fc98e55/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-930ada294481b24fa0c2b98667cae947457cd635/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-e863270850114b5e15539fa16481567f006d3699/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-15140d4c48ec39d37d29dea03238a6c8f87c2383//lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-18bfdc8f7c326aea742074ec5437f4db2fc98e55//lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-930ada294481b24fa0c2b98667cae947457cd635//lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-e863270850114b5e15539fa16481567f006d3699//lib" />
+      <root url="file://$USER_HOME$/.pub-cache/git/core-ea501224788a14587364f7bfc0f00990705b36f1//lib" />
       <root url="file://$USER_HOME$/.pub-cache/git/core-ea501224788a14587364f7bfc0f00990705b36f1/applithium_firebase/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/git/core-ea501224788a14587364f7bfc0f00990705b36f1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-36.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/_fe_analyzer_shared-38.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/adaptive_action_sheet-2.0.1/lib" />

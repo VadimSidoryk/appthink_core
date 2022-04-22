@@ -31,7 +31,7 @@ class UsageHistoryService {
 
   final String? preferencesName;
   final Future<SharedPreferences> preferencesProvider;
-  final SessionListener? listener;
+  final HistoryListener? listener;
 
   WidgetsBindingObserver asWidgetObserver() {
     return UsageWidgetStateAdapter(this);
@@ -42,6 +42,15 @@ class UsageHistoryService {
     final daysFromFirst = await _daysFromFirstSession();
     final daysFromLast = await _daysFromLastSession();
     listener?.onSessionStarted(count, daysFromFirst, daysFromLast);
+  }
+
+  Future<void> incrementProperty(String name) async {
+    final key = "$preferencesName.$name";
+    final prefs = await preferencesProvider;
+    final currentValue = prefs.getInt(key) ?? 0;
+    final newValue = currentValue + 1;
+    listener?.onPropertyIncremented(name, newValue);
+    prefs.setInt(key, newValue);
   }
 
   void pauseSession() {

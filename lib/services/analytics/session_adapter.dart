@@ -8,7 +8,7 @@ import 'service.dart';
 
 const secondsInAppProperty = "seconds_in_app";
 
-class AnalyticsSessionAdapter extends SessionListener {
+class AnalyticsSessionAdapter extends HistoryListener {
   final EventBus eventBus;
   final AnalyticsService analyticsService;
   StreamSubscription? subscription;
@@ -33,5 +33,10 @@ class AnalyticsSessionAdapter extends SessionListener {
   void onSessionResumed() {
     subscription = analyticsService.periodicUpdatedUserProperty<int>(
         secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
+  }
+
+  @override
+  void onPropertyIncremented(String name, int value) {
+    analyticsService.setUserProperty(name, value);
   }
 }
