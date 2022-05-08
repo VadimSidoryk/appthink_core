@@ -7,6 +7,7 @@ import 'package:applithium_core/services/history/usage_listener.dart';
 import 'service.dart';
 
 const secondsInAppProperty = "seconds_in_app";
+const sessionCountProperty = "sessions_count";
 
 class AnalyticsSessionAdapter extends HistoryListener {
   final EventBus eventBus;
@@ -21,6 +22,7 @@ class AnalyticsSessionAdapter extends HistoryListener {
     eventBus.onNewEvent(AplEvent.sessionStarted(count, daysFromFirstSession, daysFromLastSession));
     subscription = analyticsService.periodicUpdatedUserProperty<int>(
         secondsInAppProperty, Duration(seconds: 10), (sec) => (sec ?? 0) + 10);
+    onPropertyIncremented(sessionCountProperty, count);
   }
 
   @override
