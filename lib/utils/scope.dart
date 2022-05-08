@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ScopeUtils {
   ScopeUtils._();
 
-  Future<T?> showDialogInScope<T>({
+  static Future<T?> showDialogInScope<T>({
     required BuildContext context,
     required WidgetBuilder builder,
     bool barrierDismissible = true,
