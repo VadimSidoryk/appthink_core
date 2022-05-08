@@ -1,8 +1,6 @@
 
 import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core_example/content/presentation/widget.dart';
 import 'package:applithium_core_example/main.dart';
-import 'package:applithium_core_example/picker/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
