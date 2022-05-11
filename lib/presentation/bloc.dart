@@ -46,11 +46,11 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
     }, transformer: transformer);
   }
 
-  void bind<T>(Stream<T> stream, S Function(S, T) stateProvider) {
+  void bind<T>(Stream<T> stream, FutureOr<S> Function(S, T) stateProvider) {
     addSubscription(stream.listen((event) {
-      final changer = (S state) {
+      final changer = (S state) async {
         try {
-          return stateProvider.call(state, event);
+          return await stateProvider.call(state, event);
         } catch (e) {
           return state.withError(e);
         }
@@ -80,7 +80,7 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
 
 extension BindUtils<S extends BaseState> on AplBloc<S> {
   void bind2<T1, T2>(Stream<T1> stream1, Stream<T2> stream2,
-      S Function(S, T1, T2) stateProvider) {
+      FutureOr<S> Function(S, T1, T2) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2]),
             (state, List<dynamic> values) =>
@@ -88,7 +88,7 @@ extension BindUtils<S extends BaseState> on AplBloc<S> {
   }
 
   void bind3<T1, T2, T3>(Stream<T1> stream1, Stream<T2> stream2,
-      Stream<T3> stream3, S Function(S, T1, T2, T3) stateProvider) {
+      Stream<T3> stream3, FutureOr<S> Function(S, T1, T2, T3) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3]),
             (state, List<dynamic> values) => stateProvider.call(
@@ -100,7 +100,7 @@ extension BindUtils<S extends BaseState> on AplBloc<S> {
       Stream<T2> stream2,
       Stream<T3> stream3,
       Stream<T4> stream4,
-      S Function(S, T1, T2, T3, T4) stateProvider) {
+      FutureOr<S> Function(S, T1, T2, T3, T4) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3, stream4]),
             (state, List<dynamic> values) => stateProvider.call(
@@ -117,7 +117,7 @@ extension BindUtils<S extends BaseState> on AplBloc<S> {
       Stream<T3> stream3,
       Stream<T4> stream4,
       Stream<T5> stream5,
-      S Function(S, T1, T2, T3, T4, T5) stateProvider) {
+      FutureOr<S> Function(S, T1, T2, T3, T4, T5) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3, stream4, stream5]),
             (state, List<dynamic> values) => stateProvider.call(
