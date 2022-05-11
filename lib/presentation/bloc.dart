@@ -23,9 +23,9 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
       _stateSubj.add(it);
     });
 
-    doOn<BaseWidgetEvents>((event, emit) {
+    doOn<BaseWidgetEvents>((event, emit) async {
       if (event is ChangingInternalState<S>) {
-        S nextState = event.changer.call(state);
+        S nextState = await event.changer.call(state);
         emit(nextState);
       }
       onWidgetEvent(event);

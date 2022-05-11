@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:applithium_core/events/base_event.dart';
 import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -17,7 +19,7 @@ class BaseWidgetEvents<M> extends WidgetEvents with _$BaseWidgetEvents<M> {
   factory BaseWidgetEvents.screenTransition(String? from, String to) =
   ScreenTransition;
 
-  factory BaseWidgetEvents.changeStateWith(Function(M) changer) =
+  factory BaseWidgetEvents.changeStateWith(FutureOr<dynamic> Function(M) changer) =
   ChangingInternalState;
 
   factory BaseWidgetEvents.screenPaused(State screenState) = ScreenPausedEvent;
