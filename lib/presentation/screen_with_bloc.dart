@@ -34,6 +34,10 @@ E extends WidgetEvents, S extends BaseState> extends AplScreenState<W>
 
   @override
   void onEvent(E event) {
+    if(!mounted) {
+      return;
+    }
+
     onEventImpl(event);
   }
 
