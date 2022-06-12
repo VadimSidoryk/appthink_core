@@ -32,13 +32,15 @@ import 'services/promo/action.dart';
 import 'services/promo/analyst_adapter.dart';
 import 'services/promo/service.dart';
 
+final KEY_EXTERNAL_INITIAL_LINK = "external_initial_link";
+
 class AplAppState<W extends StatefulWidget> extends State<W> {
   final String title;
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
   final PageRoute Function(WidgetBuilder) _splashRouteBuilder;
   final Future<Store> Function() _storeBuilder;
-  final Future<void> Function(Store, AplConfig) _setupFlow;
+  final Future<String?> Function(Store, AplConfig) _setupFlow;
   final List<RouteDetails> routes;
   @visibleForTesting
   final NavigatorObserver? navObserver;
@@ -62,16 +64,20 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       EventsScheme? eventScheme,
       this.locale,
       Set<AplModule> modules = const {},
-      Future<void> Function(Store, AplConfig)? customSetupFlow})
+      Future<String?> Function(Store, AplConfig)? customSetupFlow})
       : this.title = title ?? "Sample Application",
         _splashRouteBuilder = splashRouteBuilder ??
             ((WidgetBuilder builder) => MaterialPageRoute(builder: builder)),
         _initialLinkProvider = initialLinkProvider ?? getInitialLink,
         _storeBuilder = (() async => _buildStoreWithConfigProvider(modules)),
         _setupFlow = ((Store store, AplConfig config) async {
-          await _injectDependenciesInStore(store, config, modules, eventScheme ?? FreezedEventsScheme());
+          await _injectDependenciesInStore(
+              store, config, modules, eventScheme ?? FreezedEventsScheme());
+
           if (customSetupFlow != null) {
-            await customSetupFlow.call(store, config);
+            return await customSetupFlow.call(store, config);
+          } else {
+            return null;
           }
         });
 
@@ -98,9 +104,10 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
                 ? (await provider.getApplicationConfig())
                 : defaultConfig;
             await _setupFlow.call(store, config);
-            final initialLink = await _initialLinkProvider.call();
+            final initialLink = await _getInitialLink(store);
             log("initial link = $initialLink");
-            return _AppInitialData(store, config, initialLink);
+            final linkFromSplash = await _setupFlow.call(store, config);
+            return _AppInitialData(store, config, initialLink ?? linkFromSplash);
           },
           nextScreenBuilder: (context, initialData) => Scope(
               parentContext: context,
@@ -124,6 +131,16 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     final customTree = store.getOrNull<LogTree>();
     if (customTree != null) {
       Fimber.plantTree(customTree);
+    }
+  }
+
+  Future<String?> _getInitialLink(Store store) async {
+    String? deepLink;
+    deepLink = await getInitialLink();
+    if(deepLink != null) {
+      return deepLink;
+    } else {
+      return store.get<String?>(key: KEY_EXTERNAL_INITIAL_LINK);
     }
   }
 

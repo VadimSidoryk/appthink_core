@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/applithium_core.iml" filepath="$PROJECT_DIR$/.idea/applithium_core.iml" />
       <module fileurl="file://$PROJECT_DIR$/android/applithium_core_android.iml" filepath="$PROJECT_DIR$/android/applithium_core_android.iml" />
     </modules>
   </component>
