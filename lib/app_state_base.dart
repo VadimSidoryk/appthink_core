@@ -140,7 +140,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     if(deepLink != null) {
       return deepLink;
     } else {
-      return store.get<String?>(key: KEY_EXTERNAL_INITIAL_LINK);
+      return store.getOrNull<String?>(key: KEY_EXTERNAL_INITIAL_LINK);
     }
   }
 
