@@ -72,11 +72,23 @@ extension UpdatablePresentation<T> on Stream<T> {
   }
 }
 
+extension ResultChecker<T> on Result<T> {
+  T get valueOrError {
+    if(isError) {
+      throw asError!.error;
+    } else {
+      return asValue!.value;
+    }
+  }
+}
+
 class _ValueFromStream<T> {
   final T? value;
   final _StreamState state;
 
   _ValueFromStream(this.value, this.state);
 }
+
+
 
 enum _StreamState { EMPTY, ACTIVE }
