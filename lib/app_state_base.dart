@@ -51,11 +51,11 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
   final _debugTree = DebugTree();
 
-  AplAppState(this.theme,
+  AplAppState(
       {String? title,
-        @visibleForTesting
-      this.navObserver,
+      @visibleForTesting this.navObserver,
       this.wrapper,
+      this.theme,
       required this.defaultConfig,
       required this.splashBuilder,
       PageRoute Function(WidgetBuilder)? splashRouteBuilder,
@@ -108,7 +108,8 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
             final initialLink = await _getInitialLink(store);
             log("initial link = $initialLink");
             final linkFromSplash = await _setupFlow.call(store, config);
-            return _AppInitialData(store, config, initialLink ?? linkFromSplash);
+            return _AppInitialData(
+                store, config, initialLink ?? linkFromSplash);
           },
           nextScreenBuilder: (context, initialData) => Scope(
               parentContext: context,
@@ -138,7 +139,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   Future<String?> _getInitialLink(Store store) async {
     String? deepLink;
     deepLink = await getInitialLink();
-    if(deepLink != null) {
+    if (deepLink != null) {
       return deepLink;
     } else {
       return store.getOrNull<String?>(key: KEY_EXTERNAL_INITIAL_LINK);
@@ -168,9 +169,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
     store.add((provider) => SharedPreferences.getInstance());
     store.add((provider) => AnalyticsService()..addAnalyst(LogAnalyst()));
     store.add((provider) => PromoService(provider.get()));
-    store.add((provider) => EventBus(
-        scheme: eventsScheme,
-        listeners: {
+    store.add((provider) => EventBus(scheme: eventsScheme, listeners: {
           provider.get<AnalyticsService>(),
           PromoEventsAdapter(provider.get())
         }));
@@ -265,8 +264,7 @@ class _RealApplicationState extends State<_RealApplication> {
 
   @override
   Widget build(BuildContext context) {
-    final localizationConfig =
-        LocalizationConfig(<String, dynamic>{});
+    final localizationConfig = LocalizationConfig(<String, dynamic>{});
     final supportedLocales = localizationConfig
         .getSupportedLocaleCodes()
         .map((item) => item.toLocale())
@@ -280,7 +278,10 @@ class _RealApplicationState extends State<_RealApplication> {
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
-      navigatorObservers: <NavigatorObserver>[NavigatorEventsObserver(eventBus)] + eventBus.navigatorObservers,
+      navigatorObservers: <NavigatorObserver>[
+            NavigatorEventsObserver(eventBus)
+          ] +
+          eventBus.navigatorObservers,
       locale: widget.locale,
       supportedLocales: supportedLocales,
       localizationsDelegates: [
