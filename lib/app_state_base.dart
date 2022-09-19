@@ -47,10 +47,11 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final Future<String?> Function() _initialLinkProvider;
   final Widget Function(BuildContext, Widget)? wrapper;
   final Locale? locale;
+  final ThemeData? theme;
 
   final _debugTree = DebugTree();
 
-  AplAppState(
+  AplAppState(this.theme,
       {String? title,
         @visibleForTesting
       this.navObserver,
@@ -92,12 +93,12 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   Widget build(BuildContext context) {
     return MaterialApp(
         navigatorObservers: navObserver != null ? [navObserver!] : const [],
+        theme: theme,
         home: _SplashScreen<_AppInitialData>(
           builder: splashBuilder,
           routeBuilder: _splashRouteBuilder,
           loadingTask: (context) async {
             final store = await _storeBuilder.call();
-
             _plantCustomLogTree(store);
             final provider = store.getOrNull<ConfigProvider>();
             final config = provider != null
