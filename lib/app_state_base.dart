@@ -115,6 +115,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
               parentContext: context,
               store: initialData.store,
               builder: (context) => _RealApplication(
+                  theme: theme,
                   locale: locale,
                   wrapper: wrapper,
                   initialData: initialData,
@@ -218,6 +219,7 @@ class _RealApplication extends StatefulWidget {
   final String title;
   final List<RouteDetails> routes;
   final Locale? locale;
+  final ThemeData? theme;
 
   const _RealApplication(
       {Key? key,
@@ -225,7 +227,8 @@ class _RealApplication extends StatefulWidget {
       this.wrapper,
       required this.title,
       required this.initialData,
-      required this.routes})
+      required this.routes,
+      this.theme})
       : super(key: key);
 
   @override
@@ -274,7 +277,7 @@ class _RealApplicationState extends State<_RealApplication> {
 
     final appInstance = MaterialApp(
       title: widget.title,
-      theme: context.getOrNull(),
+      theme: widget.theme,
       navigatorKey: _navigationKey,
       initialRoute: widget.initialData.link,
       onGenerateRoute: _router.onGenerateRoute,
