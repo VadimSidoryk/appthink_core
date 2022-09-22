@@ -101,5 +101,5 @@ extension ResourceProvider<R extends AplWidgetResources, W extends AplWidget<R>>
       widget.resources = widget.resourceProvider.call(context, widget);
       return widget.resources!;
     }
-  };
+  }
 }
