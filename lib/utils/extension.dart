@@ -93,13 +93,8 @@ class _ValueFromStream<T> {
 
 enum _StreamState { EMPTY, ACTIVE }
 
-extension ResourceProvider<R extends AplWidgetResources, W extends AplWidget<R>> on State<W> {
+extension LazyResourceProvider<R extends AplWidgetResources, W extends AplWidget<R>> on State<W> {
   R get res {
-    if(widget.resources != null) {
-      return widget.resources!;
-    }  else {
-      widget.resources = widget.resourceProvider.call(context, widget);
-      return widget.resources!;
-    }
+    return widget.res(context);
   }
 }
