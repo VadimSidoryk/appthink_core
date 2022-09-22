@@ -92,3 +92,7 @@ class _ValueFromStream<T> {
 
 
 enum _StreamState { EMPTY, ACTIVE }
+
+extension ResourceProvider<W extends StatefulWidget> on State<W> {
+  T by<T>(T Function(BuildContext context) provider) => provider.call(context);
+}
