@@ -4,6 +4,8 @@ import 'package:async/async.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
+import '../presentation/widget.dart';
+
 extension ObjectExt<T> on T {
   R let<R>(R Function(T that) op) => op(this);
 }
@@ -89,10 +91,15 @@ class _ValueFromStream<T> {
   _ValueFromStream(this.value, this.state);
 }
 
-
-
 enum _StreamState { EMPTY, ACTIVE }
 
-extension ResourceProvider<W extends StatefulWidget> on State<W> {
-  T by<T>(T Function(BuildContext context) provider) => provider.call(context);
+extension ResourceProvider<R extends AplWidgetResources, W extends AplWidget<R>> on State<W> {
+  R get res {
+    if(widget.resources != null) {
+      return widget.resources!;
+    }  else {
+      widget.resources = widget.resourceProvider.call(context, widget);
+      return widget.resources!;
+    }
+  };
 }
