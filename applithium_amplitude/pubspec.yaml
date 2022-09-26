@@ -1,6 +1,6 @@
 name: applithium_amplitude
 description: A new Flutter plugin.
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  amplitude_flutter: ^3.8.1
+  amplitude_flutter: ^3.10.0
   async: ^2.6.1
   applithium_core:
     git:
