@@ -27,12 +27,13 @@ const KEY_DATABASE_CONNECTED = "connected_to_database";
 
 class FirebaseModule extends AplModule {
   bool useAnalytics;
+  bool useDatabase;
   bool offlineModeEnabled;
   FirebaseApp? _app;
   FirebaseAnalytics? _analytics;
   FirebaseConfigProvider? provider;
 
-  FirebaseModule({this.provider, this.useAnalytics = true, this.offlineModeEnabled = false});
+  FirebaseModule({this.provider, this.useAnalytics = true, this.offlineModeEnabled = false, this.useDatabase = false, this.useAuth = false});
 
   @override
   Future<bool> injectConfigProvider(Store store) async {
@@ -68,7 +69,9 @@ class FirebaseModule extends AplModule {
   Future<void> injectDependencies(Store store, AplConfig config) async {
     logMethod("injectDependencies");
 
-    _setupDatabase(store);
+    if(useDatabase) {
+      _setupDatabase(store);
+    }
     _setupCrashlytics(store);
   }
 
@@ -80,12 +83,16 @@ class FirebaseModule extends AplModule {
     final connectedSubj = BehaviorSubject.seeded(false);
     store.add<Stream<bool>>((p0) => connectedSubj, key: KEY_DATABASE_CONNECTED);
 
-    final connectedRef = FirebaseDatabase.instance.ref(".info/connected");
+    final database = FirebaseDatabase.instanceFor(app: _app!);
+
+    final connectedRef = database.ref(".info/connected");
     connectedRef.onValue.listen((event) {
       final connected = event.snapshot.value as bool? ?? false;
       log("connected to firebase database = $connected");
       connectedSubj.add(connected);
     });
+
+    store.add<FirebaseDatabase>((p0) => database);
   }
 
   void _setupCrashlytics(Store store) {

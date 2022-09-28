@@ -1,6 +1,6 @@
 name: applithium_firebase
 description: Firebase stack for applithium core
-version: 0.1.9
+version: 0.1.10
 homepage:
 
 environment:
