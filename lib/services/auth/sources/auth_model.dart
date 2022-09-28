@@ -1,7 +1,10 @@
 import 'package:async/async.dart';
 
 abstract class AuthModelSource<C, M> {
-  Future<Result<M>> getUser(C creds);
+
+  Stream<Result<M>> observeUser(C creds);
+
+  Future<Result<bool>> hasUser(C creds);
 
   Future<Result<void>> updateUser(M user);
 
@@ -22,11 +25,6 @@ class _MockedAuthModelSource<C, M> extends AuthModelSource<C, M> {
   }
 
   @override
-  Future<Result<M>> getUser(C creds) async {
-    return result;
-  }
-
-  @override
   Future<Result<void>> updateUser(M user) async {
     return Result.value(true);
   }
@@ -34,5 +32,10 @@ class _MockedAuthModelSource<C, M> extends AuthModelSource<C, M> {
   @override
   Stream<Result<M>> observeUser(C creds) async* {
     yield result;
+  }
+
+  @override
+  Future<Result<bool>> hasUser(C creds) async {
+    return Result.value(true);
   }
 }

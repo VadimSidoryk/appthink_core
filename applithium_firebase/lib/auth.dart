@@ -36,14 +36,16 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
         return null;
       } else {
         log("userReceived: ${it.email}");
-        final getResult  = await modelSource.getUser(it);
-        log("getResult = $getResult");
-        if(getResult.isValue) {
-          return getResult.asValue!.value;
-        } else {
+        final checkUserResult  = await modelSource.checkUser(it);
+        log("checkResult = $checkUserResult");
+        if(!checkUserResult.isValue || !checkUserResult.asValue!.value) {
           final createResult = await modelSource.createUser(it);
-          return createResult.asValue?.value;
+          if(createResult.isError) {
+            return Stream.value(null);
+          }
         }
+
+        return modelSource.observeUser(it);
       }
     }).listen((it) {
       _userSubj.add(it);
