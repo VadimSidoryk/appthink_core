@@ -31,24 +31,26 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
   }
 
   void _initFlow() {
-    _auth.authStateChanges().asyncMap((it) async {
+    _auth.authStateChanges().asyncExpand((it) async* {
       if(it == null) {
-        return null;
+        yield Result.value(null);
       } else {
         log("userReceived: ${it.email}");
-        final checkUserResult  = await modelSource.checkUser(it);
+        final checkUserResult  = await modelSource.hasUser(it);
         log("checkResult = $checkUserResult");
-        if(!checkUserResult.isValue || !checkUserResult.asValue!.value) {
+        if(!checkUserResult.isValue || checkUserResult.asValue?.value != true) {
           final createResult = await modelSource.createUser(it);
-          if(createResult.isError) {
-            return Stream.value(null);
+          if(createResult.isError || checkUserResult.asValue?.value != true) {
+            yield* Stream.value(createResult);
+          } else {
+            yield* modelSource.observeUser(it);
           }
+        } else {
+          yield* modelSource.observeUser(it);
         }
-
-        return modelSource.observeUser(it);
       }
     }).listen((it) {
-      _userSubj.add(it);
+      _userSubj.add(it.asValue?.value);
     });
   }
 
