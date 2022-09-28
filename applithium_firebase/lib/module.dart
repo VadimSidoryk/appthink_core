@@ -33,7 +33,7 @@ class FirebaseModule extends AplModule {
   FirebaseAnalytics? _analytics;
   FirebaseConfigProvider? provider;
 
-  FirebaseModule({this.provider, this.useAnalytics = true, this.offlineModeEnabled = false, this.useDatabase = false, this.useAuth = false});
+  FirebaseModule({this.provider, this.useAnalytics = true, this.offlineModeEnabled = false, this.useDatabase = false});
 
   @override
   Future<bool> injectConfigProvider(Store store) async {
