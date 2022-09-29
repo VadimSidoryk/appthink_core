@@ -7,17 +7,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'events.dart';
-import 'state.dart';
 
-
-abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
+abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   @override
   Stream<S> get stream => _stateSubj;
 
   final _subscriptions = CompositeSubscription();
   late BehaviorSubject<S> _stateSubj;
 
-  AplBloc(S initialState) : super(initialState) {
+  final S? Function(S, dynamic) errorHandler;
+
+  AplBloc(S initialState, {required this.errorHandler}) : super(initialState) {
     _stateSubj = BehaviorSubject<S>.seeded(initialState);
     super.stream.listen((it) {
       _stateSubj.add(it);
@@ -40,8 +40,10 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
         await handler.call(event, emit);
       } catch (e, stacktrace) {
         logError(methodName, e, stacktrace);
-        super.add(
-            BaseWidgetEvents.changeStateWith((S state) => state.withError(e)));
+        final newState = errorHandler.call(state, e);
+        if(newState != null) {
+          super.add(BaseWidgetEvents.changeStateWith((S state) => newState));
+        }
       }
     }, transformer: transformer);
   }
@@ -52,7 +54,7 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
         try {
           return await stateProvider.call(state, event);
         } catch (e) {
-          return state.withError(e);
+          return errorHandler.call(state, e) ?? state;
         }
       };
       super.add(BaseWidgetEvents.changeStateWith(changer));
@@ -78,7 +80,7 @@ abstract class AplBloc<S extends BaseState> extends Bloc<WidgetEvents, S> {
   }
 }
 
-extension BindUtils<S extends BaseState> on AplBloc<S> {
+extension BindUtils<S> on AplBloc<S> {
   void bind2<T1, T2>(Stream<T1> stream1, Stream<T2> stream2,
       FutureOr<S> Function(S, T1, T2) stateProvider) {
     return bind(

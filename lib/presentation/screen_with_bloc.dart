@@ -1,14 +1,13 @@
 import 'package:applithium_core/events/events_listener.dart';
 import 'package:applithium_core/presentation/bloc.dart';
 import 'package:applithium_core/presentation/events.dart';
-import 'package:applithium_core/presentation/state.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'screen.dart';
 
 abstract class AplBlocScreenState<W extends StatefulWidget,
-E extends WidgetEvents, S extends BaseState> extends AplScreenState<W>
+E extends WidgetEvents, S> extends AplScreenState<W>
     implements EventsListener<E> {
   AplBloc<S>? _bloc;
 
