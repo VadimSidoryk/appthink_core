@@ -8,6 +8,8 @@ import 'package:rxdart/rxdart.dart';
 
 import 'events.dart';
 
+typedef ErrorHandler<S> = S? Function(S, dynamic);
+
 abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   @override
   Stream<S> get stream => _stateSubj;
@@ -15,7 +17,7 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   final _subscriptions = CompositeSubscription();
   late BehaviorSubject<S> _stateSubj;
 
-  final S? Function(S, dynamic) errorHandler;
+  final ErrorHandler<S> errorHandler;
 
   AplBloc(S initialState, {required this.errorHandler}) : super(initialState) {
     _stateSubj = BehaviorSubject<S>.seeded(initialState);
