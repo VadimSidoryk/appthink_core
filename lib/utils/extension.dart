@@ -4,8 +4,6 @@ import 'package:async/async.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
-import '../presentation/widget.dart';
-
 extension ObjectExt<T> on T {
   R let<R>(R Function(T that) op) => op(this);
 }
@@ -92,9 +90,3 @@ class _ValueFromStream<T> {
 }
 
 enum _StreamState { EMPTY, ACTIVE }
-
-extension LazyResourceProvider<R extends AplWidgetResources, W extends AplWidget<R>> on State<W> {
-  R get res {
-    return widget.res(context);
-  }
-}
