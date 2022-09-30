@@ -13,6 +13,11 @@ typedef ErrorHandler<S> = S? Function(S, dynamic);
 abstract class BlocCallbacks {
   List<Function(AplBloc)> get bindings;
 
+  @protected
+  Function(AplBloc) bind<E extends BaseWidgetEvents>(Function() callback) => (bloc) {
+    bloc.doOn<E>((event, emit) => callback.call());
+  };
+
   void applyTo(AplBloc bloc) {
     bindings.forEach((element) => element.call(bloc));
   }
@@ -43,10 +48,6 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
     });
 
     callbacks?.applyTo(this);
-  }
-
-  void callOn<E extends WidgetEvents>(Function() callback) {
-    doOn<E>((event, emit) => callback.call());
   }
 
   void doOn<E extends WidgetEvents>(EventHandler<E, S> handler,
@@ -95,12 +96,6 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   void addSubscription(StreamSubscription subscription) {
     _subscriptions.add(subscription);
   }
-}
-
-extension CallbackUtils<E extends WidgetEvents> on E {
-  Function(AplBloc) rise(Function() callback) => (bloc){
-    bloc.callOn<E>(callback);
-  };
 }
 
 extension StreamUtils<S> on AplBloc<S> {
