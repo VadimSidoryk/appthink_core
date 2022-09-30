@@ -25,10 +25,6 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
       _stateSubj.add(it);
     });
 
-    void callOn<E extends WidgetEvents>(Function() callback) {
-      doOn<E>((event, emit) => callback.call());
-    }
-
     doOn<BaseWidgetEvents>((event, emit) async {
       if (event is ChangingInternalState<S>) {
         S nextState = await event.changer.call(state);
@@ -36,6 +32,10 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
       }
       onWidgetEvent(event);
     });
+  }
+
+  void callOn<E extends WidgetEvents>(Function() callback) {
+    doOn<E>((event, emit) => callback.call());
   }
 
   void doOn<E extends WidgetEvents>(EventHandler<E, S> handler,
