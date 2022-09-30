@@ -2,15 +2,15 @@ import 'package:applithium_core/presentation/bloc.dart';
 import 'package:applithium_core/presentation/events.dart';
 
 abstract class BlocCallbacks {
-    List<Function(AplBloc)> get binders;
+    List<Function(AplBloc)> get bindings;
 
-    void bindTo(AplBloc bloc) {
-      binders.forEach((element) => element.call(bloc));
+    void applyTo(AplBloc bloc) {
+      bindings.forEach((element) => element.call(bloc));
     }
 }
 
 extension Event0<E extends WidgetEvents> on E Function() {
-  Function(AplBloc) bind(Function() callback) => (bloc) {
+  Function(AplBloc) to(Function() callback) => (bloc) {
     bloc.doOn<E>((event, emit) {
       callback.call();
     });
@@ -18,7 +18,7 @@ extension Event0<E extends WidgetEvents> on E Function() {
 }
 
 extension Event1<E extends WidgetEvents, T1> on E Function(T1) {
-  Function(AplBloc) bind(Function(E) callback) => (bloc) {
+  Function(AplBloc) to(Function(E) callback) => (bloc) {
     bloc.doOn<E>((event, emit) {
       callback.call(event);
     });
@@ -26,7 +26,7 @@ extension Event1<E extends WidgetEvents, T1> on E Function(T1) {
 }
 
 extension Event2<E extends WidgetEvents, T1, T2> on E Function(T1, T2) {
-  Function(AplBloc) bind(Function(E) callback) => (bloc) {
+  Function(AplBloc) to(Function(E) callback) => (bloc) {
     bloc.doOn<E>((event, emit) {
       callback.call(event);
     });
@@ -34,7 +34,7 @@ extension Event2<E extends WidgetEvents, T1, T2> on E Function(T1, T2) {
 }
 
 extension Event3<E extends WidgetEvents, T1, T2, T3> on E Function(T1, T2, T3) {
-  Function(AplBloc) bind(Function(E) callback) => (bloc) {
+  Function(AplBloc) to(Function(E) callback) => (bloc) {
     bloc.doOn<E>((event, emit) {
       callback.call(event);
     });
@@ -42,7 +42,7 @@ extension Event3<E extends WidgetEvents, T1, T2, T3> on E Function(T1, T2, T3) {
 }
 
 extension Event4<E extends WidgetEvents, T1, T2, T3, T4> on E Function(T1, T2, T3, T4) {
-  Function(AplBloc) bind(Function(E) callback) => (bloc) {
+  Function(AplBloc) to(Function(E) callback) => (bloc) {
     bloc.doOn<E>((event, emit) {
       callback.call(event);
     });
