@@ -10,6 +10,14 @@ import 'events.dart';
 
 typedef ErrorHandler<S> = S? Function(S, dynamic);
 
+abstract class BlocCallbacks {
+  List<Function(AplBloc)> get bindings;
+
+  void applyTo(AplBloc bloc) {
+    bindings.forEach((element) => element.call(bloc));
+  }
+}
+
 abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   @override
   Stream<S> get stream => _stateSubj;
@@ -18,8 +26,9 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   late BehaviorSubject<S> _stateSubj;
 
   final ErrorHandler<S> errorHandler;
+  final BlocCallbacks? callbacks;
 
-  AplBloc(S initialState, {required this.errorHandler}) : super(initialState) {
+  AplBloc(S initialState, {required this.errorHandler, this.callbacks}) : super(initialState) {
     _stateSubj = BehaviorSubject<S>.seeded(initialState);
     super.stream.listen((it) {
       _stateSubj.add(it);
@@ -32,6 +41,8 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
       }
       onWidgetEvent(event);
     });
+
+    callbacks?.applyTo(this);
   }
 
   void callOn<E extends WidgetEvents>(Function() callback) {
@@ -86,7 +97,13 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   }
 }
 
-extension BindUtils<S> on AplBloc<S> {
+extension CallbackUtils<E extends WidgetEvents> on E {
+  Function(AplBloc) rise(Function() callback) => (bloc){
+    bloc.callOn<E>(callback);
+  };
+}
+
+extension StreamUtils<S> on AplBloc<S> {
   void bind2<T1, T2>(Stream<T1> stream1, Stream<T2> stream2,
       FutureOr<S> Function(S, T1, T2) stateProvider) {
     return bind(
