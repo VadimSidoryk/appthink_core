@@ -14,7 +14,7 @@ abstract class BlocCallbacks {
   List<Function(AplBloc)> get bindings;
 
   @protected
-  Function(AplBloc) bind<E extends BaseWidgetEvents>(Function() callback) => (bloc) {
+  Function(AplBloc) bind<E extends WidgetEvents>(Function() callback) => (bloc) {
     bloc.doOn<E>((event, emit) => callback.call());
   };
 
