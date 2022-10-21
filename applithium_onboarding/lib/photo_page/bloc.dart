@@ -14,7 +14,7 @@ class UserPhotoPageBloc extends AplBloc<UserPhotoPageState> {
   UserPhotoPageBloc(OnboardingController controller, this._pickerManager,
       {Function()? onBack, Function()? onSkip, Function()? onContinue})
       : super(UserPhotoPageState()) {
-    bind(_pickerManager.onPickImage, (state, String? picturePath) {
+    bind(_pickerManager.imageStream, (state, String? picturePath) {
       return state.copyWith(photoPath: picturePath ?? "");
     });
 
