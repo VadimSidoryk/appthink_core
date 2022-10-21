@@ -1,6 +1,6 @@
 name: applithium_firebase
 description: Firebase stack for applithium core
-version: 0.1.11
+version: 0.1.12
 homepage:
 
 environment:
@@ -18,7 +18,7 @@ dependencies:
   firebase_crashlytics: ^2.8.11
   firebase_auth: ^3.10.0
   firebase_database: ^9.1.5
-
+  firebase_storage: ^11.0.2
 
   flutter_local_notifications: ^9.2.0
 
