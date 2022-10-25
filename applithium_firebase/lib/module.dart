@@ -29,7 +29,7 @@ class FirebaseModule extends AplModule {
   bool useAnalytics;
   bool useDatabase;
   bool offlineModeEnabled;
-  FirebaseApp? _app;
+  late FirebaseApp _app;
   FirebaseAnalytics? _analytics;
   FirebaseConfigProvider? provider;
 
