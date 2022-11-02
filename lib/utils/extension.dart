@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:async/async.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 
 extension ObjectExt<T> on T {
   R let<R>(R Function(T that) op) => op(this);
@@ -31,6 +32,24 @@ Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
       info?.let((val) => val.holder.logError(val.methodName, e, stacktrace));
     }
     return Result.error(e);
+  }
+}
+
+extension LoggableSevice on Object {
+  Future<Result<T>> call<T>(String methodName, FutureOr<T> Function() function,{Function(dynamic)? onError}) {
+    return safeCall(function, info: LogInfo(this, methodName), onError: onError);
+  }
+}
+
+extension UpdatableValue<T> on BehaviorSubject<T> {
+  void update(T Function(T) updater) async {
+    final value = await first;
+    try {
+      final newValue = updater.call(value);
+      add(newValue);
+    } catch(e) {
+      logError("update", e);
+    }
   }
 }
 
