@@ -70,7 +70,9 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
     addSubscription(stream.listen((event) {
       final changer = (S state) async {
         try {
-          return await stateProvider.call(state, event);
+          final resultState = await stateProvider.call(state, event);
+          log("bind($event) => $resultState", level: LogLevel.verbose);
+          return resultState;
         } catch (e) {
           return errorHandler.call(state, e) ?? state;
         }
