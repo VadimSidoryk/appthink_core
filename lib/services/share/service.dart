@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/logs/extension.dart';
 import 'package:share/share.dart';
 import 'package:sprintf/sprintf.dart';
 
@@ -21,8 +20,6 @@ class ShareService {
 
   void share(
       {String intent = VAL_DEFAULT_INTENT, List<Object> params = const []}) {
-    logMethod("share", params: [intent, params]);
-
     String shareText = _config.intentToText.containsKey(intent)
         ? _config.intentToText[intent]
         : _config.intentToText[VAL_DEFAULT_INTENT];

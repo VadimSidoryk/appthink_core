@@ -7,30 +7,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {
-  @override
-  void didPop(Route<dynamic>? route, Route<dynamic>? previousRoute) {
-    logMethod("didPop", params: [route, previousRoute]);
-    super.noSuchMethod(Invocation.method(#didPop, [route, previousRoute]));
-  }
-
-  @override
-  void didPush(Route<dynamic>? route, Route<dynamic>? previousRoute) {
-    logMethod("didPush", params: [route, previousRoute]);
-    super.noSuchMethod(Invocation.method(#didPush, [route, previousRoute]));
-  }
-
-  @override
-  void didRemove(Route<dynamic>? route, Route<dynamic>? previousRoute) {
-    logMethod("didRemove", params: [route, previousRoute]);
-    super.noSuchMethod(Invocation.method(#didRemove, [route, previousRoute]));
-  }
-
-  @override
-  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    logMethod("didReplace", params: [newRoute, oldRoute]);
-    super.noSuchMethod(Invocation.method(
-        #didReplace, [], {#newRoute: newRoute, #oldRoute: oldRoute}));
-  }
 }
 
 void main() {

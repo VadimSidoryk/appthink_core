@@ -37,7 +37,6 @@ class FirebaseModule extends AplModule {
 
   @override
   Future<bool> injectConfigProvider(Store store) async {
-    logMethod("injectConfigProvider");
     _app = await Firebase.initializeApp();
     store.add((provider) => _app);
 
@@ -59,16 +58,12 @@ class FirebaseModule extends AplModule {
 
   _setupInitialMessage(Store store) async {
     final initialFirebaseMessage = await FirebaseMessaging.instance.getInitialMessage();
-    log("initial firebaseX message =  $initialFirebaseMessage");
     final String? initialFirebaseLink = initialFirebaseMessage?.data["url"];
-    log("initial firebase link = $initialFirebaseLink");
     store.add<String?>((p0) => initialFirebaseLink, key: KEY_EXTERNAL_INITIAL_LINK);
   }
 
   @override
   Future<void> injectDependencies(Store store, AplConfig config) async {
-    logMethod("injectDependencies");
-
     if(useDatabase) {
       _setupDatabase(store);
     }

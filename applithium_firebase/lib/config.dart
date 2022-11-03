@@ -17,7 +17,6 @@ class FirebaseConfigProvider extends ConfigProvider {
   @override
   Future<AplConfig> getApplicationConfig() async {
     final methodName = "getApplicationConfig";
-    logMethod(methodName);
     final RemoteConfig remoteConfig = RemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: Duration(seconds: fetchTimeoutSec),
@@ -44,7 +43,6 @@ class FirebaseAplConfigAdapter extends AplConfig {
   @override
   bool getBool(String key) {
     final methodName = "getBool";
-    logMethod(methodName, params: [key]);
     try {
       return configImpl.getBool(key);
     } catch (e, stacktrace) {
@@ -56,7 +54,6 @@ class FirebaseAplConfigAdapter extends AplConfig {
   @override
   double getDouble(String key) {
     final methodName = "getDouble";
-    logMethod(methodName, params: [key]);
     try {
       return configImpl.getDouble(key);
     } catch (e, stacktrace) {
@@ -68,7 +65,6 @@ class FirebaseAplConfigAdapter extends AplConfig {
   @override
   int getInt(String key) {
     final methodName = "getInt";
-    logMethod(methodName, params: [key]);
     try {
       return configImpl.getInt(key);
     } catch (e, stacktrace) {
@@ -80,7 +76,6 @@ class FirebaseAplConfigAdapter extends AplConfig {
   @override
   String getString(String key) {
     final methodName = "getString";
-    logMethod(methodName, params: [key]);
     try {
       return configImpl.getString(key);
     } catch (e, stacktrace) {

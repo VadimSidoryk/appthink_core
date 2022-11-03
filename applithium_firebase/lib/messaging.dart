@@ -26,7 +26,6 @@ class FirebaseMessagingImpl extends Messaging {
   @override
   Future<void> init() async {
     final methodName = "init";
-    logMethod(methodName);
     try {
       final token = await FirebaseMessaging.instance.getToken(
           vapidKey: vapidKey);
@@ -82,7 +81,6 @@ class FirebaseMessagingImpl extends Messaging {
   Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     final methodName = "_firebaseMessagingBackgroundHandler";
-    logMethod(methodName);
     try {
       await Firebase.initializeApp();
       log("app initialized");
@@ -104,7 +102,6 @@ class FirebaseMessagingImpl extends Messaging {
       String? body,
       String? deeplink}) async {
     final methodName = "sendPushNotificationTo";
-    logMethod(methodName, params: [token, title, body]);
     try {
       final response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -124,7 +121,6 @@ class FirebaseMessagingImpl extends Messaging {
 
   Future<bool> _checkPermissions() async {
     final methodName = "checkPermission";
-    logMethod(methodName);
     final messaging = FirebaseMessaging.instance;
     if (Platform.isIOS) {
       log("requesting permissions");

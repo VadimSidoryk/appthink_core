@@ -31,8 +31,6 @@ class RateUsService  {
   bool get shouldOpenDialog => _impl.shouldOpenDialog;
 
   void showRateUsDialog(BuildContext context) {
-    logMethod("showRateUsDialog");
-
     _impl.showRateDialog(
       context,
       title: _config.title,
@@ -55,8 +53,6 @@ class RateUsService  {
   }
 
   void showStarsDialog(BuildContext context) {
-    logMethod("showStarsDialog");
-
     _impl.showStarRateDialog(
       context,
       title: _config.title,

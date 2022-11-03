@@ -65,7 +65,6 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
   @override
   Future<Result<void>> signIn(AuthMethod option) async {
     final methodName = "signIn";
-    logMethod(methodName, params: [option]);
     final preferences = await preferencesProvider;
     try {
       //TODO: remove this when sign_out flow implemented
@@ -83,7 +82,6 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
   @override
   Future<Result<void>> signOut() async {
     final methodName = "signOut";
-    logMethod(methodName);
     try {
       await FirebaseAuth.instance.signOut();
       (await preferencesProvider).remove(_KEY_FIREBASE_AUTH_METHOD);
@@ -98,7 +96,6 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
   Future<Result<void>> signUp(
       {required String email, required String password, M? initialData}) async {
     final methodName = "signUp";
-    logMethod(methodName, params: [initialData]);
     try {
       await _signUpImpl(email, password);
       return signIn(AuthMethod.emailAndPassword(email, password));
@@ -111,7 +108,6 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
   @override
   Future<Result<void>> deleteUser() async {
     final methodName = "deleteUser";
-    logMethod(methodName);
     try {
       await _auth.currentUser?.delete();
       return Result.value(null);
@@ -166,7 +162,6 @@ class FirebaseAuthImpl<M> extends Auth<User, M> {
   Future<Result<void>> editUser(Future<M> Function(M) updater) async {
     final methodName = "editUser";
     try {
-      logMethod(methodName, params: [updater]);
       final user = await userObs
           .where((it) => it != null)
           .first;

@@ -42,7 +42,6 @@ abstract class Messaging {
   @protected
   void displayMessage({required int id, String? title, String? body }) {
     final methodName = "displayMessage";
-    logMethod(methodName, params: [id, title, body]);
     try {
       flutterLocalNotificationsPlugin.show(
           id,

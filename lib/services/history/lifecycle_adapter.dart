@@ -1,4 +1,3 @@
-import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 import 'service.dart';
@@ -11,7 +10,6 @@ class UsageWidgetStateAdapter extends WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    logMethod("didChangeAppLifecycleState", params: [state]);
     switch (state) {
       case AppLifecycleState.resumed:
         usageService.resumeSession();

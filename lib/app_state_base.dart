@@ -104,7 +104,6 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
             final config = provider != null
                 ? (await provider.getApplicationConfig())
                 : defaultConfig;
-            await _setupFlow.call(store, config);
             final initialLink = await _getInitialLink(store);
             log("initial link = $initialLink");
             final linkFromSplash = await _setupFlow.call(store, config);
@@ -302,22 +301,20 @@ class _RealApplicationState extends State<_RealApplication> {
     _deepLinkSubscription?.cancel();
     _deepLinkSubscription = null;
     if (_widgetObserver != null) {
-      WidgetsBinding.instance?.removeObserver(_widgetObserver!);
+      WidgetsBinding.instance.removeObserver(_widgetObserver!);
     }
     super.dispose();
   }
 
   void _setupWidgetObservers() {
-    logMethod("setupWidgetObservers");
     if (_widgetObserver != null) {
-      WidgetsBinding.instance?.removeObserver(_widgetObserver!);
+      WidgetsBinding.instance.removeObserver(_widgetObserver!);
     }
     _widgetObserver = context.get<UsageHistoryService>().asWidgetObserver();
-    WidgetsBinding.instance?.addObserver(_widgetObserver!);
+    WidgetsBinding.instance.addObserver(_widgetObserver!);
   }
 
   void _handleIncomingLinks() {
-    logMethod("handleIncomingLinks");
     // It will handle app links while the app is already started - be it in
     // the foreground or in the background.
     _deepLinkSubscription = uriLinkStream.listen((Uri? uri) {

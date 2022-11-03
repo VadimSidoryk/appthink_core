@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:applithium_core/logs/extension.dart';
@@ -14,9 +13,10 @@ abstract class BlocCallbacks {
   List<Function(AplBloc)> get bindings;
 
   @protected
-  Function(AplBloc) bind<E extends WidgetEvents>(Function() callback) => (bloc) {
-    bloc.doOn<E>((event, emit) => callback.call());
-  };
+  Function(AplBloc) bind<E extends WidgetEvents>(Function() callback) =>
+      (bloc) {
+        bloc.doOn<E>((event, emit) => callback.call());
+      };
 
   void applyTo(AplBloc bloc) {
     bindings.forEach((element) => element.call(bloc));
@@ -33,7 +33,8 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   final ErrorHandler<S> errorHandler;
   final BlocCallbacks? callbacks;
 
-  AplBloc(S initialState, {required this.errorHandler, this.callbacks}) : super(initialState) {
+  AplBloc(S initialState, {required this.errorHandler, this.callbacks})
+      : super(initialState) {
     _stateSubj = BehaviorSubject<S>.seeded(initialState);
     super.stream.listen((it) {
       _stateSubj.add(it);
@@ -52,14 +53,16 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
 
   void doOn<E extends WidgetEvents>(EventHandler<E, S> handler,
       {EventTransformer<E>? transformer}) {
-    final methodName = "doOn";
     on<E>((event, emit) async {
       try {
-        await handler.call(event, emit);
+        final _mockedEmitter = _MockedEmitter(emit, (newState) {
+          logMethodResult("doOn", [event], newState);
+        });
+        await handler.call(event, _mockedEmitter);
       } catch (e, stacktrace) {
-        logError(methodName, e, stacktrace);
+        logError("doOn", e, stacktrace);
         final newState = errorHandler.call(state, e);
-        if(newState != null) {
+        if (newState != null) {
           super.add(BaseWidgetEvents.changeStateWith((S state) => newState));
         }
       }
@@ -71,9 +74,10 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
       final changer = (S state) async {
         try {
           final resultState = await stateProvider.call(state, event);
-          log("bind($event) => $resultState", level: LogLevel.verbose);
+          logMethodResult("bind", [state, event], resultState);
           return resultState;
-        } catch (e) {
+        } catch (e, stacktrace) {
+          logError("bind", e, stacktrace);
           return errorHandler.call(state, e) ?? state;
         }
       };
@@ -100,12 +104,46 @@ abstract class AplBloc<S> extends Bloc<WidgetEvents, S> {
   }
 }
 
+class _MockedEmitter<State> extends Emitter<State> {
+  final Emitter<State> source;
+  final Function(State) callback;
+
+  _MockedEmitter(this.source, this.callback);
+
+  @override
+  void call(State state) {
+    try {
+      callback.call(state);
+    } catch(e, stacktrace) {
+      logError("call returns error", e, stacktrace);
+    }
+    source.call(state);
+  }
+
+  @override
+  Future<void> forEach<T>(Stream<T> stream,
+      {required State Function(T data) onData,
+      State Function(Object error, StackTrace stackTrace)? onError}) {
+    return source.forEach(stream, onData: onData, onError: onError);
+  }
+
+  @override
+  bool get isDone => source.isDone;
+
+  @override
+  Future<void> onEach<T>(Stream<T> stream,
+      {required void Function(T data) onData,
+      void Function(Object error, StackTrace stackTrace)? onError}) {
+    return source.onEach(stream, onData: onData, onError: onError);
+  }
+}
+
 extension StreamUtils<S> on AplBloc<S> {
   void bind2<T1, T2>(Stream<T1> stream1, Stream<T2> stream2,
       FutureOr<S> Function(S, T1, T2) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2]),
-            (state, List<dynamic> values) =>
+        (state, List<dynamic> values) =>
             stateProvider.call(state, values[0] as T1, values[1] as T2));
   }
 
@@ -113,7 +151,7 @@ extension StreamUtils<S> on AplBloc<S> {
       Stream<T3> stream3, FutureOr<S> Function(S, T1, T2, T3) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3]),
-            (state, List<dynamic> values) => stateProvider.call(
+        (state, List<dynamic> values) => stateProvider.call(
             state, values[0] as T1, values[1] as T2, values[2] as T3));
   }
 
@@ -125,7 +163,7 @@ extension StreamUtils<S> on AplBloc<S> {
       FutureOr<S> Function(S, T1, T2, T3, T4) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3, stream4]),
-            (state, List<dynamic> values) => stateProvider.call(
+        (state, List<dynamic> values) => stateProvider.call(
             state,
             values[0] as T1,
             values[1] as T2,
@@ -142,7 +180,7 @@ extension StreamUtils<S> on AplBloc<S> {
       FutureOr<S> Function(S, T1, T2, T3, T4, T5) stateProvider) {
     return bind(
         CombineLatestStream.list([stream1, stream2, stream3, stream4, stream5]),
-            (state, List<dynamic> values) => stateProvider.call(
+        (state, List<dynamic> values) => stateProvider.call(
             state,
             values[0] as T1,
             values[1] as T2,

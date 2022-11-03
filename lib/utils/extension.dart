@@ -12,17 +12,16 @@ extension ObjectExt<T> on T {
 class LogInfo {
   final Object holder;
   final String methodName;
-  final List<Object> params;
+  final List<dynamic> params;
 
-  LogInfo(this.holder, this.methodName, [this.params = const []]);
+  LogInfo(this.holder, this.methodName, this.params);
 }
 
 Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
     {LogInfo? info, Function(dynamic)? onError}) async {
   try {
-    info?.let((val) => val.holder.logMethod(val.methodName, params: val.params));
     final result = await function.call();
-    info?.let((val) => result?.logResult(val.holder, val.methodName));
+    info?.let((val) => val.holder.logMethodResult(val.methodName, val.params, result));
     return Result.value(result);
   } catch (e, stacktrace) {
     info?.let((val) =>  val.holder.logError(val.methodName, e, stacktrace));
@@ -36,8 +35,8 @@ Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
 }
 
 extension LoggableSevice on Object {
-  Future<Result<T>> call<T>(String methodName, FutureOr<T> Function() function,{Function(dynamic)? onError}) {
-    return safeCall(function, info: LogInfo(this, methodName), onError: onError);
+  Future<Result<T>> call<T>(String methodName, List<dynamic> params, FutureOr<T> Function() function,{Function(dynamic)? onError}) {
+    return safeCall(function, info: LogInfo(this, methodName, params), onError: onError);
   }
 }
 
