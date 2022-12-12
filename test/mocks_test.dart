@@ -5,7 +5,7 @@ void main() {
 
   test("test mock nullable primitive", () {
     final factory = MocksFactory();
-    final values = factory.listAllVariantsOf(String);
+    final values = factory.listFastVariants(String);
     print(values);
   });
 
@@ -96,14 +96,14 @@ void main() {
 
   test("test undefined class", () {
     final factory = MocksFactory();
-    expect(() => factory.listAllVariantsOf(_SimpleClassWithTwoNullableFields),
+    expect(() => factory.listFastVariants(_SimpleClassWithTwoNullableFields),
         throwsA(isA<String>()));
   });
 
   test("test generate class without param", () {
     final factory = MocksFactory()
         ..addGenerator((mocker) => DateTime.now());
-    final values = factory.listAllVariantsOf(DateTime);
+    final values = factory.listFastVariants(DateTime);
     print(values);
   });
 
@@ -111,7 +111,7 @@ void main() {
     final factory = MocksFactory()
       ..addGenerator(
               (mocker) => _SimpleClassWithNullableField(mocker.nullable()));
-    final values = factory.listAllVariantsOf(_SimpleClassWithNullableField);
+    final values = factory.listFastVariants(_SimpleClassWithNullableField);
     print(values);
   });
 
@@ -119,7 +119,7 @@ void main() {
     final factory = MocksFactory()
       ..addGenerator(
               (mocker) => _SimpleClassWithNotNullField(mocker.notNull()));
-     final values = factory.listAllVariantsOf(_SimpleClassWithNotNullField);
+     final values = factory.listFastVariants(_SimpleClassWithNotNullField);
     // print(values);
   });
 }

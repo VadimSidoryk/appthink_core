@@ -257,26 +257,11 @@ class MocksFactory {
     int: [
       null,
       -123123123123,
-      -2455,
-      -1233,
-      -123,
-      -12,
+      -12330,
       -3,
       0,
-      1,
-      2,
-      3,
-      4,
       5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      14,
-      56,
       120,
-      2000,
       12000,
       123144312323
     ],
@@ -284,23 +269,12 @@ class MocksFactory {
       null,
       -double.maxFinite,
       -123123.321,
-      -123.2,
-      -40,
-      2,
-      -10,
+      -2000,
+      -0.00001,
       0.0,
+      0.00001,
+      2000,
       double.maxFinite,
-      0.001,
-      0.1,
-      1,
-      1.5,
-      2,
-      2.5,
-      3,
-      3.5,
-      15.5,
-      200.42,
-      2345.2433,
       double.infinity
     ],
     String: [
@@ -344,7 +318,7 @@ class MocksFactory {
     _generators[T] = mocker;
   }
 
-  List<T?> listAllVariantsOf<T>(Type type) {
+  List<T?> listFastVariants<T>(Type type) {
     if (_valuesSet.containsKey(type)) {
       return _valuesSet[type]!.map((item) => item as T?).toList();
     } else if (_generators.containsKey(type)) {
@@ -397,7 +371,7 @@ class MocksFactory {
   @visibleForTesting
   List<T?> getValuesRangeForField<T>(FieldType fieldType) {
     if (fieldType is ListType) {
-      final range = listAllVariantsOf(fieldType.itemType);
+      final range = listFastVariants(fieldType.itemType);
       return <T?>[
         null,
         [] as T,
@@ -406,7 +380,7 @@ class MocksFactory {
         range as T
       ];
     } else if (fieldType is SetType) {
-      final range = listAllVariantsOf(fieldType.itemType);
+      final range = listFastVariants(fieldType.itemType);
       final Set setWithNull = Set()..add(null);
       final Set setWithOne = Set()..add(range[1]);
       return <T?>[
@@ -417,8 +391,8 @@ class MocksFactory {
         range.toSet() as T
       ];
     } else if (fieldType is MapType) {
-      final keyRange = listAllVariantsOf(fieldType.keyType);
-      final valueRange = listAllVariantsOf(fieldType.valueType);
+      final keyRange = listFastVariants(fieldType.keyType);
+      final valueRange = listFastVariants(fieldType.valueType);
 
       final List<MapEntry> entries = keyRange
           .map((key) => valueRange.map((value) => MapEntry(key, value)))
@@ -433,7 +407,7 @@ class MocksFactory {
         Map.fromEntries(entries) as T
       ];
     } else {
-      return listAllVariantsOf<T>((fieldType as ObjectType).type);
+      return listFastVariants<T>((fieldType as ObjectType).type);
     }
   }
 }
