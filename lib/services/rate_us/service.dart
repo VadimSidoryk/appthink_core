@@ -63,7 +63,7 @@ class RateUsService  {
         // Triggered when the user updates the star rating.
         return [
           // Return a list of actions (that will be shown at the bottom of the dialog).
-          FlatButton(
+          TextButton(
             child: Text('OK'),
             onPressed: () async {
               print('Thanks for the ' +
