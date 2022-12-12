@@ -118,50 +118,6 @@ abstract class MockGenerator {
   Map<K, V> notNullMap<K, V>({bool Function(Map<dynamic, dynamic>?)? rule});
 }
 
-class EmptyMockGenerator extends MockGenerator {
-  EmptyMockGenerator._();
-
-  @override
-  T notNull<T>({bool Function(T p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  T? nullable<T>({bool Function(T? p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<T> notNullList<T>({bool Function(List p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  List<T?>? nullableList<T>({bool Function(List? p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Map<K, V> notNullMap<K, V>({bool Function(Map? p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Set<T> notNullSet<T>({bool Function(Set? p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Map<K, V>? nullableMap<K, V>({bool Function(Map? p1)? rule}) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Set<T>? nullableSet<T>({bool Function(Set? p1)? rule}) {
-    throw UnimplementedError();
-  }
-}
-
 class MockGeneratorImpl extends MockGenerator {
   final _ValueProvider valueProvider;
   final Function(FieldToGenerate)? onParam;
@@ -342,9 +298,7 @@ class MocksFactory {
           }
         }
       } else {
-        final generator = _generators[type]!;
-        final value = generator.call(EmptyMockGenerator._());
-        result.add(value);
+        throw "IllegalState, fieldsToGenerate is empty";
       }
       _valuesSet[type] = result;
       return List.from(result.map((item) => item as T?));
