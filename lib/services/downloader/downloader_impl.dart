@@ -40,21 +40,21 @@ class DownloaderServiceImpl extends DownloaderService {
       });
 
   @override
-  Stream<bool> observeIsLoaded(String url) {
+  Stream<DownloadStatus> observeIsLoaded(String url) {
     if (_urlToStatus.containsKey(url)) {
       return _urlToStatus[url]!
-          .map((event) => event == DownloadTaskStatus.complete);
+          .map(_mapInternalStatus);
     } else {
       _urlToStatus[url] = BehaviorSubject<DownloadTaskStatus>();
       return _urlToStatus[url]!
-          .map((event) => event == DownloadTaskStatus.complete);
+          .map(_mapInternalStatus);
     }
   }
 
   @override
   Future<Result<File>> open(String url) => safeCall(() async {
         if (!_urlToStatus.containsKey(url)) {
-          await load(url);
+          await download(url);
         }
 
         await _urlToStatus[url]!
@@ -63,7 +63,7 @@ class DownloaderServiceImpl extends DownloaderService {
       });
 
   @override
-  Future<Result<void>> load(String url) => safeCall(() async {
+  Future<Result<void>> download(String url) => safeCall(() async {
         final taskId = await FlutterDownloader.enqueue(
           url: url,
           headers: {},
@@ -80,6 +80,15 @@ class DownloaderServiceImpl extends DownloaderService {
         }
       });
 
+  DownloadStatus _mapInternalStatus(DownloadTaskStatus status) {
+    if(status == DownloadTaskStatus.complete) {
+      return DownloadStatus.success;
+    } else if(status == DownloadTaskStatus.failed || status == DownloadTaskStatus.canceled) {
+      return DownloadStatus.failed;
+    } else {
+      return DownloadStatus.running;
+    }
+  }
   _addTask(String taskId, String url, DownloadTaskStatus status) {
     if (!_taskIdToUrl.containsKey(taskId)) {
       _taskIdToUrl[taskId] = url;
