@@ -1,0 +1,60 @@
+import 'dart:io';
+
+import 'package:applithium_core/services/downloader/abs.dart';
+import 'package:applithium_core/utils/extension.dart';
+import 'package:async/src/result/result.dart';
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/rxdart.dart';
+
+class TestDownloaderService extends DownloaderService {
+  final _httpClient = new HttpClient();
+  final Map<String, BehaviorSubject<DownloadStatus>> _urlToStatus = {};
+
+  @override
+  Future<Result<void>> download(String url) => safeCall(() async {
+        if (_urlToStatus.containsKey(url)) {
+          return;
+        }
+
+        _urlToStatus[url] = BehaviorSubject.seeded(DownloadStatus.running);
+        var request = await _httpClient.getUrl(Uri.parse(url));
+        var response = await request.close();
+        var bytes = await consolidateHttpClientResponseBytes(response);
+        final path = await _getFilePath(url);
+        File file = new File(path);
+        await file.writeAsBytes(bytes);
+      });
+
+  @override
+  Stream<DownloadStatus> observeIsLoaded(String url) async* {
+    final path = await _getFilePath(url);
+    final isExist = await File(path).exists();
+    if (isExist) {
+      yield DownloadStatus.success;
+    } else if (_urlToStatus.containsKey(url)) {
+      yield* _urlToStatus[url]!;
+    } else {
+      yield DownloadStatus.failed;
+    }
+  }
+
+  @override
+  Future<Result<File>> open(String url) => safeCall(() async {
+        if (_urlToStatus.containsKey(url)) {
+          await _urlToStatus[url]!
+              .firstWhere((element) => element == DownloadStatus.success);
+        } else {
+          await download(url);
+        }
+        final filePath = await _getFilePath(url);
+        return File(filePath);
+      });
+
+  Future<String> _getFilePath(String url) async {
+    final uri = Uri.parse(url);
+    final fileName = uri.path.split("/").last;
+    String dir = (await getTemporaryDirectory()).path;
+    return '$dir/$fileName';
+  }
+}
