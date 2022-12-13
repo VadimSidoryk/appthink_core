@@ -58,7 +58,7 @@ class TestDownloaderService extends DownloaderService {
 
   Future<String> _getFilePath(String url) async {
     final uri = Uri.parse(url);
-    final fileName = uri.path.split("/").last;
+    final fileName = uri.path.split("/").last.replaceAll("%2F", "_");
     String dir = (await getTemporaryDirectory()).path;
     return '$dir/$fileName';
   }
