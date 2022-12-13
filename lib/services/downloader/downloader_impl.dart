@@ -67,10 +67,8 @@ class DownloaderServiceImpl extends DownloaderService {
         final taskId = await FlutterDownloader.enqueue(
           url: url,
           headers: {},
-          // optional: header send with url (auth token etc)
           savedDir: _nameFolder,
           showNotification: false,
-          // show download progress in status bar (for Android)
           openFileFromNotification:
               false, // click on notification to open downloaded file (for Android)
         );
@@ -89,6 +87,7 @@ class DownloaderServiceImpl extends DownloaderService {
       return DownloadStatus.running;
     }
   }
+
   _addTask(String taskId, String url, DownloadTaskStatus status) {
     if (!_taskIdToUrl.containsKey(taskId)) {
       _taskIdToUrl[taskId] = url;

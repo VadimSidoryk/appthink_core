@@ -5,7 +5,15 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 
-extension ObjectExt<T> on T {
+extension ObjectExt on dynamic {
+  void as<R>(Function(R that) op) {
+    if(this is R) {
+      op(this as R);
+    }
+  }
+}
+
+extension TypeExt<T> on T {
   R let<R>(R Function(T that) op) => op(this);
 }
 
