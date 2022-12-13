@@ -11,7 +11,7 @@ enum DownloadStatus {
 
 abstract class DownloaderService {
 
-    static DownloaderService _mocked = _MockedDownloaderService();
+    static DownloaderService mocked = _MockedDownloaderService();
 
     Stream<DownloadStatus> observeIsLoaded(String url);
 
