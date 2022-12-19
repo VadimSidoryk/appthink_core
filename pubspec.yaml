@@ -1,6 +1,6 @@
 name: applithium_core
 description: Applithium architecture core plugin
-version: 0.1.57
+version: 0.1.58
 
 environment:
   sdk: ">=2.18.0 <3.0.0"
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
 
   fluttertoast: ^8.0.8
-  flutter_local_notifications: ^9.2.0
+  flutter_local_notifications: ^13.0.0
   flutter_bloc: ^8.0.1
   rxdart: ^0.27.1
   async: ^2.6.1

@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 typedef TokenListener = Future<void> Function(String?);
 
 class FirebaseMessagingImpl extends Messaging {
+
   final String serverKey;
   final String vapidKey;
   final TokenListener onNewToken;
