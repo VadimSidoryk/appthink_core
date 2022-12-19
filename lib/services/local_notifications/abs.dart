@@ -5,6 +5,8 @@ abstract class LocalNotificationService {
   static final LocalNotificationService mock =
       _MockedLocalNotificationService();
 
+  Future<Result<String?>> getInitialLink();
+
   Future<Result<void>> show(
       {required int id,
       String? title,
@@ -28,4 +30,7 @@ class _MockedLocalNotificationService extends LocalNotificationService {
           bool badge = true,
           bool sound = true}) =>
       safeCall(() {});
+
+  @override
+  Future<Result<String?>> getInitialLink() => safeCall(() => null);
 }

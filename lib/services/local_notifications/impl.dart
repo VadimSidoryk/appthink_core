@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/utils/extension.dart';
 import 'package:async/async.dart';
@@ -11,6 +13,8 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
   final LocalNotificationConfig config;
   late FlutterLocalNotificationsPlugin plugin;
   final Function(String?)? onNotificationClick;
+
+  final _initCompleter = Completer<void>();
 
   LocalNotificationServiceImpl(
       {required this.config, this.onNotificationClick}) {
@@ -39,12 +43,13 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
     );
 
     await _initPlugin();
-    log("injectToApp");
-    final payload = await _getInitialPayload(_plugin);
-    if (payload != null) {
-      onNotificationClick?.call(payload);
-    }
+    _initCompleter.complete(null);
   }
+
+  Future<Result<String?>> getInitialLink() => safeCall(() async {
+        await _initCompleter.future;
+        return _getInitialPayload(_plugin);
+      });
 
   Future<void> _initPlugin() async {
     tz.initializeTimeZones();
