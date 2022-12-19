@@ -13,7 +13,7 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
   late FlutterLocalNotificationsPlugin plugin;
   final Function(String?)? onNotificationClick;
 
-  LocalNotificationServiceImpl(AplConfig config, {this.onNotificationClick}) {
+  LocalNotificationServiceImpl({AplConfig? config, this.onNotificationClick}) {
     _init(config);
   }
 
