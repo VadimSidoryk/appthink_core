@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:applithium_core/services/local_notifications/abs.dart';
 import 'package:async/async.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/services/messaging/messaging.dart';
@@ -13,27 +14,26 @@ import 'package:http/http.dart' as http;
 typedef TokenListener = Future<void> Function(String?);
 
 class FirebaseMessagingImpl extends Messaging {
-
   final String serverKey;
   final String vapidKey;
   final TokenListener onNewToken;
 
   FirebaseMessagingImpl(this.serverKey, this.vapidKey,
       {required MessageClickListener onMessageClick,
+      required LocalNotificationService service,
       required this.onNewToken,
       MessagingOptions options = const MessagingOptions()})
-      : super(onMessageClick: onMessageClick, options: options);
+      : super(service, onMessageClick: onMessageClick, options: options) {
+    _init();
+  }
 
-  @override
-  Future<void> init() async {
+  Future<void> _init() async {
     final methodName = "init";
     try {
-      final token = await FirebaseMessaging.instance.getToken(
-          vapidKey: vapidKey);
+      final token =
+          await FirebaseMessaging.instance.getToken(vapidKey: vapidKey);
       log("onNewToken $token");
       await onNewToken.call(token);
-      log("onNewToken called");
-      await super.init();
 
       log("checkPermissions");
       _checkPermissions();
@@ -55,8 +55,7 @@ class FirebaseMessagingImpl extends Messaging {
       log("setup onMessage listener");
 
       FirebaseMessaging.onMessage.listen((remoteMessage) {
-        log("Foreground callback called remoteMessage = ${jsonEncode(
-            remoteMessage.data)}");
+        log("Foreground callback called remoteMessage = ${jsonEncode(remoteMessage.data)}");
         displayMessage(
             id: remoteMessage.hashCode,
             title: "foreground title",
@@ -74,7 +73,7 @@ class FirebaseMessagingImpl extends Messaging {
         log("onNewToken $token");
         onNewToken.call(token);
       });
-    } catch(e, stacktrace) {
+    } catch (e, stacktrace) {
       logError(methodName, e, stacktrace);
     }
   }
@@ -91,7 +90,7 @@ class FirebaseMessagingImpl extends Messaging {
           id: message.hashCode,
           title: "background title",
           body: "background body");
-    } catch(e, stacktrace) {
+    } catch (e, stacktrace) {
       logError(methodName, e, stacktrace);
     }
   }
