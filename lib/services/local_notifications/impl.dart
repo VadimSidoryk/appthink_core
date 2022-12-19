@@ -101,6 +101,7 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
               tz.local, when.millisecondsSinceEpoch);
           _plugin.zonedSchedule(
               id, title, body, scheduledDate, notificationDetails,
+              payload: deeplink,
               uiLocalNotificationDateInterpretation:
                   UILocalNotificationDateInterpretation.absoluteTime,
               androidAllowWhileIdle: true);
