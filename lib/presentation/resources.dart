@@ -2,7 +2,7 @@ import 'package:applithium_core/utils/extension.dart';
 import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 
-typedef Loader = Function(String);
+typedef Loader = Future<void> Function(String);
 
 abstract class LoadableType {
   Loader get loader;
@@ -21,10 +21,12 @@ class WidgetResources {
   }
 
   @protected
-  Future<Result<void>> preload() => safeCall(() {
-    assetsMap.entries.forEach((element) {
+  Future<Result<List<void>>> preload() => safeCall(() {
+    final futures = assetsMap.entries.map((element) {
       final loader = element.value.loader;
-      loader.call(element.key);
+      return loader.call(element.key);
     });
+
+    return Future.wait(futures);
   });
 }
