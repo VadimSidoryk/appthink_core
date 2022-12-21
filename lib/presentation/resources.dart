@@ -5,16 +5,10 @@ import 'package:flutter/cupertino.dart';
 typedef Loader = Function(String);
 
 abstract class LoadableType {
+  Loader get loader;
 }
 
 class WidgetResources {
-  static final loadersMap = <LoadableType, Loader>{};
-
-  static void setLoader(LoadableType key, Loader loader) {
-    loadersMap[key] = loader;
-  }
-
-
   final BuildContext context;
   final assetsMap = <String, LoadableType>{};
 
@@ -29,9 +23,8 @@ class WidgetResources {
   @protected
   Future<Result<void>> preload() => safeCall(() {
     assetsMap.entries.forEach((element) {
-      final Loader? loader = loadersMap[element.value];
-      loader?.call(element.key);
+      final loader = element.value.loader;
+      loader.call(element.key);
     });
   });
-
 }
