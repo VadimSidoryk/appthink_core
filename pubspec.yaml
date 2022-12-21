@@ -1,6 +1,6 @@
 name: applithium_core
 description: Applithium architecture core plugin
-version: 0.1.62
+version: 0.1.63
 
 environment:
   sdk: ">=2.18.0 <3.0.0"
