@@ -7,7 +7,7 @@ import 'package:rxdart/rxdart.dart';
 
 extension ObjectExt on dynamic {
   void as<R>(Function(R that) op) {
-    if(this is R) {
+    if (this is R) {
       op(this as R);
     }
   }
@@ -29,13 +29,14 @@ Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
     {LogInfo? info, Function(dynamic)? onError}) async {
   try {
     final result = await function.call();
-    info?.let((val) => val.holder.logMethodResult(val.methodName, val.params, result));
+    info?.let((val) =>
+        val.holder.logMethodResult(val.methodName, val.params, result));
     return Result.value(result);
   } catch (e, stacktrace) {
-    info?.let((val) =>  val.holder.logError(val.methodName, e, stacktrace));
+    info?.let((val) => val.holder.logError(val.methodName, e, stacktrace));
     try {
       onError?.call(e);
-    } catch(e) {
+    } catch (e) {
       info?.let((val) => val.holder.logError(val.methodName, e, stacktrace));
     }
     return Result.error(e);
@@ -43,8 +44,11 @@ Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
 }
 
 extension LoggableSevice on Object {
-  Future<Result<T>> call<T>(String methodName, List<dynamic> params, FutureOr<T> Function() function,{Function(dynamic)? onError}) {
-    return safeCall(function, info: LogInfo(this, methodName, params), onError: onError);
+  Future<Result<T>> call<T>(
+      String methodName, List<dynamic> params, FutureOr<T> Function() function,
+      {Function(dynamic)? onError}) {
+    return safeCall(function,
+        info: LogInfo(this, methodName, params), onError: onError);
   }
 }
 
@@ -54,7 +58,7 @@ extension UpdatableValue<T> on BehaviorSubject<T> {
     try {
       final newValue = updater.call(value);
       add(newValue);
-    } catch(e) {
+    } catch (e) {
       logError("update", e);
     }
   }
@@ -64,11 +68,21 @@ extension UpdatablePresentation<T> on Stream<T> {
   Widget view(Widget Function(T) provider,
       {WidgetBuilder? loadingBuilder,
       Widget Function(BuildContext, dynamic)? errorBuilder}) {
+
+    final initialData;
+    if (this is ValueStream<T> && (this as ValueStream<T>).hasValue) {
+      final valueStream = this as ValueStream<T>;
+      initialData =
+          _ValueFromStream(valueStream.valueOrNull, _StreamState.ACTIVE);
+    } else {
+      initialData = _ValueFromStream(null, _StreamState.EMPTY);
+    }
+
     return StreamBuilder<_ValueFromStream<T>>(
       stream: this
           .distinct()
           .map((it) => _ValueFromStream(it, _StreamState.ACTIVE)),
-      initialData: _ValueFromStream(null, _StreamState.EMPTY),
+      initialData: initialData,
       builder: (context, snapshot) {
         if (snapshot.hasError || snapshot.data == null) {
           logError(snapshot.error?.toString() ?? "Unknown error");
@@ -100,7 +114,7 @@ extension UpdatablePresentation<T> on Stream<T> {
 
 extension ResultChecker<T> on Result<T> {
   T get valueOrError {
-    if(isError) {
+    if (isError) {
       throw asError!.error;
     } else {
       return asValue!.value;
