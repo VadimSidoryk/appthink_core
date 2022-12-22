@@ -69,7 +69,7 @@ extension UpdatablePresentation<T> on Stream<T> {
       {WidgetBuilder? loadingBuilder,
       Widget Function(BuildContext, dynamic)? errorBuilder}) {
 
-    final initialData;
+    final _ValueFromStream<T> initialData;
     if (this is ValueStream<T> && (this as ValueStream<T>).hasValue) {
       final valueStream = this as ValueStream<T>;
       initialData =
