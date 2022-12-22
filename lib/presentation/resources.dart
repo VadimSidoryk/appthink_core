@@ -1,18 +1,31 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 
 typedef Loader<P, T> = Future<T> Function(P);
 
-abstract class LoadableType<P, T> {
-  Loader<P, T> get loader;
-}
-
-class WidgetResources {
+abstract class WidgetResources {
   final BuildContext context;
+
+  List<Completer> get completerList;
 
   WidgetResources(this.context);
 
   @protected
-  Future<T> loadable<P, T>(LoadableType<P, T> type, P params) {
-    return type.loader.call(params);
+  static Completer<T> loadable<P, T>(Loader<P, T> loader, P params) {
+    final result = Completer<T>();
+    loader.call(params).then((value) {
+      result.complete(value);
+    });
+
+    return result;
+  }
+
+  Future<void> waitForReady() {
+    return Future.wait(completerList.map((e) => e.future));
   }
 }
+
+
+
+
