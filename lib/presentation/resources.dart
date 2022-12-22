@@ -11,7 +11,6 @@ abstract class WidgetResources {
 
   WidgetResources(this.context);
 
-  @protected
   static Completer<T> loadable<P, T>(Loader<P, T> loader, P params) {
     final result = Completer<T>();
     loader.call(params).then((value) {
