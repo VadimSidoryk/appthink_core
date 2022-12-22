@@ -1,27 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:rxdart/rxdart.dart';
 
 typedef Loader<P, T> = Future<T> Function(P);
 
 abstract class WidgetResources {
   final BuildContext context;
 
-  List<Completer> get completerList;
+  List<Subject> get subjects;
 
   WidgetResources(this.context);
 
-  static Completer<T> loadable<P, T>(Loader<P, T> loader, P params) {
-    final result = Completer<T>();
+  static BehaviorSubject<T> loadable<P, T>(Loader<P, T> loader, P params) {
+    final result = BehaviorSubject<T>();
     loader.call(params).then((value) {
-      result.complete(value);
+      result.add(value);
     });
 
     return result;
   }
 
   Future<void> waitForReady() {
-    return Future.wait(completerList.map((e) => e.future));
+    return Future.wait(subjects.map((e) => e.first));
   }
 }
 
