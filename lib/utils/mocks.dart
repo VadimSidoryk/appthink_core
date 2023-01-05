@@ -163,7 +163,7 @@ class MockGeneratorImpl extends MockGenerator {
       return (valueProvider.getValueFor(fieldToGenerate) as List<dynamic>?)
           ?.map((it) => it as T?)
           .toList();
-    } catch(e) {
+    } catch (e) {
       throw e;
     }
   }
@@ -202,7 +202,8 @@ class MockGeneratorImpl extends MockGenerator {
         rule:
             rule != null ? ((value) => rule.call(value as Map<K, V>?)) : null);
     onParam?.call(fieldToGenerate);
-    return (valueProvider.getValueFor(fieldToGenerate) as Map<dynamic, dynamic>?)
+    return (valueProvider.getValueFor(fieldToGenerate)
+            as Map<dynamic, dynamic>?)
         ?.map((key, value) => MapEntry(key as K, value as V));
   }
 }
@@ -210,17 +211,7 @@ class MockGeneratorImpl extends MockGenerator {
 class MocksFactory {
   final Map<Type, List<dynamic>> _valuesSet = {
     bool: [null, false, true],
-    int: [
-      null,
-      -123123123123,
-      -12330,
-      -3,
-      0,
-      5,
-      120,
-      12000,
-      123144312323
-    ],
+    int: [null, -123123123123, -12330, -3, 0, 5, 120, 12000, 123144312323],
     double: [
       null,
       -double.maxFinite,

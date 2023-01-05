@@ -32,9 +32,9 @@ import 'services/promo/action.dart';
 import 'services/promo/analyst_adapter.dart';
 import 'services/promo/service.dart';
 
-final KEY_EXTERNAL_INITIAL_LINK = "external_initial_link";
+const keyExternalInitialLink = "external_initial_link";
 
-class AplAppState<W extends StatefulWidget> extends State<W> {
+class AplAppState extends StatefulWidget {
   final String title;
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
@@ -44,12 +44,9 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
   final List<RouteDetails> routes;
   @visibleForTesting
   final NavigatorObserver? navObserver;
-  final Future<String?> Function() _initialLinkProvider;
   final Widget Function(BuildContext, Widget)? wrapper;
   final Locale? locale;
   final ThemeData? theme;
-
-  final _debugTree = DebugTree();
 
   AplAppState(
       {String? title,
@@ -69,7 +66,6 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
       : this.title = title ?? "Sample Application",
         _splashRouteBuilder = splashRouteBuilder ??
             ((WidgetBuilder builder) => MaterialPageRoute(builder: builder)),
-        _initialLinkProvider = initialLinkProvider ?? getInitialLink,
         _storeBuilder = (() async => _buildStoreWithConfigProvider(modules)),
         _setupFlow = ((Store store, AplConfig config) async {
           await _injectDependenciesInStore(
@@ -83,68 +79,7 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
         });
 
   @override
-  initState() {
-    Fimber.plantTree(_debugTree);
-    log("initState");
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        navigatorObservers: navObserver != null ? [navObserver!] : const [],
-        theme: theme,
-        home: _SplashScreen<_AppInitialData>(
-          builder: splashBuilder,
-          routeBuilder: _splashRouteBuilder,
-          loadingTask: (context) async {
-            final store = await _storeBuilder.call();
-            _plantCustomLogTree(store);
-            final provider = store.getOrNull<ConfigProvider>();
-            final config = provider != null
-                ? (await provider.getApplicationConfig())
-                : defaultConfig;
-            final initialLink = await _getInitialLink(store);
-            log("initial link = $initialLink");
-            final linkFromSplash = await _setupFlow.call(store, config);
-            return _AppInitialData(
-                store, config, initialLink ?? linkFromSplash);
-          },
-          nextScreenBuilder: (context, initialData) => Scope(
-              parentContext: context,
-              store: initialData.store,
-              builder: (context) => _RealApplication(
-                  theme: theme,
-                  locale: locale,
-                  wrapper: wrapper,
-                  initialData: initialData,
-                  routes: routes,
-                  title: title)),
-        ));
-  }
-
-  @override
-  void dispose() {
-    Fimber.clearAll();
-    super.dispose();
-  }
-
-  void _plantCustomLogTree(Store store) {
-    final customTree = store.getOrNull<LogTree>();
-    if (customTree != null) {
-      Fimber.plantTree(customTree);
-    }
-  }
-
-  Future<String?> _getInitialLink(Store store) async {
-    String? deepLink;
-    deepLink = await getInitialLink();
-    if (deepLink != null) {
-      return deepLink;
-    } else {
-      return store.getOrNull<String?>(key: KEY_EXTERNAL_INITIAL_LINK);
-    }
-  }
+  State<AplAppState> createState() => _AplAppStateState();
 
   static Future<Store> _buildStoreWithConfigProvider(
       Set<AplModule> modules) async {
@@ -180,6 +115,75 @@ class AplAppState<W extends StatefulWidget> extends State<W> {
 
     for (final module in modules) {
       await module.injectDependencies(store, config);
+    }
+  }
+}
+
+class _AplAppStateState extends State<AplAppState> {
+  final _debugTree = DebugTree();
+
+  @override
+  initState() {
+    Fimber.plantTree(_debugTree);
+    log("initState");
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        navigatorObservers:
+            widget.navObserver != null ? [widget.navObserver!] : const [],
+        theme: widget.theme,
+        home: _SplashScreen<_AppInitialData>(
+          builder: widget.splashBuilder,
+          routeBuilder: widget._splashRouteBuilder,
+          loadingTask: (context) async {
+            final store = await widget._storeBuilder.call();
+            _plantCustomLogTree(store);
+            final provider = store.getOrNull<ConfigProvider>();
+            final config = provider != null
+                ? (await provider.getApplicationConfig())
+                : widget.defaultConfig;
+            final initialLink = await _getInitialLink(store);
+            log("initial link = $initialLink");
+            final linkFromSplash = await widget._setupFlow.call(store, config);
+            return _AppInitialData(
+                store, config, initialLink ?? linkFromSplash);
+          },
+          nextScreenBuilder: (context, initialData) => Scope(
+              parentContext: context,
+              store: initialData.store,
+              builder: (context) => _RealApplication(
+                  theme: widget.theme,
+                  locale: widget.locale,
+                  wrapper: widget.wrapper,
+                  initialData: initialData,
+                  routes: widget.routes,
+                  title: widget.title)),
+        ));
+  }
+
+  @override
+  void dispose() {
+    Fimber.clearAll();
+    super.dispose();
+  }
+
+  void _plantCustomLogTree(Store store) {
+    final customTree = store.getOrNull<LogTree>();
+    if (customTree != null) {
+      Fimber.plantTree(customTree);
+    }
+  }
+
+  Future<String?> _getInitialLink(Store store) async {
+    String? deepLink;
+    deepLink = await getInitialLink();
+    if (deepLink != null) {
+      return deepLink;
+    } else {
+      return store.getOrNull<String?>(key: keyExternalInitialLink);
     }
   }
 }
