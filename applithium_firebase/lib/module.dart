@@ -1,3 +1,4 @@
+import 'package:applithium_core/application.dart';
 import 'package:applithium_core/config/model.dart';
 import 'package:applithium_core/config/provider.dart';
 import 'package:applithium_core/module.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/foundation.dart';
 import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/utils/extension.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:applithium_core/app_state_base.dart';
 
 import 'analyst.dart';
 import 'config.dart';
@@ -59,7 +59,7 @@ class FirebaseModule extends AplModule {
   _setupInitialMessage(Store store) async {
     final initialFirebaseMessage = await FirebaseMessaging.instance.getInitialMessage();
     final String? initialFirebaseLink = initialFirebaseMessage?.data["url"];
-    store.add<String?>((p0) => initialFirebaseLink, key: KEY_EXTERNAL_INITIAL_LINK);
+    store.add<String?>((p0) => initialFirebaseLink, key: keyExternalInitialLink);
   }
 
   @override
