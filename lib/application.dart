@@ -34,7 +34,7 @@ import 'services/promo/service.dart';
 
 const keyExternalInitialLink = "external_initial_link";
 
-class AplAppState extends StatefulWidget {
+class AplApplication extends StatefulWidget {
   final String title;
   final AplConfig defaultConfig;
   final WidgetBuilder splashBuilder;
@@ -48,7 +48,7 @@ class AplAppState extends StatefulWidget {
   final Locale? locale;
   final ThemeData? theme;
 
-  AplAppState(
+  AplApplication(
       {String? title,
       @visibleForTesting this.navObserver,
       this.wrapper,
@@ -79,7 +79,7 @@ class AplAppState extends StatefulWidget {
         });
 
   @override
-  State<AplAppState> createState() => _AplAppStateState();
+  State<AplApplication> createState() => _AplApplicationState();
 
   static Future<Store> _buildStoreWithConfigProvider(
       Set<AplModule> modules) async {
@@ -119,7 +119,7 @@ class AplAppState extends StatefulWidget {
   }
 }
 
-class _AplAppStateState extends State<AplAppState> {
+class _AplApplicationState extends State<AplApplication> {
   final _debugTree = DebugTree();
 
   @override
