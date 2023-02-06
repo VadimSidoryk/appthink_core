@@ -33,7 +33,7 @@ E extends WidgetEvents, S> extends AplScreenState<W>
 
   @override
   void onEvent(E event) {
-    if(!mounted) {
+    if (!mounted) {
       return;
     }
 
@@ -59,7 +59,12 @@ E extends WidgetEvents, S> extends AplScreenState<W>
   }
 
   @protected
-  Stream<T> stateStream<T>() {
+  Stream<S> stateStream() {
+    return _bloc!.stream;
+  }
+
+  @protected
+  Stream<T> subStateStream<T extends S>() {
     return _bloc!.stream.where((it) => it is T).map((it) => it as T);
   }
 }
