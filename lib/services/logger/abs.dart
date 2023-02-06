@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 abstract class Logger {
 
   const Logger();
@@ -6,11 +8,12 @@ abstract class Logger {
 
   void e(String tag, String message, [dynamic ex, StackTrace? stacktrace]);
 
-  StackTrace removeLast(StackTrace trace, int count) {
-    final stackTraceParts = trace.toString().split(RegExp("#d"));
+  @protected
+  static StackTrace removeLogs(StackTrace original, int count) {
+    final stackTraceParts = original.toString().split(RegExp(r'#[0-9]+'));
     final sb = StringBuffer();
-    for(int i = count; i < stackTraceParts.length; i++) {
-      sb.write(stackTraceParts[i]);
+    for(int i = count + 1; i < stackTraceParts.length; i++) {
+      sb.write("#${i - (count + 1)}     ${stackTraceParts[i]}");
     }
 
     return StackTrace.fromString(sb.toString());
