@@ -7,7 +7,7 @@ import 'package:applithium_core/logs/extension.dart';
 import 'package:applithium_core/scopes/extensions.dart';
 import 'package:applithium_core/scopes/store.dart';
 import 'package:applithium_core/services/localization/extensions.dart';
-import 'package:fimber/fimber.dart';
+import 'package:applithium_core/services/logger/service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -28,6 +28,7 @@ import 'services/analytics/session_adapter.dart';
 import 'services/history/service.dart';
 import 'services/localization/config.dart';
 import 'services/localization/delegate.dart';
+import 'services/logger/abs.dart';
 import 'services/promo/action.dart';
 import 'services/promo/analyst_adapter.dart';
 import 'services/promo/service.dart';
@@ -42,6 +43,7 @@ class AplApplication extends StatefulWidget {
   final Future<Store> Function() _storeBuilder;
   final Future<String?> Function(Store, AplConfig) _setupFlow;
   final List<RouteDetails> routes;
+  final List<Logger> loggers;
   @visibleForTesting
   final NavigatorObserver? navObserver;
   final Widget Function(BuildContext, Widget)? wrapper;
@@ -61,6 +63,7 @@ class AplApplication extends StatefulWidget {
       required this.routes,
       EventsScheme? eventScheme,
       this.locale,
+      this.loggers = const [],
       Set<AplModule> modules = const {},
       Future<String?> Function(Store, AplConfig)? customSetupFlow})
       : this.title = title ?? "Sample Application",
@@ -120,11 +123,11 @@ class AplApplication extends StatefulWidget {
 }
 
 class _AplApplicationState extends State<AplApplication> {
-  final _debugTree = DebugTree();
+
 
   @override
   initState() {
-    Fimber.plantTree(_debugTree);
+    AplLogger.initWith(widget.loggers);
     log("initState");
     super.initState();
   }
@@ -140,7 +143,6 @@ class _AplApplicationState extends State<AplApplication> {
           routeBuilder: widget._splashRouteBuilder,
           loadingTask: (context) async {
             final store = await widget._storeBuilder.call();
-            _plantCustomLogTree(store);
             final provider = store.getOrNull<ConfigProvider>();
             final config = provider != null
                 ? (await provider.getApplicationConfig())
@@ -162,19 +164,6 @@ class _AplApplicationState extends State<AplApplication> {
                   routes: widget.routes,
                   title: widget.title)),
         ));
-  }
-
-  @override
-  void dispose() {
-    Fimber.clearAll();
-    super.dispose();
-  }
-
-  void _plantCustomLogTree(Store store) {
-    final customTree = store.getOrNull<LogTree>();
-    if (customTree != null) {
-      Fimber.plantTree(customTree);
-    }
   }
 
   Future<String?> _getInitialLink(Store store) async {
