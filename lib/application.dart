@@ -73,7 +73,7 @@ class AplApplication extends StatefulWidget {
         _setupFlow = ((Store store, AplConfig config) async {
           await _injectDependenciesInStore(
               store, config, modules, eventScheme ?? FreezedEventsScheme());
-
+          store.get<UsageHistoryService>().openSession();
           if (customSetupFlow != null) {
             return await customSetupFlow.call(store, config);
           } else {
@@ -249,8 +249,8 @@ class _RealApplicationState extends State<_RealApplication> {
     Scope.of(context)?.store.add((provider) => _router);
     context.get<PromoService>().setActionHandler(_onPromoAction);
     _setupWidgetObservers();
-    _handleIncomingLinks();
-    context.get<UsageHistoryService>().openSession();
+    // _handleIncomingLinks();
+    // context.get<UsageHistoryService>().openSession();
   }
 
   void _onPromoAction(PromoAction action, Object? sender) {
