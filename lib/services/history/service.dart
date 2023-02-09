@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'lifecycle_adapter.dart';
@@ -26,14 +27,17 @@ class UsageHistoryService {
   String get lastSessionYearKey =>
       "$preferencesName.UsageHistoryService.lastSessionYear";
 
-  int _sessionCount = 0;
-  int get sessionCount => _sessionCount;
+  final _sessionCountSubj = BehaviorSubject<int>();
 
-  int _daysFromFirst = 0;
-  int get daysFromFirst => _daysFromFirst;
+  Future<int> get sessionCount => _sessionCountSubj.first;
 
-  int _daysFromLast = 0;
-  int get daysFromLast => _daysFromLast;
+  final _daysFromFirstSubj = BehaviorSubject<int>();
+
+  Future<int> get daysFromFirst => _daysFromFirstSubj.first;
+
+  final _daysFromLast = BehaviorSubject<int>();
+
+  Future<int> get daysFromLast => _daysFromLast.first;
 
   UsageHistoryService(
       {this.preferencesName, required this.preferencesProvider, this.listener});
@@ -47,10 +51,13 @@ class UsageHistoryService {
   }
 
   void openSession() async {
-    _sessionCount = await _getSessionCount();
-    _daysFromFirst = await _daysFromFirstSession();
-    _daysFromLast = await _daysFromLastSession();
-    listener?.onSessionStarted(_sessionCount, _daysFromFirst, _daysFromLast);
+    final sessionCount = await _getSessionCount();
+    _sessionCountSubj.add(sessionCount);
+    final fromFirst = await _daysFromFirstSession();
+    _daysFromFirstSubj.add(fromFirst);
+    final fromLast = await _daysFromLastSession();
+    _daysFromLast.add(fromLast);
+    listener?.onSessionStarted(sessionCount, fromFirst, fromLast);
   }
 
   Future<void> incrementProperty(String name) async {
