@@ -26,6 +26,15 @@ class UsageHistoryService {
   String get lastSessionYearKey =>
       "$preferencesName.UsageHistoryService.lastSessionYear";
 
+  int _sessionCount = 0;
+  int get sessionCount => _sessionCount;
+
+  int _daysFromFirst = 0;
+  int get daysFromFirst => _daysFromFirst;
+
+  int _daysFromLast = 0;
+  int get daysFromLast => _daysFromLast;
+
   UsageHistoryService(
       {this.preferencesName, required this.preferencesProvider, this.listener});
 
@@ -38,10 +47,10 @@ class UsageHistoryService {
   }
 
   void openSession() async {
-    final count = await _getSessionCount();
-    final daysFromFirst = await _daysFromFirstSession();
-    final daysFromLast = await _daysFromLastSession();
-    listener?.onSessionStarted(count, daysFromFirst, daysFromLast);
+    _sessionCount = await _getSessionCount();
+    _daysFromFirst = await _daysFromFirstSession();
+    _daysFromLast = await _daysFromLastSession();
+    listener?.onSessionStarted(_sessionCount, _daysFromFirst, _daysFromLast);
   }
 
   Future<void> incrementProperty(String name) async {
