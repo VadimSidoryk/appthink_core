@@ -19,9 +19,7 @@ class EventBus {
   }
 
   void onNewEvent(AplEvent event) {
-    log("onNewAplEvent: $event");
     final events = scheme.mapEvent(event);
-    log("events data: $events");
     events?.forEach((event) {
       listeners.forEach((impl) {
         impl.onEvent(event);
