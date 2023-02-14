@@ -1,5 +1,5 @@
-name: applithium_core
-description: Applithium architecture core plugin
+name: appthink_core
+description: Appthink architecture core plugin
 version: 0.10.0
 
 environment:
