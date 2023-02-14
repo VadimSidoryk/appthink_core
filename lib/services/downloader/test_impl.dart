@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:applithium_core/services/downloader/abs.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/services/downloader/abs.dart';
+import 'package:appthink_core/utils/extension.dart';
 import 'package:async/src/result/result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';

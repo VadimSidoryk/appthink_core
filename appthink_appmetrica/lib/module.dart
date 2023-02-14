@@ -1,8 +1,8 @@
 import 'package:appmetrica_sdk/appmetrica_sdk.dart';
-import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/module.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/analytics/service.dart';
+import 'package:appthink_core/config/model.dart';
+import 'package:appthink_core/module.dart';
+import 'package:appthink_core/scopes/store.dart';
+import 'package:appthink_core/services/analytics/service.dart';
 
 import 'analyst.dart';
 

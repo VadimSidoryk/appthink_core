@@ -1,5 +1,5 @@
 
-import 'package:applithium_core/config/model.dart';
+import 'package:appthink_core/config/model.dart';
 
 import 'scopes/store.dart';
 

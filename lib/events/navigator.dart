@@ -1,4 +1,4 @@
-import 'package:applithium_core/presentation/events.dart';
+import 'package:appthink_core/presentation/events.dart';
 import 'package:flutter/widgets.dart';
 
 import 'event_bus.dart';

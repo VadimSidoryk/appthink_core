@@ -1,4 +1,4 @@
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/utils/extension.dart';
 import 'package:async/async.dart';
 
 abstract class LocalNotificationService {

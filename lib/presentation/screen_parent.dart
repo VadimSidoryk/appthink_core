@@ -1,8 +1,8 @@
-import 'package:applithium_core/events/event_bus.dart';
-import 'package:applithium_core/events/navigator.dart';
-import 'package:applithium_core/presentation/events.dart';
-import 'package:applithium_core/presentation/screen.dart';
-import 'package:applithium_core/scopes/extensions.dart';
+import 'package:appthink_core/events/event_bus.dart';
+import 'package:appthink_core/events/navigator.dart';
+import 'package:appthink_core/presentation/events.dart';
+import 'package:appthink_core/presentation/screen.dart';
+import 'package:appthink_core/scopes/extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:applithium_core/services/share/config.dart';
-import 'package:applithium_core/services/share/config_remote.dart';
+import 'package:appthink_core/services/share/config.dart';
+import 'package:appthink_core/services/share/config_remote.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

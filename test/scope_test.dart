@@ -1,4 +1,4 @@
-import 'package:applithium_core/scopes/store.dart';
+import 'package:appthink_core/scopes/store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

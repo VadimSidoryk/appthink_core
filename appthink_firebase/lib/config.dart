@@ -1,7 +1,7 @@
-import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/config/provider.dart';
+import 'package:appthink_core/config/model.dart';
+import 'package:appthink_core/config/provider.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
 
 const FIREBASE_CONFIG_RESOURCES_KEY = "utils";
 const FIREBASE_CONFIG_EVENTS_KEY = "event_handlers";

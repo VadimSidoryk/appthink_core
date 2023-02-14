@@ -1,6 +1,6 @@
 
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core_example/main.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core_example/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

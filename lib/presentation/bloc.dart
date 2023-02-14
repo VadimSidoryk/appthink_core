@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';

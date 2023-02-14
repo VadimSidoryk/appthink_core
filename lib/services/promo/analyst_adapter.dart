@@ -1,5 +1,5 @@
-import 'package:applithium_core/events/mapper/scheme.dart';
-import 'package:applithium_core/events/system_listener.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
+import 'package:appthink_core/events/system_listener.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'service.dart';

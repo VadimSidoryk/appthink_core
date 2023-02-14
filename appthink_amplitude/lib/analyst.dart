@@ -1,7 +1,7 @@
 import 'package:amplitude_flutter/amplitude.dart';
-import 'package:applithium_core/services/analytics/analyst.dart';
+import 'package:appthink_core/services/analytics/analyst.dart';
 import 'package:flutter/src/widgets/navigator.dart';
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 const _EVENT_SCREEN_VIEW = "screen_view";

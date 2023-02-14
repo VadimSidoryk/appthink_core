@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 

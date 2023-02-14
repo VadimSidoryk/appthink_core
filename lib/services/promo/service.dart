@@ -1,6 +1,6 @@
-import 'package:applithium_core/events/mapper/scheme.dart';
-import 'package:applithium_core/utils/json/condition.dart';
-import 'package:applithium_core/utils/json/interpolation.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
+import 'package:appthink_core/utils/json/condition.dart';
+import 'package:appthink_core/utils/json/interpolation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'action.dart';

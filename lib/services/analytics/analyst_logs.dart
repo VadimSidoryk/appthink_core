@@ -1,4 +1,4 @@
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 import 'analyst.dart';

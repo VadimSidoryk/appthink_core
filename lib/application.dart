@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:applithium_core/events/mapper/scheme.dart';
-import 'package:applithium_core/events/mapper/scheme_freezed.dart';
-import 'package:applithium_core/events/navigator.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/scopes/extensions.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
-import 'package:applithium_core/services/logger/service.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
+import 'package:appthink_core/events/mapper/scheme_freezed.dart';
+import 'package:appthink_core/events/navigator.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/scopes/extensions.dart';
+import 'package:appthink_core/scopes/store.dart';
+import 'package:appthink_core/services/localization/extensions.dart';
+import 'package:appthink_core/services/logger/service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

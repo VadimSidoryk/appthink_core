@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/utils/extension.dart';
 import 'package:async/async.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;

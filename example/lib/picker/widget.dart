@@ -1,5 +1,5 @@
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/localization/extensions.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/services/localization/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

@@ -1,8 +1,8 @@
-import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/events/mapper/scheme.dart';
-import 'package:applithium_core/events/mapper/scheme_partial.dart';
-import 'package:applithium_core/presentation/events.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/events/base_event.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
+import 'package:appthink_core/events/mapper/scheme_partial.dart';
+import 'package:appthink_core/presentation/events.dart';
+import 'package:appthink_core/utils/extension.dart';
 
 abstract class ScreenScheme extends EventsHandler {
   static eventScreenOpened(String tag) => "${tag}_screen_open";

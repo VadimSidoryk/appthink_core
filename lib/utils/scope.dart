@@ -1,5 +1,5 @@
-import 'package:applithium_core/scopes/scope.dart';
-import 'package:applithium_core/scopes/store.dart';
+import 'package:appthink_core/scopes/scope.dart';
+import 'package:appthink_core/scopes/store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

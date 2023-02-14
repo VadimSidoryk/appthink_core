@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:applithium_core/config/model.dart';
+import 'package:appthink_core/config/model.dart';
 import 'package:share/share.dart';
 import 'package:sprintf/sprintf.dart';
 

@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:applithium_core/services/local_notifications/abs.dart';
+import 'package:appthink_core/services/local_notifications/abs.dart';
 import 'package:async/async.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/messaging/messaging.dart';
-import 'package:applithium_core/services/messaging/models/presentation_options.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/services/messaging/messaging.dart';
+import 'package:appthink_core/services/messaging/models/presentation_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;

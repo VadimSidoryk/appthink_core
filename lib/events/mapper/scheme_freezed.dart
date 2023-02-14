@@ -1,5 +1,5 @@
-import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/events/mapper/scheme.dart';
+import 'package:appthink_core/events/base_event.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
 
 class FreezedEventsScheme extends EventsScheme {
   @override

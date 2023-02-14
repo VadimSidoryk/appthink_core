@@ -1,8 +1,4 @@
-
-
-
-
-import 'package:applithium_core/services/logger/service.dart';
+import 'package:appthink_core/services/logger/service.dart';
 
 import '../services/logger/abs.dart';
 

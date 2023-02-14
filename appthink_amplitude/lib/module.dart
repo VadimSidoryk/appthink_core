@@ -1,10 +1,10 @@
 import 'package:amplitude_flutter/amplitude.dart';
-import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/module.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/analytics/service.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/config/model.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/module.dart';
+import 'package:appthink_core/scopes/store.dart';
+import 'package:appthink_core/services/analytics/service.dart';
+import 'package:appthink_core/utils/extension.dart';
 import 'package:async/async.dart';
 
 import 'analyst.dart';

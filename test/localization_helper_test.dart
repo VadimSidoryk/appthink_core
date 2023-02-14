@@ -1,5 +1,5 @@
-import 'package:applithium_core/services/localization/config.dart';
-import 'package:applithium_core/services/localization/helper.dart';
+import 'package:appthink_core/services/localization/config.dart';
+import 'package:appthink_core/services/localization/helper.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 

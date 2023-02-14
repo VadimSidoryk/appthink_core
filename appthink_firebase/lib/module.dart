@@ -1,9 +1,9 @@
-import 'package:applithium_core/application.dart';
-import 'package:applithium_core/config/model.dart';
-import 'package:applithium_core/config/provider.dart';
-import 'package:applithium_core/module.dart';
-import 'package:applithium_core/scopes/store.dart';
-import 'package:applithium_core/services/analytics/service.dart';
+import 'package:appthink_core/application.dart';
+import 'package:appthink_core/config/model.dart';
+import 'package:appthink_core/config/provider.dart';
+import 'package:appthink_core/module.dart';
+import 'package:appthink_core/scopes/store.dart';
+import 'package:appthink_core/services/analytics/service.dart';
 import 'package:fimber/fimber.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,8 +11,8 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/utils/extension.dart';
 import 'package:rxdart/subjects.dart';
 
 import 'analyst.dart';

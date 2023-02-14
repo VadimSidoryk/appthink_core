@@ -1,5 +1,5 @@
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/utils/extension.dart';
 
 import '../base_event.dart';
 import 'scheme.dart';

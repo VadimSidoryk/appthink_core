@@ -1,6 +1,6 @@
-import 'package:applithium_core/events/events_listener.dart';
-import 'package:applithium_core/presentation/bloc.dart';
-import 'package:applithium_core/presentation/events.dart';
+import 'package:appthink_core/events/events_listener.dart';
+import 'package:appthink_core/presentation/bloc.dart';
+import 'package:appthink_core/presentation/events.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

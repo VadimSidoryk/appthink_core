@@ -1,4 +1,4 @@
-import 'package:applithium_core/events/mapper/scheme.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'events_listener.dart';

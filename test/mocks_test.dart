@@ -1,4 +1,4 @@
-import 'package:applithium_core/utils/mocks.dart';
+import 'package:appthink_core/utils/mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

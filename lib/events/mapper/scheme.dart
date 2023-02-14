@@ -1,6 +1,6 @@
-import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/utils/extension.dart';
+import 'package:appthink_core/events/base_event.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/utils/extension.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class EventsScheme {

@@ -1,7 +1,7 @@
-import 'package:applithium_core/services/local_notifications/abs.dart';
+import 'package:appthink_core/services/local_notifications/abs.dart';
 import 'package:async/async.dart';
-import 'package:applithium_core/logs/extension.dart';
-import 'package:applithium_core/services/messaging/models/presentation_options.dart';
+import 'package:appthink_core/logs/extension.dart';
+import 'package:appthink_core/services/messaging/models/presentation_options.dart';
 import 'package:flutter/cupertino.dart';
 
 typedef MessageClickListener = Function(int, String);

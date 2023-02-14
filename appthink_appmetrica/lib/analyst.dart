@@ -1,8 +1,8 @@
 import 'package:appmetrica_sdk/appmetrica_sdk.dart';
-import 'package:applithium_core/events/base_event.dart';
-import 'package:applithium_core/services/analytics/analyst.dart';
+import 'package:appthink_core/events/base_event.dart';
+import 'package:appthink_core/services/analytics/analyst.dart';
 import 'package:flutter/src/widgets/navigator.dart';
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 

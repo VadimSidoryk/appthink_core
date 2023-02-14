@@ -1,5 +1,5 @@
-import 'package:applithium_core/events/mapper/scheme.dart';
-import 'package:applithium_core/logs/extension.dart';
+import 'package:appthink_core/events/mapper/scheme.dart';
+import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
 
 import 'base_event.dart';
