@@ -1,5 +1,5 @@
-name: applithium_amplitude
-description: A new Flutter plugin.
+name: appthink_amplitude
+description: AppThink amplitude module
 version: 0.2.1
 
 environment:
