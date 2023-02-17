@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
 
 extension ObjectExt on dynamic {
-  T? as<R, T>(T? Function(R that) op) {
+  R? as<R>(R? Function(R that) op) {
     if (this is R) {
       return op(this as R);
     } else {
