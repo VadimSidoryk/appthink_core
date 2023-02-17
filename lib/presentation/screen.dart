@@ -1,5 +1,4 @@
 import 'package:appthink_core/events/event_bus.dart';
-import 'package:appthink_core/events/events_listener.dart';
 import 'package:appthink_core/logs/extension.dart';
 import 'package:appthink_core/scopes/extensions.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,11 +13,11 @@ abstract class AplScreenState<W extends StatefulWidget> extends State<W> {
   void initState() {
     super.initState();
     _listeners = LifecycleListeners(
-        resumeListener: () async =>
+        onResume: () async =>
             onEventImpl(BaseWidgetEvents.screenResumed(this)),
-        suspendingListener: () async =>
+        onPause: () async =>
             onEventImpl(BaseWidgetEvents.screenPaused(this)));
-    WidgetsBinding.instance?.addObserver(_listeners);
+    WidgetsBinding.instance.addObserver(_listeners);
   }
 
   @override

@@ -12,9 +12,10 @@ dependencies:
 
   amplitude_flutter: ^3.13.0
   async: ^2.6.1
-  applithium_core:
+
+  appthink_core:
     git:
-      url: ssh://git@bitbucket.org/appthink/core.git
+      url: https://github.com/VadimSidoryk/appthink_core.git
       ref: master
 
 dev_dependencies:

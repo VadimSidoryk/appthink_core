@@ -2,24 +2,32 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 class LifecycleListeners extends WidgetsBindingObserver {
-  final AsyncCallback resumeListener;
-  final AsyncCallback suspendingListener;
+  final AsyncCallback? onResume;
+  final AsyncCallback? onPause;
+  final AsyncCallback? onInactive;
+  final AsyncCallback? onDetached;
 
   LifecycleListeners({
-    required this.resumeListener,
-    required this.suspendingListener,
+    this.onResume,
+    this.onPause,
+    this.onInactive,
+    this.onDetached
   });
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
     switch (state) {
       case AppLifecycleState.resumed:
-        await resumeListener();
+        onResume?.call();
+        break;
+      case AppLifecycleState.paused:
+        onPause?.call();
         break;
       case AppLifecycleState.inactive:
-      case AppLifecycleState.paused:
+        onInactive?.call();
+        break;
       case AppLifecycleState.detached:
-        await suspendingListener();
+        onDetached?.call();
         break;
     }
   }

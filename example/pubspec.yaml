@@ -12,16 +12,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  applithium_core:
+  appthink_core:
     git:
-      url: ssh://git@bitbucket.org/appthink/core.git
+      url: https://github.com/VadimSidoryk/appthink_core.git
       ref: master
 
-  applithium_firebase:
+  appthink_firebase:
     git:
-      url: ssh://git@bitbucket.org/appthink/core.git
-      ref: master
-      path: applithium_firebase
+      url: https://github.com/VadimSidoryk/appthink_core.git
+      ref: appthink_firebase
 
   cupertino_icons: ^1.0.2
 
