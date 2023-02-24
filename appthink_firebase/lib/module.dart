@@ -4,7 +4,6 @@ import 'package:appthink_core/config/provider.dart';
 import 'package:appthink_core/module.dart';
 import 'package:appthink_core/scopes/store.dart';
 import 'package:appthink_core/services/analytics/service.dart';
-import 'package:fimber/fimber.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -14,7 +13,6 @@ import 'package:flutter/foundation.dart';
 import 'package:appthink_core/logs/extension.dart';
 import 'package:appthink_core/utils/extension.dart';
 import 'package:rxdart/subjects.dart';
-
 import 'analyst.dart';
 import 'config.dart';
 import 'log_tree.dart';
@@ -95,7 +93,6 @@ class FirebaseModule extends AplModule {
     crashlytics.setCustomKey(
         _KEY_MODE, kReleaseMode ? _MODE_RELEASE : _MODE_DEBUG);
     FlutterError.onError = crashlytics.recordFlutterError;
-    store.add<LogTree>((provider) => CrashlyticsTreeImpl());
     _analytics?.let((val) {
       store.get<AnalyticsService>().addAnalyst(FirebaseAnalyst(val));
     });
