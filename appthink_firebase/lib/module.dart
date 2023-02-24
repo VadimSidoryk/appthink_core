@@ -15,7 +15,6 @@ import 'package:appthink_core/utils/extension.dart';
 import 'package:rxdart/subjects.dart';
 import 'analyst.dart';
 import 'config.dart';
-import 'log_tree.dart';
 
 const _KEY_MODE = "mode";
 const _MODE_RELEASE = "release";
