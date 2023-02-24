@@ -16,6 +16,7 @@ import 'package:rxdart/subjects.dart';
 import 'analyst.dart';
 import 'config.dart';
 
+
 const _KEY_MODE = "mode";
 const _MODE_RELEASE = "release";
 const _MODE_DEBUG = "debug";
@@ -29,12 +30,13 @@ class FirebaseModule extends AplModule {
   late FirebaseApp _app;
   FirebaseAnalytics? _analytics;
   FirebaseConfigProvider? provider;
+  FirebaseOptions? options;
 
-  FirebaseModule({this.provider, this.useAnalytics = true, this.offlineModeEnabled = false, this.useDatabase = false});
+  FirebaseModule({this.options, this.provider, this.useAnalytics = true, this.offlineModeEnabled = false, this.useDatabase = false});
 
   @override
   Future<bool> injectConfigProvider(Store store) async {
-    _app = await Firebase.initializeApp();
+    _app = await Firebase.initializeApp(options: options);
     store.add((provider) => _app);
 
     await _setupAnalytics(store);
