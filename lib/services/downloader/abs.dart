@@ -22,7 +22,7 @@ abstract class DownloaderService {
 
 class _MockedDownloaderService extends DownloaderService {
   @override
-  Future<Result<void>> download(String url) => safeCall(() {});
+  Future<Result<void>> download(String url) => safeCall(this, () {});
 
   @override
   Stream<DownloadStatus> observeIsLoaded(String url) {
@@ -30,7 +30,7 @@ class _MockedDownloaderService extends DownloaderService {
   }
 
   @override
-  Future<Result<File>> open(String url)  => safeCall(() {
+  Future<Result<File>> open(String url)  => safeCall(this, () {
       return File("");
   });
 }

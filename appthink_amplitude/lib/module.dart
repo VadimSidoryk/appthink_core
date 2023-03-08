@@ -36,9 +36,9 @@ extension AmplitudeModuleKeys on AplConfig {
   static const KEY_AMPLITUDE_API_KEY = "amplitude_api_key";
   static const KEY_AMPLITUDE_PROJECT_ID = "amplitude_proj_id";
 
-  Future<Result<String>> get apiKey => safeCall(() => this.getString(KEY_AMPLITUDE_API_KEY));
+  Future<Result<String>> get apiKey => safeCall(this, () => this.getString(KEY_AMPLITUDE_API_KEY));
 
-  Future<Result<String>> get projId => safeCall(() => this.getString(KEY_AMPLITUDE_PROJECT_ID));
+  Future<Result<String>> get projId => safeCall(this, () => this.getString(KEY_AMPLITUDE_PROJECT_ID));
 
 
 }

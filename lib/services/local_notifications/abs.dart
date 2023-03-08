@@ -29,8 +29,8 @@ class _MockedLocalNotificationService extends LocalNotificationService {
           bool alert = true,
           bool badge = true,
           bool sound = true}) =>
-      safeCall(() {});
+      safeCall(this, () {});
 
   @override
-  Future<Result<String?>> getInitialLink() => safeCall(() => null);
+  Future<Result<String?>> getInitialLink() => safeCall(this, () => null);
 }

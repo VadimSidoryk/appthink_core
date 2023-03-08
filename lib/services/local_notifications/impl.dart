@@ -46,7 +46,7 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
     _initCompleter.complete(null);
   }
 
-  Future<Result<String?>> getInitialLink() => safeCall(() async {
+  Future<Result<String?>> getInitialLink() => safeCall(this, () async {
         await _initCompleter.future;
         return _getInitialPayload(_plugin);
       });
@@ -96,7 +96,7 @@ class LocalNotificationServiceImpl extends LocalNotificationService {
           bool alert = true,
           bool badge = true,
           bool sound = true}) =>
-      safeCall(() async {
+      safeCall(this, () async {
         final notificationDetails =
             _buildNotificationDetails(alert, badge, sound);
         if (when == null) {

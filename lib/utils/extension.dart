@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appthink_core/services/logger/service.dart';
 import 'package:async/async.dart';
 import 'package:appthink_core/logs/extension.dart';
 import 'package:flutter/widgets.dart';
@@ -19,38 +20,24 @@ extension TypeExt<T> on T {
   R let<R>(R Function(T that) op) => op(this);
 }
 
-class LogInfo {
-  final Object holder;
-  final String methodName;
-  final List<dynamic> params;
 
-  LogInfo(this.holder, this.methodName, this.params);
-}
-
-Future<Result<T>> safeCall<T>(FutureOr<T> Function() function,
-    {LogInfo? info, Function(dynamic)? onError}) async {
+Future<Result<T>> safeCall<T>(Object holder, FutureOr<T> Function() function,
+    { String? methodName, List<String> params = const [], Function(dynamic)? onError}) async {
   try {
     final result = await function.call();
-    info?.let((val) =>
-        val.holder.logMethodResult(val.methodName, val.params, result));
+    holder.logMethodResult(methodName ?? "Undefined", params, result);
     return Result.value(result);
   } catch (e, stacktrace) {
-    info?.let((val) => val.holder.logError(val.methodName, e, stacktrace));
-    try {
-      onError?.call(e);
-    } catch (e) {
-      info?.let((val) => val.holder.logError(val.methodName, e, stacktrace));
+    holder.logError("${methodName ?? "Undefined"} : $e", stacktrace);
+    if (onError != null) {
+      try {
+        onError.call(e);
+      } catch (e) {
+        holder.logError("$methodName, onError: $e", stacktrace);
+      }
     }
-    return Result.error(e);
-  }
-}
 
-extension LoggableSevice on Object {
-  Future<Result<T>> call<T>(
-      String methodName, List<dynamic> params, FutureOr<T> Function() function,
-      {Function(dynamic)? onError}) {
-    return safeCall(function,
-        info: LogInfo(this, methodName, params), onError: onError);
+    return Result.error(e);
   }
 }
 
@@ -70,7 +57,6 @@ extension UpdatablePresentation<T> on Stream<T> {
   Widget view(Widget Function(T) provider,
       {WidgetBuilder? loadingBuilder,
       Widget Function(BuildContext, dynamic)? errorBuilder}) {
-
     final _ValueFromStream<T> initialData;
     if (this is ValueStream<T> && (this as ValueStream<T>).hasValue) {
       final valueStream = this as ValueStream<T>;

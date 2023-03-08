@@ -12,7 +12,7 @@ class TestDownloaderService extends DownloaderService {
   final Map<String, BehaviorSubject<DownloadStatus>> _urlToStatus = {};
 
   @override
-  Future<Result<void>> download(String url) => safeCall(() async {
+  Future<Result<void>> download(String url) => safeCall(this, () async {
     final isExist = await _checkIfExist(url);
         if(isExist) {
           return;
@@ -44,7 +44,7 @@ class TestDownloaderService extends DownloaderService {
   }
 
   @override
-  Future<Result<File>> open(String url) => safeCall(() async {
+  Future<Result<File>> open(String url) => safeCall(this, () async {
         if (_urlToStatus.containsKey(url)) {
           //download in progress
           await _urlToStatus[url]!
