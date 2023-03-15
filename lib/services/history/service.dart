@@ -81,8 +81,9 @@ class UsageHistoryService {
     final prefs = await preferencesProvider;
     final count = prefs.getInt(_sessionCountKey) ?? 0;
     prefs.setInt(_sessionCountKey, count + 1);
-    _saveFirstSessionDayTime();
-    _saveLastSessionDayTime();
+    if(count == 0) {
+      _saveFirstSessionDayTime();
+    }
     return count + 1;
   }
 
