@@ -11,6 +11,10 @@ import 'analyst.dart';
 
 class AmplitudeModule extends AplModule {
 
+  final String sdkKey;
+
+  AmplitudeModule(this.sdkKey);
+
   @override
   Future<bool> injectConfigProvider(Store store) async {
     return false;
@@ -18,27 +22,9 @@ class AmplitudeModule extends AplModule {
 
   @override
   Future<void> injectDependencies(Store store, AplConfig config) async {
-    final apiKeyResult = await config.apiKey;
-    if(apiKeyResult.isError) {
-      logError(apiKeyResult.asError?.error.toString() ?? "Can't get apiKey");
-    }
-    final projectIdResult = await config.projId;
-    if(projectIdResult.isError) {
-      logError(projectIdResult.asError?.error.toString() ?? "Can't get projId");
-    }
-    final Amplitude sdk = Amplitude.getInstance(instanceName: projectIdResult.asValue!.value);
-    await sdk.init(apiKeyResult.asValue!.value);
+    final Amplitude sdk = Amplitude.getInstance();
+    await sdk.init(sdkKey);
     store.get<AnalyticsService>().addAnalyst(AmplitudeAnalyst(sdk));
   }
 }
 
-extension AmplitudeModuleKeys on AplConfig {
-  static const KEY_AMPLITUDE_API_KEY = "amplitude_api_key";
-  static const KEY_AMPLITUDE_PROJECT_ID = "amplitude_proj_id";
-
-  Future<Result<String>> get apiKey => safeCall(this, () => this.getString(KEY_AMPLITUDE_API_KEY));
-
-  Future<Result<String>> get projId => safeCall(this, () => this.getString(KEY_AMPLITUDE_PROJECT_ID));
-
-
-}
