@@ -5,7 +5,6 @@ import 'package:appthink_core/module.dart';
 import 'package:appthink_core/scopes/store.dart';
 import 'package:appthink_core/services/analytics/service.dart';
 import 'package:appthink_core/utils/extension.dart';
-import 'package:async/async.dart';
 
 import 'analyst.dart';
 
