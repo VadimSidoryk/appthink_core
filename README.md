@@ -1,6 +1,6 @@
 # appthink_core
 
-Appth.ink architecture core plugin
+Flutter library to build fast
 
 ## Getting Started
 
