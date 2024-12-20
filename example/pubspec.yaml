@@ -17,10 +17,10 @@ dependencies:
       url: https://github.com/VadimSidoryk/appthink_core.git
       ref: master
 
-  appthink_firebase:
-    git:
-      url: https://github.com/VadimSidoryk/appthink_core.git
-      ref: appthink_firebase
+#  appthink_firebase:
+#    git:
+#      url: https://github.com/VadimSidoryk/appthink_core.git
+#      ref: appthink_firebase
 
   cupertino_icons: ^1.0.2
 

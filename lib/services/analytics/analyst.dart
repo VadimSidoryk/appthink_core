@@ -2,7 +2,6 @@ import 'package:appthink_core/events/mapper/scheme.dart';
 import 'package:appthink_core/events/system_listener.dart';
 
 abstract class Analyst extends SystemListener {
-
   void setUserProperty(String name, Object? value);
 
   @override
@@ -10,6 +9,5 @@ abstract class Analyst extends SystemListener {
     sendEvent(event.name, event.params);
   }
 
-  void sendEvent(String name, Map<String, Object?>? params);
+  void sendEvent(String name, Map<String, Object>? params);
 }
-

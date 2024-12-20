@@ -13,10 +13,8 @@ abstract class AplScreenState<W extends StatefulWidget> extends State<W> {
   void initState() {
     super.initState();
     _listeners = LifecycleListeners(
-        onResume: () async =>
-            onEventImpl(BaseWidgetEvents.screenResumed(this)),
-        onPause: () async =>
-            onEventImpl(BaseWidgetEvents.screenPaused(this)));
+        onResume: () async => onEventImpl(BaseWidgetEvents.screenResumed(this)),
+        onPause: () async => onEventImpl(BaseWidgetEvents.screenPaused(this)));
     WidgetsBinding.instance.addObserver(_listeners);
   }
 
@@ -44,7 +42,7 @@ abstract class AplScreenState<W extends StatefulWidget> extends State<W> {
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(_listeners);
+    WidgetsBinding.instance.removeObserver(_listeners);
     super.dispose();
   }
 }

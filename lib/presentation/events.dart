@@ -16,6 +16,12 @@ class BaseWidgetEvents<M> extends WidgetEvents with _$BaseWidgetEvents<M> {
   factory BaseWidgetEvents.screenResumed(State screenState) =
   ScreenResumedEvent;
 
+  factory BaseWidgetEvents.showAlert(String title, String description) = ShowAlert;
+
+  factory BaseWidgetEvents.showNonFatalError(dynamic error) = ShowNonFatalError;
+
+  factory BaseWidgetEvents.showAction(String title, String description, Map<String, Function()> actions) = ShowAction;
+
   factory BaseWidgetEvents.screenTransition(String? from, String to) =
   ScreenTransition;
 

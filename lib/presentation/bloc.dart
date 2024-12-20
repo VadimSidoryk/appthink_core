@@ -114,7 +114,7 @@ class _MockedEmitter<State> extends Emitter<State> {
   void call(State state) {
     try {
       callback.call(state);
-    } catch(e, stacktrace) {
+    } catch (e, stacktrace) {
       logError("call returns error", e, stacktrace);
     }
     source.call(state);

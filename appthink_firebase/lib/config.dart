@@ -1,7 +1,7 @@
 import 'package:appthink_core/config/model.dart';
 import 'package:appthink_core/config/provider.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:appthink_core/logs/extension.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 const FIREBASE_CONFIG_RESOURCES_KEY = "utils";
 const FIREBASE_CONFIG_EVENTS_KEY = "event_handlers";
@@ -17,7 +17,7 @@ class FirebaseConfigProvider extends ConfigProvider {
   @override
   Future<AplConfig> getApplicationConfig() async {
     final methodName = "getApplicationConfig";
-    final RemoteConfig remoteConfig = RemoteConfig.instance;
+    final FirebaseRemoteConfig remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: Duration(seconds: fetchTimeoutSec),
       minimumFetchInterval: const Duration(hours: 1),
@@ -36,7 +36,7 @@ class FirebaseConfigProvider extends ConfigProvider {
 }
 
 class FirebaseAplConfigAdapter extends AplConfig {
-  final RemoteConfig configImpl;
+  final FirebaseRemoteConfig configImpl;
 
   FirebaseAplConfigAdapter(this.configImpl);
 

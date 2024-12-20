@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  amplitude_flutter: ^3.13.0
-  async: ^2.6.1
+  amplitude_flutter: ^3.16.5
+  async: ^2.11.0
 
   appthink_core:
     git:

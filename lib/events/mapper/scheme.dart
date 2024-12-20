@@ -4,11 +4,10 @@ import 'package:appthink_core/utils/extension.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class EventsScheme {
-
   List<EventData>? mapEvent(AplEvent event) {
     try {
       return mapEventImpl(event);
-    } catch(e, stacktrace) {
+    } catch (e, stacktrace) {
       logError("mapEvent", e, stacktrace);
       return null;
     }
@@ -20,15 +19,12 @@ abstract class EventsScheme {
 
 class EventData {
   final String name;
-  final Map<String, Object?>? params;
+  final Map<String, Object>? params;
 
   EventData({required this.name, this.params});
 
-  Map<String, Object?> asArgs() {
-    final result = <String, Object?>{
-      "name": name,
-      "sender": null
-    };
+  Map<String, Object> asArgs() {
+    final result = <String, Object>{"name": name, "sender": ""};
     params?.let((it) {
       result.addAll(it);
     });
@@ -36,4 +32,3 @@ class EventData {
     return result;
   }
 }
-
